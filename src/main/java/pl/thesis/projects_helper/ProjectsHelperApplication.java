@@ -1,4 +1,4 @@
-package com.example.projects_helper;
+package pl.thesis.projects_helper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

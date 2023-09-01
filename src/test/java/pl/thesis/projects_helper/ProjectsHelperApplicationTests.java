@@ -1,4 +1,4 @@
-package com.example.projects_helper;
+package pl.thesis.projects_helper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
