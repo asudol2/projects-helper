@@ -1,6 +1,5 @@
 package pl.thesis.projects_helper.controllers;
 
-import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.thesis.projects_helper.interfaces.IUSOSService;
@@ -10,11 +9,9 @@ import java.io.IOException;
 
 @RestController
 //@RequestMapping("/login")
-public class LoginController {
+public class USOSController {
     private final IUSOSService usosService;
-    private OAuthToken accessToken;
-
-    public LoginController(IUSOSService usosService) {
+    public USOSController(IUSOSService usosService) {
         this.usosService = usosService;
     }
 
@@ -27,9 +24,14 @@ public class LoginController {
     @GetMapping("/callback")
     public RedirectView loginSuccessCallback(@RequestParam("oauth_token") String oauthToken,
                                              @RequestParam("oauth_verifier") String oauthVerifier) {
-        accessToken = usosService.getAccessToken(oauthToken, oauthVerifier);
+        usosService.exchangeAndSaveAccessToken(oauthVerifier);
 
-        return new RedirectView("https://www.google.com");
+        return new RedirectView("http://localhost:8080/name");
 
+    }
+
+    @GetMapping("/name")
+    public String displayName(){
+        return usosService.getUserName();
     }
 }
