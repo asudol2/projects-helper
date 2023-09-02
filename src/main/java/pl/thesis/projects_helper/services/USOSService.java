@@ -1,5 +1,7 @@
 package pl.thesis.projects_helper.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -8,12 +10,11 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.http.HttpParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.social.oauth1.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,6 +24,9 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,13 +93,26 @@ public class USOSService implements IUSOSService {
         }
     }
     public String getUserName() {
-        final String url = "https://apps.usos.pw.edu.pl/services/users/user2";
-        final String signedUrl = generateSignedUrl(url);
+        String url = "https://apps.usos.pw.edu.pl/services/users/user";
+        String signedUrl = generateSignedUrl(url);
+
 
         ResponseEntity<String> response = restTemplate.exchange(signedUrl,
                                                                 HttpMethod.GET,
                                                                 null,
                                                                 String.class);
-        return response.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(),
+                    new TypeReference<Map<String, Object>>() {});
+            String id = (String) jsonMap.get("id");
+            String firstName = (String) jsonMap.get("first_name");
+            String lastName = (String) jsonMap.get("last_name");
+
+            return id + "  " + firstName + "  " + lastName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response.getBody();
     }
 }
