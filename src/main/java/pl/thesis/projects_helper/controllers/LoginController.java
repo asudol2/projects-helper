@@ -30,5 +30,6 @@ public class LoginController {
         accessToken = usosService.getAccessToken(oauthToken, oauthVerifier);
 
         return new RedirectView("https://www.google.com");
+
     }
 }
