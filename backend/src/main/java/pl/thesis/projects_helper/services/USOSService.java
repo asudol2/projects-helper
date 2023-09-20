@@ -55,7 +55,8 @@ public class USOSService implements IUSOSService {
         final String requestTokenUrl = usosBaseUrl +"oauth/request_token";
         final String authorizeUrl = usosBaseUrl +"oauth/authorize";
         final String accessTokenUrl = usosBaseUrl +"oauth/access_token";
-        this.oauthTemplate = new OAuth1Template(this.consumerKey, this.consumerSecret, requestTokenUrl, authorizeUrl, accessTokenUrl);
+        this.oauthTemplate = new OAuth1Template(
+                this.consumerKey, this.consumerSecret, requestTokenUrl, authorizeUrl, accessTokenUrl);
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setOutputStreaming(false);
         this.oauthTemplate.setRequestFactory(requestFactory);
