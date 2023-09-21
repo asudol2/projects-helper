@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.IUSOSService;
 import pl.thesis.projects_helper.model.response.LoginResponse;
+import pl.thesis.projects_helper.model.response.TokenResponse;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -37,10 +38,12 @@ public class USOSService implements IUSOSService {
     private String usosBaseUrl;
     @Value("${app.baseUrl}")
     private String appBaseUrl;
+    @Value("${app.frontendUrl}")
+    private String frontendUrl;
+
     private OAuth1Template oauthTemplate;
     private final RestTemplate restTemplate;
     private OAuthToken requestToken;
-    private OAuthToken accessToken;
 
 
     @Autowired
@@ -77,26 +80,27 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public void exchangeAndSaveAccessToken(String oauthVerifier) {
+    public TokenResponse exchangeAndSaveAccessToken(String oauthVerifier) {
         AuthorizedRequestToken authReqToken = new AuthorizedRequestToken(requestToken, oauthVerifier);
-        accessToken = oauthTemplate.exchangeForAccessToken(authReqToken, null);
+        OAuthToken accessToken = oauthTemplate.exchangeForAccessToken(authReqToken, null);
+        return new TokenResponse(accessToken.getValue(), accessToken.getSecret());
     }
 
-    private String generateSignedUrl(String url)
+    private String generateSignedUrl(String url, String token, String secret)
             throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(accessToken.getValue(), accessToken.getSecret());
+        consumer.setTokenWithSecret(token, secret);
         return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
     }
 
-    public LoginResponse getUserData() {
+    public LoginResponse getUserData(String token, String secret) {
         String fields = "id|first_name|last_name|email|student_number";
         String url = usosBaseUrl+"users/user?fields=" + fields;
         try {
-            String signedUrl = generateSignedUrl(url);
+            String signedUrl = generateSignedUrl(url, token, secret);
             ObjectMapper objectMapper = new ObjectMapper();
             OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-            consumer.setTokenWithSecret(accessToken.getValue(), accessToken.getSecret());
+            consumer.setTokenWithSecret(token, secret);
             ResponseEntity<String> response = restTemplate.exchange(
                                                     signedUrl, HttpMethod.GET, null, String.class);
             Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
