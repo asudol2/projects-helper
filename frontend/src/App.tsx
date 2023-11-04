@@ -11,7 +11,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />}/>
             <Route path="/login" element={<LoginPage />}/>
-            <Route path="/home/:usosAccessToken/:usosAccessSecret" element={<HomePage />}/>
+            <Route path="/home" element={<HomePage />}/>
           </Routes>
         </BrowserRouter>
       </header>

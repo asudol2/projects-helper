@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+    backend:
+        container_name: backend
+        build:
+            context: backend
+        ports:
+            - 8080:8080
+        environment:
+            - spring.datasource.url=jdbc:postgresql://database:5432/projectshelper
+        depends_on:
+            - database
+    frontend:
+        container_name: frontend
+        build:
+            context: frontend
+            dockerfile: Dockerfile
+        ports:
+            - 3000:3000
+        depends_on:
+            - backend
+    database:
+        container_name: database
+        build:
+            context: database
+            dockerfile: dockerfile
+        command: ["postgres", "-c", "log_statement=all"]
+        ports:
+            - 5432:5432
+
