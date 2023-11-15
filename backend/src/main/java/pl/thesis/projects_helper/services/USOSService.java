@@ -21,11 +21,16 @@ import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.IUSOSService;
+import pl.thesis.projects_helper.model.LoginTokenEntity;
+import pl.thesis.projects_helper.model.request.TokenRequest;
 import pl.thesis.projects_helper.model.response.LoginResponse;
 import pl.thesis.projects_helper.model.response.TokenResponse;
+import pl.thesis.projects_helper.repository.TokenRepository;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+import java.util.Base64;
 import java.util.Map;
+import java.security.SecureRandom;
 
 @Service
 @PropertySource("classpath:constants.properties")
@@ -38,8 +43,11 @@ public class USOSService implements IUSOSService {
     private String usosBaseUrl;
     @Value("${app.baseUrl}")
     private String appBaseUrl;
-    @Value("${app.frontendUrl}")
-    private String frontendUrl;
+    @Value("${app.loginTokenLength}")
+    private int loginTokenLength;
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     private OAuth1Template oauthTemplate;
     private final RestTemplate restTemplate;
@@ -66,24 +74,33 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public String getAuthorizeUrl() {
+    public String getAuthorizeUrl(String loginToken) {
         OAuth1Parameters params = new OAuth1Parameters();
         params.set("interactivity", "confirm_user");
-        assignRequestToken();
+        assignRequestToken(loginToken);
+        tokenRepository.save(new LoginTokenEntity(loginToken));
         return this.oauthTemplate.buildAuthorizeUrl(requestToken.getValue(), params);
     }
 
-    private void assignRequestToken() {
+    private void assignRequestToken(String loginToken) {
         OAuth1Parameters params = new OAuth1Parameters();
         params.set("scopes", "email|studies");
-        requestToken = this.oauthTemplate.fetchRequestToken(appBaseUrl+"callback", params);
+        String callbackUrl = appBaseUrl+"callback?login_token="+loginToken;
+        requestToken = this.oauthTemplate.fetchRequestToken(callbackUrl, params);
     }
 
     @Override
-    public TokenResponse exchangeAndSaveAccessToken(String oauthVerifier) {
+    public void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken) {
         AuthorizedRequestToken authReqToken = new AuthorizedRequestToken(requestToken, oauthVerifier);
         OAuthToken accessToken = oauthTemplate.exchangeForAccessToken(authReqToken, null);
-        return new TokenResponse(accessToken.getValue(), accessToken.getSecret());
+        LoginTokenEntity entity = tokenRepository.findByLoginToken(loginToken);
+        if (entity == null) {
+            //TODO do something
+            return;
+        }
+        entity.setOauthToken(accessToken.getValue());
+        entity.setOauthSecret(accessToken.getSecret());
+        tokenRepository.save(entity);
     }
 
     private String generateSignedUrl(String url, String token, String secret)
@@ -91,6 +108,17 @@ public class USOSService implements IUSOSService {
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
         consumer.setTokenWithSecret(token, secret);
         return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
+    }
+
+    public void saveOAuthCredentials(String oAuthToken, String oAuthSecret) {
+        String loginToken = generateLoginToken();
+        tokenRepository.save(new LoginTokenEntity(loginToken, oAuthToken, oAuthSecret));
+    }
+    public String generateLoginToken() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[loginTokenLength];
+        secureRandom.nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
     public LoginResponse getUserData(String token, String secret) {
@@ -115,5 +143,10 @@ public class USOSService implements IUSOSService {
             logger.error(e.getMessage());
         }
         return null;
+    }
+
+    public TokenResponse getOAuthCredentials(TokenRequest request) {
+        LoginTokenEntity token = tokenRepository.findByLoginToken(request.loginToken());
+        return new TokenResponse(token.getOauthToken(), token.getOauthSecret());
     }
 }
