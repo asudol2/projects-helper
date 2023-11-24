@@ -18,7 +18,7 @@ export function UserDataComponent(props: UserDataComponentProps) {
             if (data !== undefined) {
                 Requests.getUserData(data?.token, data?.secret).then(res => res.res).then(data => {
                     if (data !== undefined)
-                        setUsername(data?.firstName+" "+data?.lastName)
+                        setUsername(data?.firstName+"-"+data?.lastName+"-"+data?.id)
                 })
                 .catch(error => {
                     console.log(error);
