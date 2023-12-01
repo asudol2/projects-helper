@@ -265,7 +265,8 @@ public class USOSService implements IUSOSService {
                     (String)course.get("course_id"),
                     (String)course.get("term_id"),
                     names.get("pl"),
-                    names.get("en")));
+                    names.get("en"),
+                    (String)course.get("relationship_type")));
         }
         return courses;
     }
@@ -280,4 +281,50 @@ public class USOSService implements IUSOSService {
         }
         return success;
     }
+
+    public Pair<Integer, Integer> getUserStatusPair(String TEMP_loginToken){
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("fields", new ArrayList<>(
+                Arrays.asList("student_status", "staff_status")
+        ));
+        JsonNode usosJson = requestUsersEndpoint(TEMP_loginToken, "user", args);
+        // student, staff
+        return Pair.of(usosJson.get("student_status").asInt(),
+                usosJson.get("staff_status").asInt());
+    }
+
+    private boolean isCurrStudent(String TEMP_loginToken){
+        return getUserStatusPair(TEMP_loginToken).getFirst() == 2;
+    }
+
+    private boolean isCurrStaff(String TEMP_loginToken){
+        return getUserStatusPair(TEMP_loginToken).getSecond() == 2;
+    }
+
+    private List<CourseEntity> getCurrentStatusRelatedCourses(String role,
+                                                              String TEMP_loginToken){
+        if (role.equals("participant") && !isCurrStudent(TEMP_loginToken)){
+            return new ArrayList<>();
+        }
+        else if (role.equals("lecturer") && !isCurrStaff(TEMP_loginToken)) {
+            return new ArrayList<>();
+        }
+
+        List<CourseEntity> currCourses = new ArrayList<>();
+        for (CourseEntity course: getAllUserCurrentRelatedCourses(TEMP_loginToken)){
+            if (course.getRelationshipType().equals(role)){
+                currCourses.add(course);
+            }
+        }
+        return currCourses;
+    }
+    public List<CourseEntity> getCurrentStudentCourses(String TEMP_loginToken){
+       return getCurrentStatusRelatedCourses("participant", TEMP_loginToken);
+    }
+
+    public List<CourseEntity> getCurrentStaffCourses(String TEMP_loginToken){
+        return getCurrentStatusRelatedCourses("lecturer", TEMP_loginToken);
+    }
+
+
 }

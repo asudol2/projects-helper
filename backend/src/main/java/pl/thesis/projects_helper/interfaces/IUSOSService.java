@@ -2,6 +2,7 @@ package pl.thesis.projects_helper.interfaces;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.data.util.Pair;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.request.TokenRequest;
@@ -35,4 +36,7 @@ public interface IUSOSService {
                                                               String TEMP_loginToken);
     List<CourseEntity> getAllUserCurrentRelatedCourses(String TEMP_login);
     boolean addTopic(TopicEntity topic);
+    Pair<Integer, Integer> getUserStatusPair(String TEMP_loginToken);
+    List<CourseEntity> getCurrentStudentCourses(String TEMP_loginToken);
+    List<CourseEntity> getCurrentStaffCourses(String TEMP_loginToken);
 }

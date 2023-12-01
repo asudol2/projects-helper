@@ -12,6 +12,7 @@ import pl.thesis.projects_helper.model.response.LoginResponse;
 import pl.thesis.projects_helper.model.response.TokenResponse;
 import pl.thesis.projects_helper.model.response.UsosAuthUrlResponse;
 import pl.thesis.projects_helper.services.USOSService;
+import org.springframework.data.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,5 +107,20 @@ public class USOSController {
     @PostMapping("/topics")
     public boolean addOrUpdateTopic(@RequestBody TopicEntity topic){
         return usosService.addTopic(topic);
+    }
+
+    @GetMapping("/status")
+    public Pair<Integer, Integer> getStatus(){
+        return usosService.getUserStatusPair(TEMP_loginToken);
+    }
+
+    @GetMapping("/student/courses")
+    public String getStudentCurrCourses(){
+        return usosService.getCurrentStudentCourses(TEMP_loginToken).toString();
+    }
+
+    @GetMapping("/staff/courses")
+    public String getStaffCurrCourses(){
+        return usosService.getCurrentStaffCourses(TEMP_loginToken).toString();
     }
 }

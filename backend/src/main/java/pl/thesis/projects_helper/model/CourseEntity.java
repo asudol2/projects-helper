@@ -7,22 +7,27 @@ public class CourseEntity {
     private final String courseID;
     private final String termID;
     private final Pair<String, String> names;
+    private final String relationshipType;
 
     public CourseEntity(String courseID,
                         String termID,
-                        String course_name_pl,
-                        String course_name_en){
+                        String courseNamePl,
+                        String courseNameEn,
+                        String relationshipType){
         this.courseID = courseID;
         this.termID = termID;
-        this.names = Pair.of(course_name_pl, course_name_en);
+        this.names = Pair.of(courseNamePl, courseNameEn);
+        this.relationshipType = relationshipType;
     }
 
     public CourseEntity(String courseID,
                         String termID,
-                        Pair<String, String> names){
+                        Pair<String, String> names,
+                        String relationshipType){
         this.courseID = courseID;
         this.termID = termID;
         this.names = names;
+        this.relationshipType = relationshipType;
         }
 
     public String getCourseID() {
@@ -35,5 +40,9 @@ public class CourseEntity {
 
     public Pair<String, String> getNames() {
         return names;
+    }
+
+    public String getRelationshipType() {
+        return relationshipType;
     }
 }
