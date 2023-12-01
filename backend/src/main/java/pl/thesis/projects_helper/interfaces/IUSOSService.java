@@ -17,26 +17,18 @@ public interface IUSOSService {
     String getAuthorizeUrl(String loginToken);
 
     void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken);
-//    LoginResponse getUserData(String token, String secret);
+
+    LoginResponse getUserData(String token, String secret);
 
     String generateLoginToken();
+
     void saveOAuthCredentials(String oAuthToken, String oAuthSecret);
+
     TokenResponse getOAuthCredentials(TokenRequest request);
 
-    JsonNode requestUsersEndpoint(String logintoken,
-                                                    String func,
-                                                    Map<String, List<String>> args);
+//    JsonNode requestUsersEndpoint(String token,
+//                                  String secret,
+//                                  String func,
+//                                  Map<String, List<String>> args);
 
-//    public JsonNode requestGroupsEndpoint(String logintoken,
-//                                          String func,
-//                                          Map<String, List<String>> args);
-
-    List<TopicEntity> getAllUserCurrentRelatedTopics(String TEMP_loginToken);
-    List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
-                                                              String TEMP_loginToken);
-    List<CourseEntity> getAllUserCurrentRelatedCourses(String TEMP_login);
-    boolean addTopic(TopicEntity topic);
-    Pair<Integer, Integer> getUserStatusPair(String TEMP_loginToken);
-    List<CourseEntity> getCurrentStudentCourses(String TEMP_loginToken);
-    List<CourseEntity> getCurrentStaffCourses(String TEMP_loginToken);
 }
