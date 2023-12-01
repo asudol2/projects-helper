@@ -4,9 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +25,11 @@ import pl.thesis.projects_helper.model.response.TokenResponse;
 import pl.thesis.projects_helper.repository.TokenRepository;
 
 import jakarta.annotation.PostConstruct;
-import java.util.Base64;
-import java.util.Map;
+
+import java.util.*;
 import java.security.SecureRandom;
+
+import static pl.thesis.projects_helper.utils.URLArgsUtils.generateSignedUrl;
 
 @Service
 @PropertySource("classpath:constants.properties")
@@ -39,6 +38,8 @@ public class USOSService implements IUSOSService {
     private String consumerKey;
     @Value("${consumer.secret}")
     private String consumerSecret;
+    private OAuthConsumer consumer;
+    private final ObjectMapper mapper = new ObjectMapper();
     @Value("${usos.baseUrl}")
     private String usosBaseUrl;
     @Value("${app.baseUrl}")
@@ -63,11 +64,11 @@ public class USOSService implements IUSOSService {
 
     @PostConstruct
     private void init() {
-        final String requestTokenUrl = usosBaseUrl +"oauth/request_token";
-        final String authorizeUrl = usosBaseUrl +"oauth/authorize";
-        final String accessTokenUrl = usosBaseUrl +"oauth/access_token";
-        this.oauthTemplate = new OAuth1Template(
-                this.consumerKey, this.consumerSecret, requestTokenUrl, authorizeUrl, accessTokenUrl);
+        final String requestTokenUrl = usosBaseUrl + "oauth/request_token";
+        final String authorizeUrl = usosBaseUrl + "oauth/authorize";
+        final String accessTokenUrl = usosBaseUrl + "oauth/access_token";
+        consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        this.oauthTemplate = new OAuth1Template(this.consumerKey, this.consumerSecret, requestTokenUrl, authorizeUrl, accessTokenUrl);
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setOutputStreaming(false);
         this.oauthTemplate.setRequestFactory(requestFactory);
@@ -85,7 +86,7 @@ public class USOSService implements IUSOSService {
     private void assignRequestToken(String loginToken) {
         OAuth1Parameters params = new OAuth1Parameters();
         params.set("scopes", "email|studies");
-        String callbackUrl = appBaseUrl+"callback?login_token="+loginToken;
+        String callbackUrl = appBaseUrl + "callback?login_token=" + loginToken;
         requestToken = this.oauthTemplate.fetchRequestToken(callbackUrl, params);
     }
 
@@ -103,17 +104,32 @@ public class USOSService implements IUSOSService {
         tokenRepository.save(entity);
     }
 
-    private String generateSignedUrl(String url, String token, String secret)
-            throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
-        OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(token, secret);
-        return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
+    @Override
+    public LoginResponse getUserData(String token, String secret) {
+        String fields = "first_name|last_name";
+        String url = usosBaseUrl + "users/user?fields=" + fields;
+        try {
+            String signedUrl = generateSignedUrl(url, token, secret, consumerKey, consumerSecret);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
+            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+            });
+            String firstName = (String) jsonMap.get("first_name");
+            String lastName = (String) jsonMap.get("last_name");
+            return new LoginResponse(firstName, lastName);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
     }
 
+    @Override
     public void saveOAuthCredentials(String oAuthToken, String oAuthSecret) {
         String loginToken = generateLoginToken();
         tokenRepository.save(new LoginTokenEntity(loginToken, oAuthToken, oAuthSecret));
     }
+
+    @Override
     public String generateLoginToken() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[loginTokenLength];
@@ -121,30 +137,7 @@ public class USOSService implements IUSOSService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
-    public LoginResponse getUserData(String token, String secret) {
-        String fields = "id|first_name|last_name|email|student_number";
-        String url = usosBaseUrl+"users/user?fields=" + fields;
-        try {
-            String signedUrl = generateSignedUrl(url, token, secret);
-            ObjectMapper objectMapper = new ObjectMapper();
-            OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-            consumer.setTokenWithSecret(token, secret);
-            ResponseEntity<String> response = restTemplate.exchange(
-                                                    signedUrl, HttpMethod.GET, null, String.class);
-            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
-            });
-            String id = (String) jsonMap.get("id");
-            String firstName = (String) jsonMap.get("first_name");
-            String lastName = (String) jsonMap.get("last_name");
-            String email = (String) jsonMap.get("email");
-            String studentNumber = (String) jsonMap.get("student_number");
-            return new LoginResponse(id, firstName, lastName, email, studentNumber);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return null;
-    }
-
+    @Override
     public TokenResponse getOAuthCredentials(TokenRequest request) {
         LoginTokenEntity token = tokenRepository.findByLoginToken(request.loginToken());
         return new TokenResponse(token.getOauthToken(), token.getOauthSecret());
