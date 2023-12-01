@@ -31,6 +31,7 @@ export function LoginForm(props: LoginFormProps) {
                             <div className="projects-helper-login-submit">
                                 <button type="submit" onClick={handleSubmit} className="btn btn-outline-success">Zaloguj się</button>
                             </div>
+                            <p>Logowanie odbywa się poprzez system USOS</p>
                         </div>
                     </form>
                 </div>

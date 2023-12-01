@@ -1,5 +1,6 @@
 package pl.thesis.projects_helper.controllers;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -36,12 +37,12 @@ public class USOSController {
     }
 
     @GetMapping("/name")
-    public LoginResponse displayUserData(@RequestParam String token, @RequestParam String secret){
+    public LoginResponse displayUserData(@NotNull @RequestParam String token, @NotNull @RequestParam String secret) {
         return usosService.getUserData(token, secret);
     }
 
     @PostMapping("/oauthcredentials")
-    public TokenResponse getOAuthCredentials(@RequestBody TokenRequest token) {
+    public TokenResponse getOAuthCredentials(@NotNull @RequestBody TokenRequest token) {
         return usosService.getOAuthCredentials(token);
     }
 }

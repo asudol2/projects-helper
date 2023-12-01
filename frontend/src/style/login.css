@@ -1,0 +1,80 @@
+.projects-helper-login-page {
+    height: 100vh;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.projects-helper-login-page-cont {
+    width: 100%;
+}
+
+.projects-helper-login-cont {
+    width: 100%;
+}
+
+.projects-helper-login-row {
+    justify-content: center;
+}
+
+.projects-helper-login-card {
+    align-items: center;
+    padding: 10% 0;
+    animation: fadeIn;
+    animation-duration: 500ms;
+}
+
+.projects-helper-login-card p {
+    align-items: center;
+    padding-top: 5%;
+    font-size: 12px;
+}
+
+.projects-helper-login-user {
+    margin: 0 0 4%;
+    text-align: start;
+    width: 70%;
+    animation: fadeIn;
+    animation-duration: 1000ms;
+}
+
+.projects-helper-login-pwd {
+    margin: 0 0 4%;
+    text-align: start;
+    width: 70%;
+    animation: fadeIn;
+    animation-duration: 1500ms;
+}
+
+.projects-helper-login-submit {
+    justify-content: center;
+    animation: fadeIn;
+    animation-duration: 2000ms;
+}
+
+.projects-helper-login-reglink-text {
+    animation: fadeIn;
+    animation-duration: 2500ms;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.projects-helper-login-reglink {
+    animation: fadeIn;
+    animation-duration: 3000ms;
+}
+
+.projects-helper-login-error {
+    align-items: center;
+    position: fixed !important;
+    top: 5%;
+    margin: 0;
+    padding-left: 10%;
+    padding-right: 15%;
+    width: 100%;
+    z-index: 1;
+}
