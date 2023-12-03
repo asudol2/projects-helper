@@ -1,0 +1,106 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+
+@media (max-width: 768px) {
+  .hide-on-small {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .hide-on-medium {
+    display: none;
+  }
+}
+
+@media (max-width: 1300px) {
+  .hide-on-large {
+    display: none;
+  }
+}
+
+textarea.form-control {
+  min-height: 200px;
+  color: #4a4a4a;
+  border-color: #000;
+}
+
+textarea.form-control:focus {
+  min-height: 200px;
+  color: black;
+  box-shadow: 0 5px 10px 0 black;
+  outline-color: black;
+  border: 1px solid #555;
+}
+
+select.form-select:focus {
+  color: black;
+  box-shadow: 0 5px 10px 0 black;
+  outline-color: black;
+  border: 1px solid #555;
+}
+
+input.form-control {
+  color: #4a4a4a;
+  border-color: #000;
+}
+
+input.form-control:focus {
+  color: black;
+  box-shadow: 0 5px 10px 0 black;
+  outline-color: black;
+  border: 1px solid #555;
+}
+
+.projects-helper-pubcheck-input {
+  color: #adc178;
+  border-color: black;
+}
+
+.projects-helper-pubcheck-input:checked {
+  background-color: #adc178;
+  border-color: black;
+}
+
+.projects-helper-pubcheck-input:checked:focus {
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem #adc178;
+  border-color: black;
+}
+
+.projects-helper-pubcheck-input:focus {
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(0, 0, 0, 0.25);
+  border-color: black;
+}
+
+.projects-helper-pubcheck-input:active {
+  background-color: #adc178;
+  border-color: black;
+}
+
+.projects-helper-link {
+  text-decoration: none;
+  color: green;
+}
+
+.projects-helper-link:hover {
+  color: darkgreen;
+}
+
+tr {
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-duration: 1000ms;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}

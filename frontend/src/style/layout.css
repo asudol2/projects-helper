@@ -1,0 +1,70 @@
+.projects-helper-navbar {
+    margin: 0;
+    padding-top: 0 !important;
+    padding-left: 1%;
+    border-bottom: 2px solid white;
+    background-color: black;
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+    color: white;
+}
+
+.projects-helper-nav-item {
+    display: inline-block !important;
+}
+
+.projects-helper-navbar-nav {
+    display: inline-block !important;
+}
+
+li>.projects-helper-navbar-link {
+    display: inline-block !important;
+}
+
+.projects-helper-navbar-link {
+    font-size: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.projects-helper-navbar-link:active {
+    animation: pulse;
+    animation-duration: 500ms;
+}
+
+.projects-helper-navbar-link-main {
+    font-size: 25px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.projects-helper-navbar-link-main:active {
+    font-weight: bold;
+    animation: pulse;
+    animation-duration: 500ms;
+}
+
+.projects-helper-navbar-link-main:hover {
+    font-weight: bold;
+}
+
+.projects-helper-navbar-link-main:focus {
+    font-weight: bold;
+}
+
+.projects-helper-backbutton {
+    position: fixed !important;
+    top: 8%;
+    left: 1%;
+    z-index: 1;
+}
+
+.projects-helper-nav-item-username {
+    display: inline-block !important;
+}
+
+.projects-helper-nav-item-username span {
+    font-size: 15px;
+}

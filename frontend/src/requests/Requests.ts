@@ -3,22 +3,25 @@ import { SecurityHelper } from "../helpers/SecurityHelper";
 import { LoginResponse } from "../model/LoginResponse";
 import { UserDataResponse } from "../model/UserDataResponse";
 
-function fetchGet(url: string) {
-    // const token = SecurityHelper.getContext()?.token;
+function fetchGet(url: string, token: string = "", secret: string = "") {
+    const concatenatedValue = `${token}:${secret}`;
+    const base64EncodedValue = btoa(concatenatedValue);
     return fetch(Global.backendUrl + url, {
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `${token ?? ""}`
+            'Authorization': `${base64EncodedValue ?? ""}`
         }
     })
 }
 
-function fetchPost(url: string, body: any) {
+function fetchPost(url: string, body: any, token: string = "", secret: string = "") {
+    const concatenatedValue = `${token}:${secret}`;
+    const base64EncodedValue = btoa(concatenatedValue);
     return fetch(Global.backendUrl + url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `${token ?? ""}`
+            'Authorization': `${base64EncodedValue ?? ""}`
         },
         body: JSON.stringify(body)
     })
@@ -45,7 +48,7 @@ export class Requests {
         return {res: json};
     }
     static async getUserData(token: string, secret: string): Promise<GenericResponse<UserDataResponse>> {
-        const response = await fetchGet("/name?token="+token+"&secret="+secret)
+        const response = await fetchGet("/name", token, secret);
         if (response.status !== 200) {
             return {err: "błąd"}
         }
@@ -56,11 +59,21 @@ export class Requests {
 
     static async getOAuthCredentials() {
         let loginToken = SecurityHelper.getLoginToken();
-        const response = await fetchPost("/oauthcredentials", {loginToken: loginToken});
-        if (response.status !== 200) {
-            return {err: "Błąd"}
+        let response: Response | null = null;
+        response = await fetchPost("/oauthcredentials", { loginToken: loginToken });
+        if (response == null || response.status !== 200) {
+            throw new Error();
         }
         const json = await response.json();
         return {res: json}
+    }
+
+    static async getAllCourses(token: string, secret: string) {
+        const response = await fetchGet("/courses", token, secret);
+        if (response.status !== 200) {
+            throw new Error();
+        }
+        const json = await response.json();
+        return { res: json }
     }
 }
