@@ -1,5 +1,3 @@
-import "../style/login.css";
-
 interface CourseComponentProps {
     key: number;
     id: string;
@@ -9,9 +7,8 @@ interface CourseComponentProps {
 export function CourseComponent(props: CourseComponentProps) {
 
     return (
-        <div className="container-fluid projects-helper-user-data-cont">
-            <div className="row projects-helper-user-data-row">
-                {props.name} - {props.id}
-            </div>
-        </div>)
+        <div className="container-fluid projects-helper-course-row">
+            {props.name} <span className="projects-helper-course-row-id"> {props.id}</span>
+        </div>
+    )
 }

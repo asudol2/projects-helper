@@ -13,8 +13,6 @@ import pl.thesis.projects_helper.model.response.TokenResponse;
 import pl.thesis.projects_helper.model.response.UsosAuthUrlResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class USOSController {
@@ -43,7 +41,7 @@ public class USOSController {
         usosService.exchangeAndSaveAccessToken(oauthVerifier, loginToken);
         return new RedirectView(frontendUrl + "home");
     }
-    
+
     @GetMapping("/name")
     public LoginResponse displayUserData(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =

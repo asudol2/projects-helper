@@ -7,6 +7,8 @@ import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { Course } from "../model/Course";
 import { useNavigate } from "react-router-dom";
 import { SecurityHelper } from "../helpers/SecurityHelper";
+import "../style/courses.css";
+
 
 export default function LoginPage() {
     const [courses, setCourses] = useState<Course[] | null>(null);
@@ -35,7 +37,8 @@ export default function LoginPage() {
                 <title>Zapisy na projekty ∙ Strona główna</title>
             </Helmet>
             <Content>
-                <div className="App container-fluid projects-helper-main-page">
+                <div className="App container-fluid projects-helper-courses-cont">
+                    <p className="container-fluid projects-helper-courses-header">Przedmioty w bieżącej realizacji 23Z</p>
                     {courses != null &&
                         courses.map((course, index) => (
                             <CourseComponent key={index} name={Object.keys(course.names)[0]} id={course.courseID} />

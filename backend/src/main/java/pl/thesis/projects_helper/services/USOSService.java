@@ -77,7 +77,6 @@ public class USOSService implements IUSOSService {
     @Override
     public String getAuthorizeUrl(String loginToken) {
         OAuth1Parameters params = new OAuth1Parameters();
-        params.set("interactivity", "confirm_user");
         assignRequestToken(loginToken);
         tokenRepository.save(new LoginTokenEntity(loginToken));
         return this.oauthTemplate.buildAuthorizeUrl(requestToken.getValue(), params);

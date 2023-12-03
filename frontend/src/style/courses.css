@@ -1,0 +1,29 @@
+.projects-helper-courses-cont {
+    text-align: left;
+}
+
+.projects-helper-courses-header {
+    margin-bottom: 10vh;
+    font-size: 32pt;
+    padding-left: 2vw;
+}
+
+.projects-helper-course-row {
+    text-align: left;
+    border: 1px solid black;
+    margin: 2vh 0;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    width: auto;
+}
+
+.projects-helper-course-row:hover {
+    background-color: darkgrey;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.projects-helper-course-row-id {
+    color: grey;
+    font-size: 12pt;
+}
