@@ -4,7 +4,6 @@ import { LoginResponse } from "../model/LoginResponse";
 import { UserDataResponse } from "../model/UserDataResponse";
 
 function fetchGet(url: string) {
-    // const token = SecurityHelper.getContext()?.token;
     return fetch(Global.backendUrl + url, {
         headers: {
             'Content-Type': 'application/json',
@@ -45,7 +44,7 @@ export class Requests {
         return {res: json};
     }
     static async getUserData(token: string, secret: string): Promise<GenericResponse<UserDataResponse>> {
-        const response = await fetchGet("/name?token="+token+"&secret="+secret)
+        const response = await fetchGet("/name?token="+token+"&secret="+secret) //TODO poprawić
         if (response.status !== 200) {
             return {err: "błąd"}
         }
@@ -62,5 +61,14 @@ export class Requests {
         }
         const json = await response.json();
         return {res: json}
+    }
+
+    static async getAllCourses(token: string, secret: string) {
+        const response = await fetchGet("/courses?token=" + token + "&secret=" + secret);
+        if (response.status !== 200) {
+            return { err: "Błąd" }
+        }
+        const json = await response.json();
+        return { res: json }
     }
 }

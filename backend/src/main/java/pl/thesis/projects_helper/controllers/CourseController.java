@@ -16,7 +16,7 @@ public class CourseController {
         this.coursesService = coursesService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public List<CourseEntity> getUserCourses(@RequestParam String token, @RequestParam String secret) {
         return coursesService.getAllUserCurrentRelatedCourses(token, secret);
     }

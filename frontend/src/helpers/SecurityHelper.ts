@@ -16,7 +16,7 @@ export class SecurityHelper {
     }
 
     static getStringValueOrNull(key: string): string | null {
-        const value = secureLocalStorage.getItem(SecurityHelper.loginTokenKey);
+        const value = secureLocalStorage.getItem(key);
         if (!value)
             return null;
         return value as string;
@@ -31,7 +31,7 @@ export class SecurityHelper {
     }
 
     static getUsosSecret(): string | null {
-        return SecurityHelper.getStringValueOrNull(SecurityHelper.usosTokenKey);
+        return SecurityHelper.getStringValueOrNull(SecurityHelper.usosSecretKey);
     }
 
     static clearStorage() {

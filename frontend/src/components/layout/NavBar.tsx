@@ -3,28 +3,36 @@ import "../../style/layout.css"
 import { SecurityHelper } from "../../helpers/SecurityHelper";
 import { useEffect, useState } from "react";
 import { Requests } from "../../requests/Requests";
+import { useUsosTokens } from "../../contexts/UsosTokensContext";
 
 const NavBar = () => {
     const navigate = useNavigate();
 
     const [userName, setUsername] = useState("");
+    const {token, setToken, secret, setSecret} = useUsosTokens();
 
     useEffect(() => {
-        Requests.getOAuthCredentials().then(res => res.res).then(data => {
-            if (data !== undefined) {
-                Requests.getUserData(data?.token, data?.secret).then(res => res.res).then(data => {
-                    if (data !== undefined)
-                        setUsername(data?.firstName + " " + data?.lastName)
-                })
-                    .catch(error => {
-                        console.log(error);
-                    });
-            }
-        })
+        if (!token || !secret) {
+            Requests.getOAuthCredentials().then(res => res.res).then(data => {
+                if (data !== undefined) {
+                    setToken(data?.token);
+                    setSecret(data?.secret);
+                }
+            })
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+        } else {
+            Requests.getUserData(token, secret).then(res => res.res).then(data => {
+                if (data !== undefined)
+                    setUsername(data?.firstName + " " + data?.lastName)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+    }, [token, setToken, secret, setSecret]);
+
 
     return <div>
         <nav className="navbar navbar-dark projects-helper-navbar">
@@ -39,6 +47,8 @@ const NavBar = () => {
                     <li className="nav-item projects-helper-nav-item-username"><span>{userName}</span></li>
                     <li className="nav-item projects-helper-nav-item">
                     <Link onClick={() => {
+                        setToken(null);
+                        setSecret(null);
                         SecurityHelper.clearStorage();
                         navigate("/login")
                     }} className="nav-link projects-helper-navbar-link" to="/login">
