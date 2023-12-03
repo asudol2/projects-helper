@@ -12,7 +12,7 @@ export function LoginForm(props: LoginFormProps) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         Requests.login().then(res => {
-            if (res?.res?.usosURL != ""){
+            if (res?.res?.usosURL != "") {
                 if (res.res !== undefined)
                     props.onSuccess(res.res);
             }
