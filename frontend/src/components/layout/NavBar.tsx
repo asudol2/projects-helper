@@ -20,7 +20,7 @@ const NavBar = () => {
                 }
             })
             .catch(error => {
-                console.log(error);
+                navigate("/login");
             });
         } else {
             Requests.getUserData(token, secret).then(res => res.res).then(data => {
@@ -28,7 +28,8 @@ const NavBar = () => {
                     setUsername(data?.firstName + " " + data?.lastName)
             })
             .catch(error => {
-                console.log(error);
+                SecurityHelper.clearStorage();
+                navigate("/login");
             });
         }
     }, [token, setToken, secret, setSecret]);
@@ -50,7 +51,7 @@ const NavBar = () => {
                         setToken(null);
                         setSecret(null);
                         SecurityHelper.clearStorage();
-                        navigate("/login")
+                        navigate("/login");
                     }} className="nav-link projects-helper-navbar-link" to="/login">
                         <i className="bi bi-box-arrow-right" /> Wyloguj się
                     </Link>

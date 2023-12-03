@@ -55,9 +55,10 @@ export class Requests {
 
     static async getOAuthCredentials() {
         let loginToken = SecurityHelper.getLoginToken();
-        const response = await fetchPost("/oauthcredentials", {loginToken: loginToken});
-        if (response.status !== 200) {
-            return {err: "Błąd"}
+        let response: Response | null = null;
+        response = await fetchPost("/oauthcredentials", { loginToken: loginToken });
+        if (response == null || response.status !== 200) {
+            throw new Error();
         }
         const json = await response.json();
         return {res: json}
@@ -66,7 +67,7 @@ export class Requests {
     static async getAllCourses(token: string, secret: string) {
         const response = await fetchGet("/courses?token=" + token + "&secret=" + secret);
         if (response.status !== 200) {
-            return { err: "Błąd" }
+            throw new Error();
         }
         const json = await response.json();
         return { res: json }
