@@ -10,5 +10,7 @@ public interface ITopicService {
     List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
                                                        String token, String secret);
 
+    TopicEntity getTopicById(int topicId);
+
     boolean addTopic(TopicEntity topic);
 }

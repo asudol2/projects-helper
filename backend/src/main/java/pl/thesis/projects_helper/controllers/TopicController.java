@@ -19,12 +19,21 @@ public class TopicController {
         this.topicService = topicService;
         this.authorizationService = authorizationService;
     }
+
     @GetMapping("")
     public List<TopicEntity> getUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                            @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.getAllCourseCurrentRelatedTopics(courseID, authData.token(), authData.secret());
+    }
+
+    @GetMapping("/{id}")
+    public TopicEntity getTopicById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                    @PathVariable int id) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return topicService.getTopicById(id);
     }
 
     @PostMapping("/add")

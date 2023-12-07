@@ -7,6 +7,7 @@
     position: fixed !important;
     top: 0;
     width: 100%;
+    max-height: 8vh;
     z-index: 1;
     color: white;
 }
@@ -54,17 +55,14 @@ li>.projects-helper-navbar-link {
     font-weight: bold;
 }
 
-.projects-helper-backbutton {
-    position: fixed !important;
-    top: 8%;
-    left: 1%;
-    z-index: 1;
-}
-
 .projects-helper-nav-item-username {
     display: inline-block !important;
 }
 
 .projects-helper-nav-item-username span {
     font-size: 15px;
+}
+
+main {
+    margin-top: 8vh;
 }

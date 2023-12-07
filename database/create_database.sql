@@ -65,8 +65,3 @@ ALTER TABLE ONLY public.topics
 ALTER TABLE ONLY public.topics
     ADD CONSTRAINT unique_title UNIQUE (title);
 
-insert into public.topics(id, course_id, lecturer_id, title, description)
-values (1, '103A-INxxx-ISP-ZPR', '38996', 'project_1', 'description_1');
-
-insert into public.topics(id, course_id, lecturer_id, title, description)
-values (2, '103A-INxxx-ISP-ZPR', '38996', 'project_2', 'description_2');

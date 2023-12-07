@@ -70,6 +70,11 @@ public class TopicService implements ITopicService {
     }
 
     @Override
+    public TopicEntity getTopicById(int topicId) {
+        return topicRepository.findTopicById(topicId);
+    }
+
+    @Override
     public boolean addTopic(TopicEntity topic) {
         boolean success = false;
         try {

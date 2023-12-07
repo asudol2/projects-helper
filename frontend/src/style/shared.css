@@ -1,0 +1,19 @@
+.projects-helper-page-header {
+    margin-bottom: 10vh;
+    font-size: 32pt;
+}
+
+.projects-helper-item-row {
+    text-align: left;
+    border: 1px solid black;
+    margin: 2vh 0;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    width: auto;
+}
+
+.projects-helper-item-row:hover {
+    background-color: darkgrey;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
