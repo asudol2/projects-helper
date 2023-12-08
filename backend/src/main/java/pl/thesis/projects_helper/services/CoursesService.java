@@ -78,7 +78,7 @@ public class CoursesService implements ICoursesService {
 
     private JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "users/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(restTemplate, token, secret, url);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class CoursesService implements ICoursesService {
     @Override
     public JsonNode requestGroupsEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "groups/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(restTemplate, token, secret, url);
     }
 
     @Override
