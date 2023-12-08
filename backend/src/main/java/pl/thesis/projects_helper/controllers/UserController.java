@@ -32,8 +32,8 @@ public class UserController {
 
     @GetMapping("/student")
     public UserEntity getStudentById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                      @RequestParam("student_id") String lecturerID){
+                                      @RequestParam("student_id") String studentID){
         AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
-        return userService.getLecturerById(lecturerID, authData.token(), authData.secret());
+        return userService.getStudentById(studentID, authData.token(), authData.secret());
     }
 }
