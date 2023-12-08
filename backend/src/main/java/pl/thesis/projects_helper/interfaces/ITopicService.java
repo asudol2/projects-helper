@@ -11,4 +11,6 @@ public interface ITopicService {
                                                        String token, String secret);
 
     boolean addTopic(TopicEntity topic);
+
+    List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
 }

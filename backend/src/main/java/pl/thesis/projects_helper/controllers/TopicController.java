@@ -34,4 +34,12 @@ public class TopicController {
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.addTopic(topic);
     }
+
+    @GetMapping("/get")
+    public List<TopicEntity> getSelectiveUserTopics(String courseID){
+        courseID = "103D-INxxx-ISP-FO";
+        String token = "QjexkEv3h2mpxNafKLHY";
+        String secret = "VnCQJQ58jyTq7ng9ncgEBY2fhQPd8fLJk9CHs36Z";
+        return topicService.getSelectiveUserTopicsByCourse(courseID, token, secret);
+    }
 }

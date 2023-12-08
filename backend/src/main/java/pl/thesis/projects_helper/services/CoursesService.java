@@ -90,11 +90,11 @@ public class CoursesService implements ICoursesService {
         return Pair.of(usosJson.get("student_status").asInt(), usosJson.get("staff_status").asInt());
     }
 
-    private boolean isCurrStudent(String token, String secret) {
+    public boolean isCurrStudent(String token, String secret) {
         return getUserStatusPair(token, secret).getFirst() == 2;  //TODO explain magic number, why 2?
     }
 
-    private boolean isCurrStaff(String token, String secret) {
+    public boolean isCurrStaff(String token, String secret) {
         return getUserStatusPair(token, secret).getSecond() == 2;  //TODO explain magic number, why 2?
     }
 

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -79,5 +80,22 @@ public class TopicService implements ITopicService {
             logger.error(e.getMessage());
         }
         return success;
+    }
+
+    private List<TopicEntity> getSelectiveStudentTopicsByCourse(String courseID, String token, String secret){
+        List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
+        topics.removeIf(TopicEntity::isTemporary);
+        return topics;
+    }
+
+    @Override
+    public List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret){
+        if (coursesService.isCurrStudent(token, secret)){
+            return getSelectiveStudentTopicsByCourse(courseID, token, secret);
+        } else if (coursesService.isCurrStaff(token, secret)) {
+            return getAllCourseCurrentRelatedTopics(courseID, token, secret);
+        } else {
+            return null;
+        }
     }
 }
