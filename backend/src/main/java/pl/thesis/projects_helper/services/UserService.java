@@ -2,6 +2,7 @@ package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -44,10 +45,9 @@ public class UserService implements IUserService {
         return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
     }
 
-    @Override
-    public UserEntity getLecturerById(String lecturerID, String token, String secret) {
+    private UserEntity getUserById(String userID, String token, String secret) {
         Map<String, List<String>> args = new HashMap<>();
-        args.put("user_id", List.of(lecturerID));
+        args.put("user_id", List.of(userID));
         args.put("fields", List.of("first_name",
                 "middle_names",
                 "last_name",
@@ -56,7 +56,7 @@ public class UserService implements IUserService {
                 "staff_status",
                 "email"));
         Map<String, Object> userData = mapper.convertValue(requestUsersEndpoint(token, secret, "user", args), Map.class);
-        return new UserEntity(lecturerID,
+        return new UserEntity(userID,
                 (String) userData.get("first_name"),
                 (String) userData.get("middle_names"),
                 (String) userData.get("last_name"),
@@ -64,5 +64,23 @@ public class UserService implements IUserService {
                 (Integer) userData.get("student_status"),
                 (Integer) userData.get("staff_status"),
                 (String) userData.get("email"));
+    }
+
+    @Override
+    public UserEntity getLecturerById(String lecturerID, String token, String secret) {
+        UserEntity user = getUserById(lecturerID, token, secret);
+        if (user.getStaffStatus() != 2){
+            return null;
+        }
+        return user;
+    }
+
+    @Override
+    public UserEntity getStudentById(String studentID, String token, String secret) {
+        UserEntity user = getUserById(studentID, token, secret);
+        if (user.getStudentStatus() != 2){
+            return null;
+        }
+        return user;
     }
 }

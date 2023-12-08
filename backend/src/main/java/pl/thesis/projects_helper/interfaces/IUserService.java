@@ -5,4 +5,5 @@ import pl.thesis.projects_helper.model.UserEntity;
 public interface IUserService {
 
     UserEntity getLecturerById(String lecturerID, String token, String secret);
+    UserEntity getStudentById(String studentID, String token, String secret);
 }

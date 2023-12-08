@@ -29,4 +29,11 @@ public class UserController {
         AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
         return userService.getLecturerById(lecturerID, authData.token(), authData.secret());
     }
+
+    @GetMapping("/student")
+    public UserEntity getStudentById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                      @RequestParam("student_id") String lecturerID){
+        AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
+        return userService.getLecturerById(lecturerID, authData.token(), authData.secret());
+    }
 }
