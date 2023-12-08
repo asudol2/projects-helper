@@ -24,10 +24,16 @@ public class URLArgsUtils {
     public static String generateArgsUrl(Map<String, List<String>> args) {
         StringBuilder builder = new StringBuilder();
         for (String arg : args.keySet()) {
+            if (args.get(arg).isEmpty()) {
+                continue;
+            }
             builder.append(arg);
             builder.append("=");
             builder.append(String.join("%7c", args.get(arg)));
             builder.append("&");
+        }
+        if (builder.isEmpty()){
+            return "";
         }
         builder.deleteCharAt(builder.length() - 1);
         return builder.toString();
