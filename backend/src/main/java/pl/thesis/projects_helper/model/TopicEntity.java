@@ -52,7 +52,8 @@ public class TopicEntity {
     public TopicEntity(String courseID,
                        int lecturerID,
                        String title,
-                       String description
+                       String description,
+                       boolean temporary
     ){
         this.courseID = courseID;
         this.lecturerID = lecturerID;

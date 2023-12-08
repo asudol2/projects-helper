@@ -94,4 +94,14 @@ export class Requests {
         const json = await response.json();
         return { res: json }
     }
+
+    static async addTopic(token: string, secret: string, courseId: string, title: string, description: string) {
+        const response = await fetchPost(
+                    "/topics/add", { courseId: courseId, title: title, description: description}, token, secret);
+        if (response == null || response.status !== 200) {
+            throw new Error();
+        }
+        const json = await response.json();
+        return { res: json }
+    }
 }

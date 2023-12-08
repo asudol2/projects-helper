@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
 
 import java.util.*;
@@ -75,8 +76,17 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public boolean addTopic(TopicEntity topic) {
+    public boolean addTopic(TopicRequest topicRequest) {
         boolean success = false;
+        int lecturerId = 99; //TODO fix, temporary solution
+        boolean temporary = true; //TODO fix, temporary solution
+        TopicEntity topic = new TopicEntity(
+                topicRequest.courseId(),
+                lecturerId,
+                topicRequest.title(),
+                topicRequest.description(),
+                temporary
+        );
         try {
             topicRepository.save(topic);
             success = true;

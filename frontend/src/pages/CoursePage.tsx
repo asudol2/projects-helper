@@ -38,6 +38,9 @@ export default function CoursePage() {
 
     }, [token, setToken, secret, setSecret]);
 
+    const addTopic = () => {
+        navigate("/topic/add/" + courseData);
+    };
 
     return (
         <>
@@ -59,6 +62,7 @@ export default function CoursePage() {
                                 Nie ma jeszcze żadnych tematów zdefiniowanych dla tego przedmiotu.
                             </p>
                     }
+                    <div className="projects-helper-course-add-topic" onClick={addTopic}>Zaproponuj własny temat</div>
                 </div>
             </Content>
         </>

@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class TopicController {
 
     @PostMapping("/add")
     public boolean addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                    @RequestBody TopicEntity topic) {
+                                    @RequestBody TopicRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.addTopic(topic);
