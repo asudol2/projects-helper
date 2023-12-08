@@ -108,7 +108,7 @@ public class USOSService implements IUSOSService {
         String fields = "first_name|last_name";
         String url = usosBaseUrl + "users/user?fields=" + fields;
         try {
-            String signedUrl = generateSignedUrl(url, token, secret);
+            String signedUrl = generateSignedUrl(url, token, secret, consumerKey, consumerSecret);
             ObjectMapper objectMapper = new ObjectMapper();
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
             Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
