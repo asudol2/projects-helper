@@ -1,12 +1,11 @@
 package pl.thesis.projects_helper.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IUserService;
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.services.AuthorizationService;
 import pl.thesis.projects_helper.services.UserService;
 
 @RestController
@@ -16,16 +15,18 @@ public class UserController {
 
     private final IUserService userService;
 
+    private final AuthorizationService authServ;
+
     @Autowired
-    public UserController(IUserService userService){
+    public UserController(IUserService userService, AuthorizationService authorizationService){
         this.userService = userService;
+        this.authServ = authorizationService;
     }
 
     @GetMapping("/lecturer")
-    public UserEntity getLecturerById(String lecturerID){
-        String token = "gjWaaFkdSdkJz5McWYcf";
-        String secret = "GSUWSEWwzFEpWugjwtHgTYb6Hgnk43GqneuHQkMp";
-        lecturerID = "1012113";
-        return userService.getLecturerById(lecturerID, token, secret);
+    public UserEntity getLecturerById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+            @RequestParam("lecturer_id") String lecturerID){
+        AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
+        return userService.getLecturerById(lecturerID, authData.token(), authData.secret());
     }
 }
