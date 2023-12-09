@@ -14,6 +14,7 @@ import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.repository.TopicRepository;
+import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.*;
 
@@ -71,15 +72,29 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public boolean addTopic(TopicEntity topic) {
-        boolean success = false;
+    public TopicOperationResult addTopic(TopicEntity topic) {
+        String message = "";
         try {
             topicRepository.save(topic);
-            success = true;
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            message = e.getMessage();
         }
-        return success;
+
+        if (message.isEmpty()){
+            return TopicOperationResult.SUCCESS;
+        } else if (message.contains("unique_title_per_course_and_term")) {
+            return TopicOperationResult.UNIQUE_TITLE_PER_COURSE_AND_TERM;
+        } else if (message.contains("course_id")) {
+            return TopicOperationResult.COURSE_ID;
+        } else if (message.contains("lecturer_id")) {
+            return TopicOperationResult.LECTURER_ID;
+        } else if (message.contains("term")) {
+            return TopicOperationResult.TERM;
+        } else if (message.contains("title")) {
+            return TopicOperationResult.TITLE;
+        } else {
+            return TopicOperationResult.SIZE;
+        }
     }
 
     private String getUserID(String token, String secret){

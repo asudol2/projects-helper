@@ -1,10 +1,12 @@
 package pl.thesis.projects_helper.controllers;
 
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.services.AuthorizationService;
+import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.List;
 
@@ -28,8 +30,8 @@ public class TopicController {
     }
 
     @PostMapping("/add")
-    public boolean addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                    @RequestBody TopicEntity topic) {
+    public TopicOperationResult addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                 @RequestBody TopicEntity topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.addTopic(topic);

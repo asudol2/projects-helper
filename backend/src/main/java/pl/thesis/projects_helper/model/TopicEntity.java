@@ -55,40 +55,38 @@ public class TopicEntity {
         this.temporary = temporary;
     }
 
-    public TopicEntity(String courseID,
-                       int lecturerID,
-                       String title,
-                       String description
-    ){
-        this.courseID = courseID;
-        this.lecturerID = lecturerID;
-        this.title = title;
-        this.description = description;
-    }
+    public TopicEntity(){}
 
-    public TopicEntity(Long id,
-                       String courseID,
-                       int lecturerID,
-                       String title,
-                       String description,
-                       int minTeamCap,
-                       int maxTeamCap,
-                       boolean temporary
-    ){
-        this.id = id;
+    public TopicEntity(String courseID, int lecturerID, String term, String title, String description,
+                       int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
         this.courseID = courseID;
         this.lecturerID = lecturerID;
+        this.term = term;
         this.title = title;
         this.description = description;
         this.minTeamCap = minTeamCap;
         this.maxTeamCap = maxTeamCap;
         this.temporary = temporary;
+        this.propounderID = propounderID;
     }
 
-    public TopicEntity(){}
+    public TopicEntity(String courseID, int lecturerID, String term, String title, String description) {
+        this.courseID = courseID;
+        this.lecturerID = lecturerID;
+        this.term = term;
+        this.title = title;
+        this.description = description;
+    }
 
-    public TopicEntity(Long id, String courseID, int lecturerID, String term, String title, String description,
-                       int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
+    public TopicEntity(String courseID, int lecturerID, String term, String title) {
+        this.courseID = courseID;
+        this.lecturerID = lecturerID;
+        this.term = term;
+        this.title = title;
+    }
+
+    public TopicEntity(Long id, String courseID, int lecturerID, String term, String title,
+                       String description, int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
         this.id = id;
         this.courseID = courseID;
         this.lecturerID = lecturerID;
