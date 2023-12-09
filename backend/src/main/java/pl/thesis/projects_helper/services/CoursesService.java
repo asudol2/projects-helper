@@ -71,7 +71,8 @@ public class CoursesService implements ICoursesService {
         List<CourseEntity> courses = new ArrayList<>();
         for (Map<String, Object> course : currGroup) {
             Map<String, String> names = (Map<String, String>) course.get("course_name");
-            courses.add(new CourseEntity((String) course.get("course_id"), (String) course.get("term_id"), names.get("pl"), names.get("en"), (String) course.get("relationship_type")));
+            courses.add(new CourseEntity((String) course.get("course_id"), (String) course.get("term_id"),
+                    names.get("pl"), names.get("en"), (String) course.get("relationship_type")));
         }
         return courses;
     }

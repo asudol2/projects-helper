@@ -7,7 +7,8 @@ public enum TopicOperationResult {
     LECTURER_ID(1002, "invalid lecturer_id"),
     TERM(1003, "invalid_term"),
     TITLE(1004, "invalid_title"),
-    SIZE(1005, "size overflow");
+    SIZE(1005, "size overflow"),
+    UNAUTHORIZED(1006, "unauthorized");
 
     private final int code;
     private final String message;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
+import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
@@ -71,8 +72,22 @@ public class TopicService implements ITopicService {
         return courseTopics;
     }
 
+    private boolean isAuthorizedToManipulateTopic(TopicEntity topic, String token, String secret){
+        List<CourseEntity> relCourses = coursesService.getAllUserCurrentRelatedCourses(token, secret);
+        for (CourseEntity course: relCourses){
+            if (course.getCourseID().equals(topic.getCourseID())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
-    public TopicOperationResult addTopic(TopicEntity topic) {
+    public TopicOperationResult addTopic(TopicEntity topic, String token, String secret) {
+        if (!isAuthorizedToManipulateTopic(topic, token, secret)){
+            return TopicOperationResult.UNAUTHORIZED;
+        }
+
         String message = "";
         try {
             topicRepository.save(topic);

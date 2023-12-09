@@ -38,23 +38,6 @@ public class TopicEntity {
     @Column(name = "propounder_id")
     private String propounderID;
 
-    public TopicEntity(String courseID,
-                       int lecturerID,
-                       String title,
-                       String description,
-                       int minTeamCap,
-                       int maxTeamCap,
-                       boolean temporary
-                       ){
-        this.courseID = courseID;
-        this.lecturerID = lecturerID;
-        this.title = title;
-        this.description = description;
-        this.minTeamCap = minTeamCap;
-        this.maxTeamCap = maxTeamCap;
-        this.temporary = temporary;
-    }
-
     public TopicEntity(){}
 
     public TopicEntity(String courseID, int lecturerID, String term, String title, String description,

@@ -11,7 +11,7 @@ public interface ITopicService {
     List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
                                                        String token, String secret);
 
-    TopicOperationResult addTopic(TopicEntity topic);
+    TopicOperationResult addTopic(TopicEntity topic, String token, String secret);
 
     List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
 }

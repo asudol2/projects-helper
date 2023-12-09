@@ -34,14 +34,14 @@ public class TopicController {
                                                  @RequestBody TopicEntity topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.addTopic(topic);
+        return topicService.addTopic(topic, authData.token(), authData.secret());
     }
 
     @GetMapping("/get")
-    public List<TopicEntity> getSelectiveUserTopics(String courseID){
-        courseID = "103D-INxxx-ISP-FO";
-        String token = "QjexkEv3h2mpxNafKLHY";
-        String secret = "VnCQJQ58jyTq7ng9ncgEBY2fhQPd8fLJk9CHs36Z";
-        return topicService.getSelectiveUserTopicsByCourse(courseID, token, secret);
+    public List<TopicEntity> getSelectiveUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                    @RequestParam("course_id") String courseID){
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
     }
 }
