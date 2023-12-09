@@ -17,6 +17,9 @@ public class TopicEntity {
     @Column(name = "lecturer_id")
     private int lecturerID;
 
+    @Column(name = "term")
+    private String term;
+
     @Column(name = "title")
     private String title;
 
@@ -31,6 +34,9 @@ public class TopicEntity {
 
     @Column(name = "temporary")
     private boolean temporary;
+
+    @Column(name = "propounder_id")
+    private String propounderID;
 
     public TopicEntity(String courseID,
                        int lecturerID,
@@ -80,6 +86,20 @@ public class TopicEntity {
     }
 
     public TopicEntity(){}
+
+    public TopicEntity(Long id, String courseID, int lecturerID, String term, String title, String description,
+                       int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
+        this.id = id;
+        this.courseID = courseID;
+        this.lecturerID = lecturerID;
+        this.term = term;
+        this.title = title;
+        this.description = description;
+        this.minTeamCap = minTeamCap;
+        this.maxTeamCap = maxTeamCap;
+        this.temporary = temporary;
+        this.propounderID = propounderID;
+    }
 
     public Long getId() {
         return id;
@@ -143,5 +163,13 @@ public class TopicEntity {
 
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public String getPropounderID() {
+        return propounderID;
     }
 }

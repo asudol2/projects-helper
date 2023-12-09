@@ -76,7 +76,7 @@ public class CoursesService implements ICoursesService {
         return courses;
     }
 
-    private JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+    public JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "users/" + func + "?" + generateArgsUrl(args);
         return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
     }

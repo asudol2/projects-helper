@@ -82,18 +82,35 @@ public class TopicService implements ITopicService {
         return success;
     }
 
+    private String getUserID(String token, String secret){
+        Map<String, String> idMap = mapper.convertValue(coursesService.requestUsersEndpoint(token, secret, "user",
+                new HashMap<String, List<String>>(){{
+                    put("fields", List.of("id"));
+                }}),
+        Map.class);
+        return idMap.get("id");
+    }
     private List<TopicEntity> getSelectiveStudentTopicsByCourse(String courseID, String token, String secret){
         List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
-        topics.removeIf(TopicEntity::isTemporary);
+        String userID = getUserID(token, secret);
+        String targetTerm = "2023Z"; // TODO: find and add term retrieve method
+
+        topics.removeIf(topic ->
+                !topic.getTerm().equals(targetTerm) ||
+                        (topic.isTemporary() && !topic.getPropounderID().equals(userID))
+        );
         return topics;
     }
 
     @Override
     public List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret){
+        // TODO: what with situation when user is student and lecturer at the same time?
         if (coursesService.isCurrStudent(token, secret)){
             return getSelectiveStudentTopicsByCourse(courseID, token, secret);
         } else if (coursesService.isCurrStaff(token, secret)) {
-            return getAllCourseCurrentRelatedTopics(courseID, token, secret);
+             List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
+             topics.removeIf(topic -> !topic.getTerm().equals("2023Z")); //TODO: find and add term retrieve method
+             return topics;
         } else {
             return null;
         }
