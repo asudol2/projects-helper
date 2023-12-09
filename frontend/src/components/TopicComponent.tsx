@@ -17,7 +17,7 @@ export function TopicComponent(props: TopicComponentProps) {
     }
     return (
         <div className="container-fluid projects-helper-item-row" onClick={handleClisk}>
-            {props.index}. {title}
+            {props.index}. {title} {temporary === true && (<span className="projects-helper-temporary-topic">niezatwierdzony</span>)}
         </div>
     )
 }

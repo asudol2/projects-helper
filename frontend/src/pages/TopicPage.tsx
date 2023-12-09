@@ -45,9 +45,21 @@ export default function TopicPage() {
             <Content>
                 <div className="App container-fluid projects-helper-topic-details">
                     <div className="projects-helper-topic-label">Tytuł:</div>
-                    <div className="projects-helper-page-header">{topic && topic.title}</div>
+                    <div className="projects-helper-page-header">{topic?.title}</div>
                     <div className="projects-helper-topic-label">Opis:</div>
                     <div className="projects-helper-topic-description">{topic && topic.description}</div>
+                    <div className="projects-helper-topic-capacity">Minimalny skład zespołu: {topic?.minTeamCap}</div>
+                    <div className="projects-helper-topic-capacity">Maksymalny skład zespołu: {topic?.maxTeamCap}</div>
+                    <button
+                        className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled': ''}`}
+                    >
+                        Wybierz ten temat
+                    </button>
+                    {
+                        topic?.temporary && <button className={"btn btn-primary projects-helper-cancel-topic"}>
+                            Wycofaj propozycję tematu
+                        </button>
+                    }
                 </div>
             </Content>
         </>

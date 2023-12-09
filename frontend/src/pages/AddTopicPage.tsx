@@ -40,7 +40,7 @@ export default function AddTopicPage() {
         if (token && secret) {
             Requests.addTopic(token, secret, courseId, state.title, state.description).then(res => res.res).then(data => {
                 if (data == "SUCCESS") {
-                    navigate("/course/"+courseData);
+                    navigate(-1);
                 } else {
                     console.log("Wystąpił błąd: "+data); //TODO coś bardziej kreatywnego
                 }
