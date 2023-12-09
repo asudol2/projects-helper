@@ -19,4 +19,10 @@ public interface ICoursesService {
     JsonNode requestGroupsEndpoint(String token, String secret, String func, Map<String, List<String>> args);
 
     List<Map<String, Object>> retrieveCurrentCoursesGroup(JsonNode usosJson);
+
+    boolean isCurrStudent(String token, String secret);
+
+    boolean isCurrStaff(String token, String secret);
+
+    JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args);
 }

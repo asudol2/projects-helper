@@ -6,6 +6,7 @@ import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.services.AuthorizationService;
+import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.List;
 
@@ -20,7 +21,6 @@ public class TopicController {
         this.topicService = topicService;
         this.authorizationService = authorizationService;
     }
-
     @GetMapping("")
     public List<TopicEntity> getUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                            @RequestParam("course_id") String courseID) {
@@ -38,10 +38,18 @@ public class TopicController {
     }
 
     @PostMapping("/add")
-    public boolean addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                    @RequestBody TopicRequest topic) {
+    public TopicOperationResult addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                 @RequestBody TopicRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.addTopic(topic);
+        return topicService.addTopic(topic, authData.token(), authData.secret());
+    }
+
+    @GetMapping("/get")
+    public List<TopicEntity> getSelectiveUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                    @RequestParam("course_id") String courseID){
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
     }
 }
