@@ -2,12 +2,9 @@ package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.CourseEntity;
@@ -27,14 +24,8 @@ public class TopicService implements ITopicService {
     private final ObjectMapper mapper;
     private final ICoursesService coursesService;
 
-
-    private final RestTemplate restTemplate;
-
-    private static final Logger logger = LoggerFactory.getLogger(USOSService.class);
-
     @Autowired
-    public TopicService(RestTemplate restTemplate, ICoursesService coursesService) {
-        this.restTemplate = restTemplate;
+    public TopicService(ICoursesService coursesService) {
         this.coursesService = coursesService;
         mapper = new ObjectMapper();
     }
@@ -97,7 +88,8 @@ public class TopicService implements ITopicService {
                 topicRequest.title(),
                 topicRequest.description(),
                 term,
-                temporary
+                temporary,
+                getUserID(token, secret)
         );
         if (!isAuthorizedToManipulateTopic(topic, token, secret)){
             return TopicOperationResult.UNAUTHORIZED;
@@ -110,28 +102,26 @@ public class TopicService implements ITopicService {
             message = e.getMessage();
         }
 
-        if (message.isEmpty()){
+        if (message.isEmpty())
             return TopicOperationResult.SUCCESS;
-        } else if (message.contains("unique_title_per_course_and_term")) {
+        if (message.contains("unique_title_per_course_and_term"))
             return TopicOperationResult.UNIQUE_TITLE_PER_COURSE_AND_TERM;
-        } else if (message.contains("course_id")) {
+        if (message.contains("course_id"))
             return TopicOperationResult.COURSE_ID;
-        } else if (message.contains("lecturer_id")) {
+        if (message.contains("lecturer_id"))
             return TopicOperationResult.LECTURER_ID;
-        } else if (message.contains("term")) {
+        if (message.contains("term"))
             return TopicOperationResult.TERM;
-        } else if (message.contains("title")) {
+        if (message.contains("title"))
             return TopicOperationResult.TITLE;
-        } else {
-            return TopicOperationResult.SIZE;
-        }
+        return TopicOperationResult.SIZE;
     }
 
     private String getUserID(String token, String secret){
         Map<String, String> idMap = mapper.convertValue(coursesService.requestUsersEndpoint(token, secret, "user",
-                new HashMap<String, List<String>>(){{
-                    put("fields", List.of("id"));
-                }}),
+                        new HashMap<>() {{
+                            put("fields", List.of("id"));
+                        }}),
         Map.class);
         return idMap.get("id");
     }

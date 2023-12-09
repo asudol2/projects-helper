@@ -17,7 +17,7 @@ interface AddTopicState {
 
 export default function AddTopicPage() {
     const { courseData } = useParams();
-    const { token, setToken, secret, setSecret } = useUsosTokens();
+    const { token, secret } = useUsosTokens();
     const [state, setState] = useState<AddTopicState>({
         title: "",
         description: ""
@@ -39,14 +39,14 @@ export default function AddTopicPage() {
         e.preventDefault();
         if (token && secret) {
             Requests.addTopic(token, secret, courseId, state.title, state.description).then(res => res.res).then(data => {
-                if (data) {
+                if (data == "SUCCESS") {
                     navigate("/course/"+courseData);
                 } else {
-                    console.log("Wystąpił błąd"); //TODO coś bardziej kreatywnego
+                    console.log("Wystąpił błąd: "+data); //TODO coś bardziej kreatywnego
                 }
             })
             .catch(error => {
-                console.log("nie udało się dodać tematu"); //TODO coś bardziej kreatywnego
+                console.log("nie udało się dodać tematu. "+error);
             });
         }
     };

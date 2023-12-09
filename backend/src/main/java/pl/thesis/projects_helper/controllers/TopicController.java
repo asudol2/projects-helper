@@ -26,7 +26,7 @@ public class TopicController {
                                            @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getAllCourseCurrentRelatedTopics(courseID, authData.token(), authData.secret());
+        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
     }
 
     @GetMapping("/{id}")
@@ -43,13 +43,5 @@ public class TopicController {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.addTopic(topic, authData.token(), authData.secret());
-    }
-
-    @GetMapping("/get")
-    public List<TopicEntity> getSelectiveUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                                    @RequestParam("course_id") String courseID){
-        AuthorizationService.AuthorizationData authData =
-                authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
     }
 }
