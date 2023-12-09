@@ -12,6 +12,7 @@ import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
 
@@ -81,7 +82,23 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public TopicOperationResult addTopic(TopicEntity topic, String token, String secret) {
+    public TopicEntity getTopicById(int topicId) {
+        return topicRepository.findTopicById(topicId);
+    }
+
+    @Override
+    public TopicOperationResult addTopic(TopicRequest topicRequest, String token, String secret) {
+        int lecturerId = 99; //TODO fix, temporary solution
+        boolean temporary = true; //TODO fix, temporary solution
+        String term = "2023Z"; //TODO fix, temporary solution
+        TopicEntity topic = new TopicEntity(
+                topicRequest.courseId(),
+                lecturerId,
+                topicRequest.title(),
+                topicRequest.description(),
+                term,
+                temporary
+        );
         if (!isAuthorizedToManipulateTopic(topic, token, secret)){
             return TopicOperationResult.UNAUTHORIZED;
         }

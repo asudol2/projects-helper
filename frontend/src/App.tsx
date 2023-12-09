@@ -6,6 +6,9 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UsosTokensProvider } from './contexts/UsosTokensContext';
+import CoursePage from './pages/CoursePage';
+import TopicPage from './pages/TopicPage';
+import AddTopicPage from './pages/AddTopicPage';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/home" element={<HomePage />} />
+              <Route path="/course/:courseData" element={<CoursePage />} />
+              <Route path="/topic/:topicId" element={<TopicPage />} />
+              <Route path="/topic/add/:courseData" element={<AddTopicPage />} />
             </Routes>
           </BrowserRouter>
         </UsosTokensProvider>

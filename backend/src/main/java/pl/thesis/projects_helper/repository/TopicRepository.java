@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TopicRepository extends JpaRepository<TopicEntity, Long> {
 
-    TopicEntity findByCourseID(String courseID);
+    TopicEntity findTopicById(int id);
 
     List<TopicEntity> findAllByCourseID(String courseID);
 

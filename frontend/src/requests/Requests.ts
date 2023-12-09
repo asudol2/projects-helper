@@ -76,4 +76,32 @@ export class Requests {
         const json = await response.json();
         return { res: json }
     }
+
+    static async getCourseTopics(token: string, secret: string, courseId: string) {   //TODO przemyśleć reużywalność kodu
+        const response = await fetchGet("/topics?course_id="+courseId, token, secret);
+        if (response.status !== 200) {
+            throw new Error();
+        }
+        const json = await response.json();
+        return { res: json }
+    }
+
+    static async getTopicById(token: string, secret: string, topicId: string) {
+        const response = await fetchGet("/topics/" + topicId, token, secret);
+        if (response.status !== 200) {
+            throw new Error();
+        }
+        const json = await response.json();
+        return { res: json }
+    }
+
+    static async addTopic(token: string, secret: string, courseId: string, title: string, description: string) {
+        const response = await fetchPost(
+                    "/topics/add", { courseId: courseId, title: title, description: description}, token, secret);
+        if (response == null || response.status !== 200) {
+            throw new Error();
+        }
+        const json = await response.json();
+        return { res: json }
+    }
 }

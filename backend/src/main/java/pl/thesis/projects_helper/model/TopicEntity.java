@@ -53,7 +53,13 @@ public class TopicEntity {
         this.propounderID = propounderID;
     }
 
-    public TopicEntity(String courseID, int lecturerID, String term, String title, String description) {
+    public TopicEntity(String courseID,
+                       int lecturerID,
+                       String title,
+                       String description,
+                       String term,
+                       boolean temporary
+    ){
         this.courseID = courseID;
         this.lecturerID = lecturerID;
         this.term = term;

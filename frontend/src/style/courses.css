@@ -27,3 +27,27 @@
     color: grey;
     font-size: 12pt;
 }
+
+.projects-helper-course-details {
+    text-align: left;
+}
+
+.projects-helper-course-add-topic {
+    color: green;
+    border: 1px solid green;
+    padding: 0 2vw;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.projects-helper-course-add-topic:hover {
+    color: white;
+    background-color: green;
+    border: 1px solid black;
+}
