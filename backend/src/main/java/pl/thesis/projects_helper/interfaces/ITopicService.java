@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.interfaces;
 
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.List;
 
@@ -10,5 +11,7 @@ public interface ITopicService {
     List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
                                                        String token, String secret);
 
-    boolean addTopic(TopicEntity topic);
+    TopicOperationResult addTopic(TopicEntity topic, String token, String secret);
+
+    List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
 }

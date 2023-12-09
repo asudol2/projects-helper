@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.services.AuthorizationService;
+import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.List;
 
@@ -28,10 +29,18 @@ public class TopicController {
     }
 
     @PostMapping("/add")
-    public boolean addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                    @RequestBody TopicEntity topic) {
+    public TopicOperationResult addOrUpdateTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                 @RequestBody TopicEntity topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.addTopic(topic);
+        return topicService.addTopic(topic, authData.token(), authData.secret());
+    }
+
+    @GetMapping("/get")
+    public List<TopicEntity> getSelectiveUserTopics(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                    @RequestParam("course_id") String courseID){
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
     }
 }

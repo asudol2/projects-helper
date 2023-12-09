@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IUserService;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.services.AuthorizationService;
-import pl.thesis.projects_helper.services.UserService;
 
 @RestController
 @RequestMapping("/user")
