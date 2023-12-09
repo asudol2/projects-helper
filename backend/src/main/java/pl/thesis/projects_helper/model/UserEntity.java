@@ -29,6 +29,17 @@ public class UserEntity {
         this.email = email;
     }
 
+    public UserEntity(String ID, String firstName, String lastName) {
+        this.ID = ID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        middleNames = null;
+        sex = null;
+        studentStatus = null;
+        staffStatus = null;
+        email = null;
+    }
+
     public String getID() {
         return ID;
     }

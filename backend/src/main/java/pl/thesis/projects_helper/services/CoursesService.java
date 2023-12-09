@@ -4,19 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
+import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.*;
 
@@ -167,5 +166,28 @@ public class CoursesService implements ICoursesService {
             }
         }
         return null;
+    }
+
+    public JsonNode requestCoursesEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+        String url = usosBaseUrl + "courses/" + func + "?" + generateArgsUrl(args);
+        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+    }
+    @Override
+    public List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret){
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("course_id", List.of(courseID));
+        args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
+        args.put("fields", List.of("lecturers"));
+
+        JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
+        List<Map<String, String>> lecturersMap = mapper.convertValue(usosJson.get("lecturers"), List.class);
+
+        List<UserEntity> lecturers = new ArrayList<>();
+        for (Map<String, String> lecturerMap: lecturersMap){
+            lecturers.add(new UserEntity(lecturerMap.get("id"),
+                    lecturerMap.get("first_name"),
+                    lecturerMap.get("last_name")));
+        }
+        return lecturers;
     }
 }

@@ -90,10 +90,9 @@ public class TopicService implements ITopicService {
     public TopicOperationResult addTopic(TopicRequest topicRequest, String token, String secret) {
         boolean temporary = !coursesService.isCurrStaff(token, secret);
         String term = coursesService.retrieveCurrentTerm(token, secret);
-        int lecturerId = 99; //TODO fix, temporary solution
         TopicEntity topic = new TopicEntity(
                 topicRequest.courseId(),
-                lecturerId,
+                topicRequest.lecturerID(),
                 topicRequest.title(),
                 topicRequest.description(),
                 term,
@@ -138,7 +137,7 @@ public class TopicService implements ITopicService {
     private List<TopicEntity> getSelectiveStudentTopicsByCourse(String courseID, String token, String secret){
         List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
         String userID = getUserID(token, secret);
-        String targetTerm = "2023Z"; // TODO: find and add term retrieve method
+        String targetTerm = coursesService.retrieveCurrentTerm(token, secret);
 
         topics.removeIf(topic ->
                 !topic.getTerm().equals(targetTerm) ||
@@ -154,7 +153,7 @@ public class TopicService implements ITopicService {
             return getSelectiveStudentTopicsByCourse(courseID, token, secret);
         } else if (coursesService.isCurrStaff(token, secret)) {
              List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
-             topics.removeIf(topic -> !topic.getTerm().equals("2023Z")); //TODO: find and add term retrieve method
+             topics.removeIf(topic -> !topic.getTerm().equals(coursesService.retrieveCurrentTerm(token, secret)));
              return topics;
         } else {
             return null;
