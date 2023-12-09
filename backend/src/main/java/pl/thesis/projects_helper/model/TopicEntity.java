@@ -15,7 +15,7 @@ public class TopicEntity {
     private String courseID;
 
     @Column(name = "lecturer_id")
-    private int lecturerID;
+    private Integer lecturerID;
 
     @Column(name = "term")
     private String term;
@@ -27,21 +27,21 @@ public class TopicEntity {
     private String description;
 
     @Column(name = "min_team_cap")
-    private int minTeamCap;
+    private Integer minTeamCap;
 
     @Column(name = "max_team_cap")
-    private int maxTeamCap;
+    private Integer maxTeamCap;
 
     @Column(name = "temporary")
-    private boolean temporary;
+    private Boolean temporary;
 
     @Column(name = "propounder_id")
     private String propounderID;
 
     public TopicEntity(){}
 
-    public TopicEntity(String courseID, int lecturerID, String term, String title, String description,
-                       int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
+    public TopicEntity(String courseID, Integer lecturerID, String term, String title, String description,
+                       Integer minTeamCap, Integer maxTeamCap, Boolean temporary, String propounderID) {
         this.courseID = courseID;
         this.lecturerID = lecturerID;
         this.term = term;
@@ -54,28 +54,29 @@ public class TopicEntity {
     }
 
     public TopicEntity(String courseID,
-                       int lecturerID,
+                       Integer lecturerID,
                        String title,
                        String description,
                        String term,
-                       boolean temporary
+                       Boolean temporary
     ){
         this.courseID = courseID;
         this.lecturerID = lecturerID;
         this.term = term;
         this.title = title;
         this.description = description;
+        this.temporary = temporary;
     }
 
-    public TopicEntity(String courseID, int lecturerID, String term, String title) {
+    public TopicEntity(String courseID, Integer lecturerID, String term, String title) {
         this.courseID = courseID;
         this.lecturerID = lecturerID;
         this.term = term;
         this.title = title;
     }
 
-    public TopicEntity(Long id, String courseID, int lecturerID, String term, String title,
-                       String description, int minTeamCap, int maxTeamCap, boolean temporary, String propounderID) {
+    public TopicEntity(Long id, String courseID, Integer lecturerID, String term, String title,
+                       String description, Integer minTeamCap, Integer maxTeamCap, Boolean temporary, String propounderID) {
         this.id = id;
         this.courseID = courseID;
         this.lecturerID = lecturerID;
@@ -104,12 +105,20 @@ public class TopicEntity {
         this.courseID = courseID;
     }
 
-    public int getLecturerID() {
+    public Integer getLecturerID() {
         return lecturerID;
     }
 
-    public void setLecturerID(int lecturerID) {
+    public void setLecturerID(Integer lecturerID) {
         this.lecturerID = lecturerID;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     public String getTitle() {
@@ -128,35 +137,35 @@ public class TopicEntity {
         this.description = description;
     }
 
-    public int getMinTeamCap() {
+    public Integer getMinTeamCap() {
         return minTeamCap;
     }
 
-    public void setMinTeamCap(int minTeamCap) {
+    public void setMinTeamCap(Integer minTeamCap) {
         this.minTeamCap = minTeamCap;
     }
 
-    public int getMaxTeamCap() {
+    public Integer getMaxTeamCap() {
         return maxTeamCap;
     }
 
-    public void setMaxTeamCap(int maxTeamCap) {
+    public void setMaxTeamCap(Integer maxTeamCap) {
         this.maxTeamCap = maxTeamCap;
     }
 
-    public boolean isTemporary() {
+    public Boolean getTemporary() {
         return temporary;
     }
 
-    public void setTemporary(boolean temporary) {
+    public void setTemporary(Boolean temporary) {
         this.temporary = temporary;
-    }
-
-    public String getTerm() {
-        return term;
     }
 
     public String getPropounderID() {
         return propounderID;
+    }
+
+    public void setPropounderID(String propounderID) {
+        this.propounderID = propounderID;
     }
 }

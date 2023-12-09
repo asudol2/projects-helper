@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
+import pl.thesis.projects_helper.utils.UserActivityStatus;
 
 import java.util.*;
 
@@ -92,11 +93,11 @@ public class CoursesService implements ICoursesService {
     }
 
     public boolean isCurrStudent(String token, String secret) {
-        return getUserStatusPair(token, secret).getFirst() == 2;  //TODO explain magic number, why 2?
+        return getUserStatusPair(token, secret).getFirst() == UserActivityStatus.ACTIVE.getCode();
     }
 
     public boolean isCurrStaff(String token, String secret) {
-        return getUserStatusPair(token, secret).getSecond() == 2;  //TODO explain magic number, why 2?
+        return getUserStatusPair(token, secret).getSecond() == UserActivityStatus.ACTIVE.getCode(); 
     }
 
     @Override
