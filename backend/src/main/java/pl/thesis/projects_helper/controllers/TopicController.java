@@ -1,6 +1,5 @@
 package pl.thesis.projects_helper.controllers;
 
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ITopicService;
