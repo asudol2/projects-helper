@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,10 @@ import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.*;
 
@@ -97,7 +101,7 @@ public class CoursesService implements ICoursesService {
     }
 
     public boolean isCurrStaff(String token, String secret) {
-        return getUserStatusPair(token, secret).getSecond() == UserActivityStatus.ACTIVE.getCode(); 
+        return getUserStatusPair(token, secret).getSecond() == UserActivityStatus.ACTIVE.getCode();
     }
 
     @Override
@@ -133,5 +137,35 @@ public class CoursesService implements ICoursesService {
         }
         Collections.sort(ids);
         return ids.get(ids.size() - 1);
+    }
+
+    @Override
+    public JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+        String url = usosBaseUrl + "terms/" + func + "?" + generateArgsUrl(args);
+        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+    }
+
+    @Override
+    public String retrieveCurrentTerm(String token, String secret){
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("active_only", List.of("true"));
+        JsonNode usosJson = requestTermsEndpoint(token, secret, "terms_index", args);
+        List<Map<String, String>> usosMap = mapper.convertValue(usosJson, List.class);
+
+        LocalDate currDate = LocalDate.now();
+        String currYear = String.valueOf(LocalDate.now().getYear());
+        List<Map<String, String>> realizations = usosMap.stream()
+                .filter(map -> map.get("id").contains(currYear))
+                .toList();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (Map<String, String> realizationMap: realizations){
+            LocalDate endDate = LocalDate.parse(realizationMap.get("end_date"), formatter);
+            LocalDate startDate = LocalDate.parse(realizationMap.get("start_date"), formatter);
+            if (currDate.isAfter(startDate) && currDate.isBefore(endDate)){
+                return realizationMap.get("id");
+            }
+        }
+        return null;
     }
 }

@@ -43,4 +43,11 @@ public class CourseController {
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return coursesService.getCurrentStaffCourses(authData.token(), authData.secret());
     }
+
+    @GetMapping("/term")
+    public String getCurrentTerm(){
+        String token = "QKpyNBjdDpX7jrutmQLq";
+        String secret = "P5ZgV5kVtF6whmff6crA6XqcJQVgsFsz2MfcFYLj";
+        return coursesService.retrieveCurrentTerm(token, secret);
+    }
 }

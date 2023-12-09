@@ -153,7 +153,7 @@ public class TopicEntity {
         this.maxTeamCap = maxTeamCap;
     }
 
-    public Boolean getTemporary() {
+    public Boolean isTemporary() {
         return temporary;
     }
 

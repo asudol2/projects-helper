@@ -25,4 +25,8 @@ public interface ICoursesService {
     boolean isCurrStaff(String token, String secret);
 
     JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+
+    JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+
+    String retrieveCurrentTerm(String token, String secret);
 }

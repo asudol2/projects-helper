@@ -88,9 +88,9 @@ public class TopicService implements ITopicService {
 
     @Override
     public TopicOperationResult addTopic(TopicRequest topicRequest, String token, String secret) {
+        boolean temporary = !coursesService.isCurrStaff(token, secret);
+        String term = coursesService.retrieveCurrentTerm(token, secret);
         int lecturerId = 99; //TODO fix, temporary solution
-        boolean temporary = true; //TODO fix, temporary solution
-        String term = "2023Z"; //TODO fix, temporary solution
         TopicEntity topic = new TopicEntity(
                 topicRequest.courseId(),
                 lecturerId,
