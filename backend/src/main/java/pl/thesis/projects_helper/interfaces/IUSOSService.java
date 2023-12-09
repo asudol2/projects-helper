@@ -26,9 +26,6 @@ public interface IUSOSService {
 
     TokenResponse getOAuthCredentials(TokenRequest request);
 
-//    JsonNode requestUsersEndpoint(String token,
-//                                  String secret,
-//                                  String func,
-//                                  Map<String, List<String>> args);
+    boolean revokeAccessToken(String token, String secret);
 
 }

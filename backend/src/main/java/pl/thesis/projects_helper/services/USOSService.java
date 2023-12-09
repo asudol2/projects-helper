@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
@@ -30,6 +31,7 @@ import java.util.*;
 import java.security.SecureRandom;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.generateSignedUrl;
+import static pl.thesis.projects_helper.utils.URLArgsUtils.requestOnEndpoint;
 
 @Service
 @PropertySource("classpath:constants.properties")
@@ -140,5 +142,24 @@ public class USOSService implements IUSOSService {
     public TokenResponse getOAuthCredentials(TokenRequest request) {
         LoginTokenEntity token = tokenRepository.findByLoginToken(request.loginToken());
         return new TokenResponse(token.getOauthToken(), token.getOauthSecret());
+    }
+
+    @Override
+    public boolean revokeAccessToken(String token, String secret){
+        String url = usosBaseUrl + "oauth/revoke_token";
+        try {
+            JsonNode usosJson = requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+            Map<String, Boolean> usosMap = mapper.convertValue(usosJson, Map.class);
+
+            if (usosMap.isEmpty()){
+                return false;
+            }
+            if (usosMap.containsKey("success")){
+                return usosMap.get("success");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return false;
     }
 }
