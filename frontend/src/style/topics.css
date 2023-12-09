@@ -9,6 +9,7 @@
 
 .projects-helper-topic-description {
     margin-bottom: 20px;
+    white-space: pre-line;
 }
 
 .projects-helper-choose-topic, .projects-helper-cancel-topic{
