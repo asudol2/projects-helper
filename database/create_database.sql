@@ -37,10 +37,10 @@ ALTER TABLE ONLY public.oauth_tokens
 CREATE TABLE public.topics (
     id integer not null,
     course_id varchar(64) not null,
-    lecturer_id integer default null,
     term varchar(64) not null,
     title varchar(64) not null,
-    description varchar(512),
+    lecturer_id integer default null,
+    description varchar(512) default null,
     min_team_cap integer not null default 2,
     max_team_cap integer not null default 2,
     temporary bool default False,
