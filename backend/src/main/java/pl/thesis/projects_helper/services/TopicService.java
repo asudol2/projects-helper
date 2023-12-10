@@ -77,8 +77,43 @@ public class TopicService implements ITopicService {
         return topicRepository.findTopicById(topicId);
     }
 
+    private TopicOperationResult analyzeTopicDBMessage(String message){
+        if (message.isEmpty())
+            return TopicOperationResult.SUCCESS;
+        if (message.contains("unique_title_per_course_and_term"))
+            return TopicOperationResult.UNIQUE_TITLE_PER_COURSE_AND_TERM;
+        if (message.contains("course_id"))
+            return TopicOperationResult.COURSE_ID;
+        if (message.contains("term"))
+            return TopicOperationResult.TERM;
+        if (message.contains("title"))
+            return TopicOperationResult.TITLE;
+        if (message.contains("lecturer_id"))
+            return TopicOperationResult.LECTURER_ID;
+        if (message.contains("min_team_cap"))
+            return TopicOperationResult.MIN_TEAM_CAP;
+        if (message.contains("max_team_cap"))
+            return TopicOperationResult.MAX_TEAM_CAP;
+        if (message.contains("id"))
+            return TopicOperationResult.ID;
+        return TopicOperationResult.SIZE;
+    }
+
+    private TopicOperationResult validateTopicRequest(TopicRequest topic){
+        if (topic.courseId().length() > 64)
+            return TopicOperationResult.COURSE_ID_SIZE;
+        if (topic.title().length() > 256)
+            return TopicOperationResult.TITLE_SIZE;
+        if (topic.description().length() > 8192)
+            return TopicOperationResult.DESCRIPTION_SIZE;
+        return TopicOperationResult.SUCCESS;
+    }
     @Override
     public TopicOperationResult addTopic(TopicRequest topicRequest, String token, String secret) {
+        TopicOperationResult basicValidationResult = validateTopicRequest(topicRequest);
+        if (basicValidationResult.getCode() != 0)
+            return basicValidationResult;
+
         boolean temporary = !coursesService.isCurrStaff(token, secret);
         String term = coursesService.retrieveCurrentTerm(token, secret);
         TopicEntity topic = new TopicEntity(
@@ -100,20 +135,7 @@ public class TopicService implements ITopicService {
         } catch (Exception e) {
             message = e.getMessage();
         }
-
-        if (message.isEmpty())
-            return TopicOperationResult.SUCCESS;
-        if (message.contains("unique_title_per_course_and_term"))
-            return TopicOperationResult.UNIQUE_TITLE_PER_COURSE_AND_TERM;
-        if (message.contains("course_id"))
-            return TopicOperationResult.COURSE_ID;
-        if (message.contains("lecturer_id"))
-            return TopicOperationResult.LECTURER_ID;
-        if (message.contains("term"))
-            return TopicOperationResult.TERM;
-        if (message.contains("title"))
-            return TopicOperationResult.TITLE;
-        return TopicOperationResult.SIZE;
+        return analyzeTopicDBMessage(message);
     }
 
     private String getUserID(String token, String secret){

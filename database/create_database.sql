@@ -38,7 +38,7 @@ CREATE TABLE public.topics (
     id integer not null,
     course_id varchar(64) not null,
     term varchar(64) not null,
-    title varchar(64) not null,
+    title varchar(256) not null,
     lecturer_id integer default null,
     description varchar(8192) default null,
     min_team_cap integer not null default 2,
