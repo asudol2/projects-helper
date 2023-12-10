@@ -17,7 +17,7 @@ export default function LoginPage() {
             <title>Zapisy na projekty ∙ Zaloguj się</title>
         </Helmet>
         <div className="App container-fluid projects-helper-login-page">
-            <div className=""><h1>ZAPISY NA PROJEKTY</h1></div>
+            <div className="projects-helper-welcome-header"><h1>ZAPISY NA PROJEKTY</h1></div>
             <div className="App projects-helper-login-page-cont">
                 <LoginForm onSuccess={onLoginSuccess} onError={() => alert("error")}/>
             </div>

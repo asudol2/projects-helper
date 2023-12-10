@@ -19,7 +19,6 @@ export default function CoursePage() {
     const [topics, setTopics] = useState<Topic[] | null>(null);
     const navigate = useNavigate();
 
-
     useEffect(() => {
         if (token && secret) {
             const courseId = courseData?.split("&")[1];

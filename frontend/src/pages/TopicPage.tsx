@@ -44,10 +44,28 @@ export default function TopicPage() {
             </Helmet>
             <Content>
                 <div className="App container-fluid projects-helper-topic-details">
-                    <div className="projects-helper-topic-label">Tytuł:</div>
-                    <div className="projects-helper-page-header">{topic && topic.title}</div>
+                    <div className="projects-helper-topic-label">Tytuł tematu:</div>
+                    <div className="projects-helper-topic-title">{topic?.title}</div>
                     <div className="projects-helper-topic-label">Opis:</div>
                     <div className="projects-helper-topic-description">{topic && topic.description}</div>
+                    <div className="projects-helper-topic-capacity">
+                        <span className="projects-helper-topic-label">Minimalny skład zespołu: </span>
+                        {topic?.minTeamCap}
+                    </div>
+                    <div className="projects-helper-topic-capacity">
+                        <span className="projects-helper-topic-label">Maksymalny skład zespołu: </span>
+                        {topic?.maxTeamCap}
+                    </div>
+                    <button
+                        className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled': ''}`}
+                    >
+                        Wybierz ten temat
+                    </button>
+                    {
+                        topic?.temporary && <button className={"btn btn-primary projects-helper-cancel-topic"}>
+                            Wycofaj propozycję tematu
+                        </button>
+                    }
                 </div>
             </Content>
         </>

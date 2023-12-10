@@ -60,6 +60,7 @@ public class TopicEntity {
                        String term,
                        boolean temporary,
                        String propounderID
+
     ){
         this.courseID = courseID;
         this.lecturerID = lecturerID;

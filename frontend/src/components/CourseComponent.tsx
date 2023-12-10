@@ -15,7 +15,7 @@ export function CourseComponent(props: CourseComponentProps) {
     }
     return (
         <div className="container-fluid projects-helper-item-row" onClick={handleClisk}>
-            {props.name} <span className="projects-helper-item-row-id"> {props.id}</span>
+            {props.name} <span className="projects-helper-course-row-id"> {props.id}</span>
         </div>
     )
 }

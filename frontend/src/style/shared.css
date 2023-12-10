@@ -10,6 +10,7 @@
     border-radius: 10px;
     transition: all 0.3s ease-in-out;
     width: auto;
+    position: relative;
 }
 
 .projects-helper-item-row:hover {

@@ -17,7 +17,7 @@ interface AddTopicState {
 
 export default function AddTopicPage() {
     const { courseData } = useParams();
-    const { token, setToken, secret, setSecret } = useUsosTokens();
+    const { token, secret } = useUsosTokens();
     const [state, setState] = useState<AddTopicState>({
         title: "",
         description: ""
@@ -39,14 +39,14 @@ export default function AddTopicPage() {
         e.preventDefault();
         if (token && secret) {
             Requests.addTopic(token, secret, courseId, state.title, state.description).then(res => res.res).then(data => {
-                if (data) {
-                    navigate("/course/"+courseData);
+                if (data == "SUCCESS") {
+                    navigate(-1);
                 } else {
-                    console.log("Wystąpił błąd"); //TODO coś bardziej kreatywnego
+                    console.log("Wystąpił błąd: "+data); //TODO coś bardziej kreatywnego
                 }
             })
             .catch(error => {
-                console.log("nie udało się dodać tematu"); //TODO coś bardziej kreatywnego
+                console.log("nie udało się dodać tematu. "+error);
             });
         }
     };
@@ -75,7 +75,7 @@ export default function AddTopicPage() {
                                     required
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group projects-helper-add-topic-description">
                                 <label htmlFor="description">Opis:</label>
                                 <textarea
                                     className="form-control"
