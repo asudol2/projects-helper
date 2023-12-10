@@ -75,7 +75,7 @@ export default function AddTopicPage() {
                                     required
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group projects-helper-add-topic-description">
                                 <label htmlFor="description">Opis:</label>
                                 <textarea
                                     className="form-control"

@@ -23,3 +23,15 @@
     right: 1vw;
     bottom: 0;
 }
+
+.projects-helper-topic-label {
+    font-weight: bold;
+}
+
+.projects-helper-topic-details {
+    padding-top: 20px;
+}
+
+.projects-helper-add-topic-description {
+    margin-bottom: 20px;
+}
