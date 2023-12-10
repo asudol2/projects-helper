@@ -11,31 +11,31 @@ public class TopicEntity {
     @SequenceGenerator(name = "topic_sequence", sequenceName = "public.topics_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "course_id")
+    @Column(name = "course_id", nullable = false)
     private String courseID;
 
-    @Column(name = "lecturer_id")
+    @Column(name = "lecturer_id", columnDefinition = "default null")
     private Integer lecturerID;
 
-    @Column(name = "term")
+    @Column(name = "term", nullable = false)
     private String term;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "default null")
     private String description;
 
-    @Column(name = "min_team_cap")
+    @Column(name = "min_team_cap", nullable = false)
     private Integer minTeamCap;
 
-    @Column(name = "max_team_cap")
+    @Column(name = "max_team_cap", nullable = false)
     private Integer maxTeamCap;
 
-    @Column(name = "temporary")
+    @Column(name = "temporary", columnDefinition = "bool default False")
     private Boolean temporary;
 
-    @Column(name = "propounder_id")
+    @Column(name = "propounder_id", columnDefinition = "default null")
     private String propounderID;
 
     public TopicEntity(){}
@@ -58,7 +58,8 @@ public class TopicEntity {
                        String title,
                        String description,
                        String term,
-                       Boolean temporary
+                       boolean temporary,
+                       String propounderID
     ){
         this.courseID = courseID;
         this.lecturerID = lecturerID;
@@ -66,6 +67,9 @@ public class TopicEntity {
         this.title = title;
         this.description = description;
         this.temporary = temporary;
+        this.minTeamCap = 2;
+        this.maxTeamCap = 2;
+        this.propounderID = propounderID;
     }
 
     public TopicEntity(String courseID, Integer lecturerID, String term, String title) {

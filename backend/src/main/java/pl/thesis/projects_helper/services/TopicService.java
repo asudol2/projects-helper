@@ -96,7 +96,8 @@ public class TopicService implements ITopicService {
                 topicRequest.title(),
                 topicRequest.description(),
                 term,
-                temporary
+                temporary,
+                getUserID(token, secret)
         );
         if (!isAuthorizedToManipulateTopic(topic, token, secret)){
             return TopicOperationResult.UNAUTHORIZED;
