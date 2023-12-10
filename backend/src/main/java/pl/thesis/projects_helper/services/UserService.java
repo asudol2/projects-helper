@@ -68,7 +68,7 @@ public class UserService implements IUserService {
     @Override
     public UserEntity getLecturerById(String lecturerID, String token, String secret) {
         UserEntity user = getUserById(lecturerID, token, secret);
-        if (user.staffStatus() != 2){
+        if (user.getStaffStatus() != 2){
             return null;
         }
         return user;
@@ -77,7 +77,7 @@ public class UserService implements IUserService {
     @Override
     public UserEntity getStudentById(String studentID, String token, String secret) {
         UserEntity user = getUserById(studentID, token, secret);
-        if (user.studentStatus() != 2){
+        if (user.getStudentStatus() != 2){
             return null;
         }
         return user;
