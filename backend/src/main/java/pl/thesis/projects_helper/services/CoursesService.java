@@ -10,7 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
+import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.utils.UserActivityStatus;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.*;
@@ -92,11 +96,11 @@ public class CoursesService implements ICoursesService {
     }
 
     public boolean isCurrStudent(String token, String secret) {
-        return getUserStatusPair(token, secret).getFirst() == 2;  //TODO explain magic number, why 2?
+        return getUserStatusPair(token, secret).getFirst() == UserActivityStatus.ACTIVE.getCode();
     }
 
     public boolean isCurrStaff(String token, String secret) {
-        return getUserStatusPair(token, secret).getSecond() == 2;  //TODO explain magic number, why 2?
+        return getUserStatusPair(token, secret).getSecond() == UserActivityStatus.ACTIVE.getCode();
     }
 
     @Override
@@ -132,5 +136,58 @@ public class CoursesService implements ICoursesService {
         }
         Collections.sort(ids);
         return ids.get(ids.size() - 1);
+    }
+
+    @Override
+    public JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+        String url = usosBaseUrl + "terms/" + func + "?" + generateArgsUrl(args);
+        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+    }
+
+    @Override
+    public String retrieveCurrentTerm(String token, String secret){
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("active_only", List.of("true"));
+        JsonNode usosJson = requestTermsEndpoint(token, secret, "terms_index", args);
+        List<Map<String, String>> usosMap = mapper.convertValue(usosJson, List.class);
+
+        LocalDate currDate = LocalDate.now();
+        String currYear = String.valueOf(LocalDate.now().getYear());
+        List<Map<String, String>> realizations = usosMap.stream()
+                .filter(map -> map.get("id").contains(currYear))
+                .toList();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (Map<String, String> realizationMap: realizations){
+            LocalDate endDate = LocalDate.parse(realizationMap.get("end_date"), formatter);
+            LocalDate startDate = LocalDate.parse(realizationMap.get("start_date"), formatter);
+            if (currDate.isAfter(startDate) && currDate.isBefore(endDate)){
+                return realizationMap.get("id");
+            }
+        }
+        return null;
+    }
+
+    public JsonNode requestCoursesEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+        String url = usosBaseUrl + "courses/" + func + "?" + generateArgsUrl(args);
+        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+    }
+    @Override
+    public List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret){
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("course_id", List.of(courseID));
+        args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
+        args.put("fields", List.of("lecturers"));
+
+        JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
+        List<Map<String, String>> lecturersMap = mapper.convertValue(usosJson.get("lecturers"), List.class);
+
+        List<UserEntity> lecturers = new ArrayList<>();
+        for (Map<String, String> lecturerMap: lecturersMap){
+            lecturers.add(new UserEntity(lecturerMap.get("id"),
+                    lecturerMap.get("first_name"),
+                    lecturerMap.get("last_name")));
+        }
+        return lecturers;
     }
 }
