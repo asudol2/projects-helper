@@ -59,4 +59,12 @@ public class CourseController {
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return coursesService.retrieveCurrentCourseLecturers(courseID, authData.token(), authData.secret());
     }
+
+    @GetMapping("/participants")
+    public List<UserEntity> getCourseParticipants(){
+        String token = "Vc2t2eGu5ktGhbX8FY9n";
+        String secret = "LjdWENv8kfGj4HKTfpDm8ZH5Ym4kKtHS444AD48n";
+        String courseID = "103D-INxxx-ISP-FO";
+        return coursesService.retrieveCurrentCourseParticipants(courseID, token, secret);
+    }
 }

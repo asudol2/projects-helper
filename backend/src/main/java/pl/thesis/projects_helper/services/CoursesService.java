@@ -2,6 +2,7 @@ package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -182,12 +183,28 @@ public class CoursesService implements ICoursesService {
         JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
         List<Map<String, String>> lecturersMap = mapper.convertValue(usosJson.get("lecturers"), List.class);
 
-        List<UserEntity> lecturers = new ArrayList<>();
-        for (Map<String, String> lecturerMap: lecturersMap){
-            lecturers.add(new UserEntity(lecturerMap.get("id"),
-                    lecturerMap.get("first_name"),
-                    lecturerMap.get("last_name")));
+        return  mapUsosUsersMapsListToUserEntitiesList(lecturersMap);
+    }
+
+    @Override
+    public List<UserEntity> retrieveCurrentCourseParticipants(String courseID, String token, String secret) {
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("course_id", List.of(courseID));
+        args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
+        args.put("fields", List.of("participants"));
+
+        JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
+        List<Map<String, String>> participantsMapsList = mapper.convertValue(usosJson.get("participants"), List.class);
+        return mapUsosUsersMapsListToUserEntitiesList(participantsMapsList);
+    }
+
+    private List<UserEntity> mapUsosUsersMapsListToUserEntitiesList(List<Map<String, String>> usersMapsList) {
+        List<UserEntity> participantsList = new ArrayList<>();
+        for (Map<String, String> partMap: usersMapsList){
+            participantsList.add(new UserEntity(partMap.get("id"),
+                    partMap.get("first_name"),
+                    partMap.get("last_name")));
         }
-        return lecturers;
+        return participantsList;
     }
 }
