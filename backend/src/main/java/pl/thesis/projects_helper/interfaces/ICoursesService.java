@@ -3,6 +3,7 @@ package pl.thesis.projects_helper.interfaces;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.util.Pair;
 import pl.thesis.projects_helper.model.CourseEntity;
+import pl.thesis.projects_helper.model.UserEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +26,10 @@ public interface ICoursesService {
     boolean isCurrStaff(String token, String secret);
 
     JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+
+    JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+
+    String retrieveCurrentTerm(String token, String secret);
+
+    List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret);
 }
