@@ -40,7 +40,7 @@ CREATE TABLE public.topics (
     term varchar(64) not null,
     title varchar(64) not null,
     lecturer_id integer default null,
-    description varchar(512) default null,
+    description varchar(8192) default null,
     min_team_cap integer not null default 2,
     max_team_cap integer not null default 2,
     temporary bool default False,
@@ -79,7 +79,7 @@ insert into public.topics(course_id, lecturer_id, term, title, description, temp
 values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_3', 'description_3', false, null);
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_4', 'description_4', false, null);
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_4', 'description_4', false, 1158741);
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
 values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_5', 'description_5', true, '1158935');
@@ -88,10 +88,10 @@ insert into public.topics(course_id, lecturer_id, term, title, description, temp
 values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_6', 'description_6', false, '1158935');
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_7', 'description_7', true, '1158940');
+values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_7', 'description_7', true, '1158741');
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_8', 'description_8', true, '1158940');
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_8', 'description_8', true, '1158741');
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
 values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_9', 'description_9', true, '1158935');
