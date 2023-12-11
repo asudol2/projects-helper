@@ -30,10 +30,10 @@ li>.projects-helper-navbar-link {
     margin-right: 10px;
 }
 
-.projects-helper-navbar-link:active {
+/* .projects-helper-navbar-link:active {
     animation: pulse;
     animation-duration: 500ms;
-}
+} */
 
 .projects-helper-navbar-link-main {
     font-size: 25px;
