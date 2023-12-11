@@ -1,9 +1,9 @@
 import { Link, useNavigate, } from "react-router-dom";
-import "../../style/layout.css"
 import { SecurityHelper } from "../../helpers/SecurityHelper";
 import { useEffect, useState } from "react";
 import { Requests } from "../../requests/Requests";
 import { useUsosTokens } from "../../contexts/UsosTokensContext";
+import "../../style/layout.css"
 
 const NavBar = () => {
     const navigate = useNavigate();
