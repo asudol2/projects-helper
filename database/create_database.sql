@@ -35,7 +35,7 @@ ALTER TABLE ONLY public.oauth_tokens
 
 
 CREATE TABLE public.topics (
-    id integer not null,
+    id serial primary key,
     course_id varchar(64) not null,
     term varchar(64) not null,
     title varchar(256) not null,
@@ -48,22 +48,6 @@ CREATE TABLE public.topics (
 );
 
 ALTER TABLE public.topics OWNER TO projectshelper;
-
-CREATE SEQUENCE public.topics_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER TABLE public.topics_id_seq OWNER TO projectshelper;
-ALTER SEQUENCE public.topics_id_seq OWNED BY public.topics.id;
-ALTER TABLE ONLY public.topics ALTER COLUMN id SET DEFAULT nextval('public.topics_id_seq'::regclass);
-
-ALTER TABLE ONLY public.topics
-    ADD CONSTRAINT topics_pkey PRIMARY KEY (id);
-
 ALTER TABLE public.topics
     ADD CONSTRAINT unique_title_per_course_and_term
         UNIQUE (course_id, term, title);
@@ -98,3 +82,25 @@ values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_9', 'description_9', t
 
 insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
 values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_10', 'description_10', false, '1158935');
+
+--------------------------------------------------------------
+
+CREATE TABLE public.teams (
+    id serial primary key,
+    topic_id integer references topics(id)
+);
+ALTER TABLE public.teams OWNER TO projectshelper;
+
+CREATE TABLE public.team_requests (
+    id serial primary key,
+    topic_id integer references topics(id)
+);
+ALTER TABLE public.team_requests OWNER TO projectshelper;
+
+CREATE TABLE public.users_in_teams (
+    team_id integer references public.teams(id),
+    team_request_id integer references public.team_requests(id),
+    user_id varchar(64),
+    primary key (team_id, team_request_id, user_id)
+);
+ALTER TABLE public.users_in_teams OWNER TO projectshelper;

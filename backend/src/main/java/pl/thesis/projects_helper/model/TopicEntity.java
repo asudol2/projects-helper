@@ -6,9 +6,8 @@ import jakarta.persistence.*;
 @Table(name = "topics")
 public class TopicEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "topic_sequence")
-    @SequenceGenerator(name = "topic_sequence", sequenceName = "public.topics_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "course_id", nullable = false)
@@ -39,6 +38,10 @@ public class TopicEntity {
     private String propounderID;
 
     public TopicEntity(){}
+
+    public TopicEntity(Long id) {
+        this.id = id;
+    }
 
     public TopicEntity(String courseID, Integer lecturerID, String term, String title, String description,
                        Integer minTeamCap, Integer maxTeamCap, Boolean temporary, String propounderID) {
