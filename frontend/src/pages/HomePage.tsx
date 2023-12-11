@@ -1,12 +1,12 @@
-import { Helmet } from "react-helmet";
-import { CourseComponent } from "../components/CourseComponent";
-import Content from "../components/layout/Content";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { useNavigate } from "react-router-dom";
+import { CourseComponent } from "../components/CourseComponent";
 import { Requests } from "../requests/Requests";
 import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { Course } from "../model/Course";
-import { useNavigate } from "react-router-dom";
 import { SecurityHelper } from "../helpers/SecurityHelper";
+import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/courses.css";
 

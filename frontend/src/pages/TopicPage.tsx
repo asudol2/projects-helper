@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet";
-import Content from "../components/layout/Content";
 import { Requests } from "../requests/Requests";
 import { useEffect, useState } from "react";
 import { Topic } from "../model/Topic";
@@ -7,7 +6,7 @@ import { SecurityHelper } from "../helpers/SecurityHelper";
 import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
-import { TopicComponent } from "../components/TopicComponent";
+import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/topics.css";
 
