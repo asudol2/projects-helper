@@ -9,6 +9,7 @@ import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
@@ -170,5 +171,23 @@ public class TopicService implements ITopicService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean confirmTemporaryTopic(TopicConfirmRequest topic, String token, String secret) {
+        String term = coursesService.retrieveCurrentTerm(token, secret);
+        Optional<TopicEntity> topicEntityOpt = topicRepository.findByCourseIDAndTermAndTitle(topic.courseId(),
+                term, topic.title());
+        if (topicEntityOpt.isEmpty())
+            return false;
+        if (!topic.confirm()) {
+            if (!topicEntityOpt.get().isTemporary())
+                return false;
+            topicRepository.delete(topicEntityOpt.get());
+            return true;
+        }
+        topicEntityOpt.get().setTemporary(false);
+        topicRepository.save(topicEntityOpt.get());
+        return true;
     }
 }

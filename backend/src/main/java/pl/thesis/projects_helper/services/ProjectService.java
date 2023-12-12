@@ -12,6 +12,8 @@ import pl.thesis.projects_helper.model.TeamRequestEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.UserInTeamEntity;
+import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
@@ -59,18 +61,19 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public boolean addProjectRequest(TopicRequest topic, List<String> teammatesIDs, String token, String secret) {
+    public boolean addProjectRequest(TeamRequest teamReq, String token, String secret) {
         String term = coursesService.retrieveCurrentTerm(token, secret);
-        Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(topic.courseId(), term, topic.title());
+        Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
+                term, teamReq.title());
         if (optTopic.isEmpty())
             return false;
         if (optTopic.get().isTemporary())
             return false;
 
         Long topicID = optTopic.get().getId();
-        TeamRequestEntity teamReq = new TeamRequestEntity(topicID, "topic");
-        TeamRequestEntity addedTeamReq = teamRequestRepository.save(teamReq);
-        for (String userID: teammatesIDs) {
+        TeamRequestEntity teamReqEntity = new TeamRequestEntity(topicID, "topic");
+        TeamRequestEntity addedTeamReq = teamRequestRepository.save(teamReqEntity);
+        for (String userID: teamReq.userIDs()) {
             UserInTeamEntity user = new UserInTeamEntity(addedTeamReq, userID);
             userInTeamRepository.save(user);
         }

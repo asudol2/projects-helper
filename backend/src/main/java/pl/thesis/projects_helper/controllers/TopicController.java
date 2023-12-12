@@ -4,7 +4,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
+import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.services.AuthorizationService;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
 
@@ -43,5 +45,13 @@ public class TopicController {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return topicService.addTopic(topic, authData.token(), authData.secret());
+    }
+
+    @PostMapping("/confirm")
+    public boolean decideTemporaryTopic(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                        @RequestBody TopicConfirmRequest topic) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return topicService.confirmTemporaryTopic(topic, authData.token(), authData.secret());
     }
 }

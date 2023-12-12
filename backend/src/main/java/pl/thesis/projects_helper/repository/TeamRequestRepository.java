@@ -7,7 +7,6 @@ import pl.thesis.projects_helper.model.TeamRequestEntity;
 
 import java.util.List;
 
-//@Repository
 public interface TeamRequestRepository extends JpaRepository<TeamRequestEntity, Long> {
 
     @Query("SELECT tr FROM TeamRequestEntity tr WHERE tr.topic.courseID = :courseID")

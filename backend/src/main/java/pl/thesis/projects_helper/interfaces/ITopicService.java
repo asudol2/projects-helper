@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.interfaces;
 
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
 
@@ -17,4 +18,6 @@ public interface ITopicService {
     List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
 
     TopicEntity getTopicById(int topicId);
+
+    boolean confirmTemporaryTopic(TopicConfirmRequest topic, String token, String secret);
 }
