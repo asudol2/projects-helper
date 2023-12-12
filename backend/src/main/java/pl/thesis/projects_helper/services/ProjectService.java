@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -17,8 +18,7 @@ import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.repository.UserInTeamRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @PropertySource("classpath:constants.properties")
@@ -45,6 +45,9 @@ public class ProjectService implements IProjectService {
     @Autowired
     CoursesService coursesService;
 
+    @Autowired
+    UserService userService;
+
 
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
@@ -61,20 +64,35 @@ public class ProjectService implements IProjectService {
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(topic.courseId(), term, topic.title());
         if (optTopic.isEmpty())
             return false;
+        if (optTopic.get().isTemporary())
+            return false;
 
         Long topicID = optTopic.get().getId();
         TeamRequestEntity teamReq = new TeamRequestEntity(topicID, "topic");
         TeamRequestEntity addedTeamReq = teamRequestRepository.save(teamReq);
         for (String userID: teammatesIDs) {
-//            UserInTeamEntity.UserInTeamId id = new UserInTeamEntity.UserInTeamId();
-//            id.setTeamRequestID(addedTeamReq.getId());
-//            id.setUserID(userID);
-//            UserInTeamEntity UITEntity = new UserInTeamEntity();
-//            UITEntity.setId(id);
-//            UITrEntity.setTeamRequest(addedTeamReq);
-            UserInTeamEntity user = new UserInTeamEntity(userID, addedTeamReq.getId());
+            UserInTeamEntity user = new UserInTeamEntity(addedTeamReq, userID);
             userInTeamRepository.save(user);
         }
         return true;
+    }
+
+    @Override
+    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(String courseID, String token, String secret) {
+        List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findAllByCourseID(courseID);
+        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+
+        for (TeamRequestEntity teamReq: courseTeamRequests) {
+            List<UserEntity> users = new ArrayList<>();
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(teamReq);
+            for (String userID: userIDs) {
+                UserEntity user = userService.getStudentById(userID, token, secret);
+                if (user != null)
+                    users.add(user);
+            }
+            TopicEntity topic = teamReq.getTopic();
+            finalMap.put(topic, users);
+        }
+        return finalMap;
     }
 }

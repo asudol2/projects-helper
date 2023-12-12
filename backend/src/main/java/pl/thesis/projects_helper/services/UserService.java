@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.IUserService;
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.utils.UserActivityStatus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,7 @@ public class UserService implements IUserService {
     @Override
     public UserEntity getLecturerById(String lecturerID, String token, String secret) {
         UserEntity user = getUserById(lecturerID, token, secret);
-        if (user.getStaffStatus() != 2){
+        if (user.getStaffStatus() != UserActivityStatus.ACTIVE.getCode()){
             return null;
         }
         return user;
@@ -77,7 +78,7 @@ public class UserService implements IUserService {
     @Override
     public UserEntity getStudentById(String studentID, String token, String secret) {
         UserEntity user = getUserById(studentID, token, secret);
-        if (user.getStudentStatus() != 2){
+        if (user.getStudentStatus() != UserActivityStatus.ACTIVE.getCode()){
             return null;
         }
         return user;

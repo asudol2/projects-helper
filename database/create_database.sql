@@ -98,9 +98,9 @@ CREATE TABLE public.team_requests (
 ALTER TABLE public.team_requests OWNER TO projectshelper;
 
 CREATE TABLE public.users_in_teams (
+    id serial primary key,
     team_id integer references public.teams(id),
     team_request_id integer references public.team_requests(id),
-    user_id varchar(64),
-    primary key (team_id, team_request_id, user_id)
+    user_id varchar(64)
 );
 ALTER TABLE public.users_in_teams OWNER TO projectshelper;

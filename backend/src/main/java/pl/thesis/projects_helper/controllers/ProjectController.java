@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
+import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/projects")
@@ -34,8 +37,17 @@ public class ProjectController {
         String user2ID = "1158741";
         TopicRequest topic = new TopicRequest("103D-INxxx-ISP-FO", 1012113,
                 "project_8", "description_8");
-        String token = "Eqeje7DV4fhxLzdgesZL";
-        String secret = "CvnDHvkQ5h4LSZSs3Bsz42tebYZQYmWj35V8Sj95";
+        String token = "33HsHHCbCDsuU4wZufh2";
+        String secret = "GZUwtFKJYNqxGgj2j7AePyS42J6g7GhAy3nuzq4H";
         return projectService.addProjectRequest(topic, List.of(user1ID, user2ID), token, secret);
     }
+
+    @GetMapping("/requests")
+    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests() {
+        String course = "103D-INxxx-ISP-FO";
+        String token = "EthsGQYCCnufwnwyuEzr";
+        String secret = "7JMR9gVXPbSkuu8rPGM2BjL7CUaRrnRBC22kW9kp";
+        return projectService.getCourseTeamRequests(course, token, secret);
+    }
+
 }
