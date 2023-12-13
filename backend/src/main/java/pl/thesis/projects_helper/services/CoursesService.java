@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
 
 import java.time.LocalDate;
@@ -67,6 +68,7 @@ public class CoursesService implements ICoursesService {
     }
 
     @Override
+    @RequiresAuthentication
     public List<CourseEntity> getAllUserCurrentRelatedCourses(String token, String secret) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("fields", new ArrayList<>(Arrays.asList("course_id", "lecturers")));

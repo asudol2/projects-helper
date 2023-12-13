@@ -10,8 +10,6 @@ import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
-import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
-import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
