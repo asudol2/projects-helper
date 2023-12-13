@@ -8,10 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.IProjectService;
-import pl.thesis.projects_helper.model.TeamRequestEntity;
-import pl.thesis.projects_helper.model.TopicEntity;
-import pl.thesis.projects_helper.model.UserEntity;
-import pl.thesis.projects_helper.model.UserInTeamEntity;
+import pl.thesis.projects_helper.model.*;
+import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
@@ -97,5 +95,47 @@ public class ProjectService implements IProjectService {
             finalMap.put(topic, users);
         }
         return finalMap;
+    }
+
+    private void acceptProjectRequest(TopicEntity topic,
+                                         List<UserInTeamEntity> relatedUITs) {
+        TeamEntity addedTeam = teamRepository.save(new TeamEntity(topic.getId(), "topic"));
+        for (UserInTeamEntity uit: relatedUITs) {
+            uit.setTeam(addedTeam);
+            uit.setTeamRequest(null);
+            userInTeamRepository.save(uit);
+        }
+        teamRequestRepository.deleteById(relatedUITs.get(0).getId());
+    }
+
+    private void rejectProjectRequest(List<UserInTeamEntity> relatedUITs) {
+        Long teamRequestID = relatedUITs.get(0).getTeamRequest().getId();
+        userInTeamRepository.deleteAll(relatedUITs);
+        teamRequestRepository.deleteById(teamRequestID);
+    }
+
+    @Override
+    public boolean confirmProjectRequest(TeamConfirmRequest teamConfirmRequest, String token, String secret) {
+        String term = coursesService.retrieveCurrentTerm(token, secret);
+        Optional<TopicEntity> topic = topicRepository.findByCourseIDAndTermAndTitle(teamConfirmRequest.courseID(),
+                term, teamConfirmRequest.title());
+        if (topic.isEmpty())
+            return false;
+
+        List<UserInTeamEntity> uitList = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(
+                teamConfirmRequest.userIDs());
+        List<UserInTeamEntity> relatedUITs = new ArrayList<>();
+        for (UserInTeamEntity uit: uitList) {
+            if (uit.getTeamRequest() == null)
+                continue;
+            if (Objects.equals(uit.getTeamRequest().getTopic().getId(), topic.get().getId())) {
+                relatedUITs.add(uit);
+            }
+        }
+
+        if (teamConfirmRequest.confirm())
+            acceptProjectRequest(topic.get(), relatedUITs);
+        else rejectProjectRequest(relatedUITs);
+        return true;
     }
 }

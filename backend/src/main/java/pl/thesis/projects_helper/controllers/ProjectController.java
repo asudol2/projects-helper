@@ -8,6 +8,7 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
@@ -52,4 +53,11 @@ public class ProjectController {
         return projectService.getCourseTeamRequests(courseID, authData.token(), authData.secret());
     }
 
+    @PostMapping("/confirm")
+    public boolean confirmProjectRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                         @RequestBody TeamConfirmRequest teamConfirmRequest) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.confirmProjectRequest(teamConfirmRequest, authData.token(), authData.secret());
+    }
 }

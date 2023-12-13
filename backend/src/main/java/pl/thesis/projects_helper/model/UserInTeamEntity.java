@@ -38,4 +38,36 @@ public class UserInTeamEntity {
 
     public UserInTeamEntity() {
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TeamEntity getTeam() {
+        return team;
+    }
+
+    public void setTeam(TeamEntity team) {
+        this.team = team;
+    }
+
+    public TeamRequestEntity getTeamRequest() {
+        return teamRequest;
+    }
+
+    public void setTeamRequest(TeamRequestEntity teamRequest) {
+        this.teamRequest = teamRequest;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 }
