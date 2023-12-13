@@ -35,3 +35,15 @@
 .projects-helper-add-topic-description {
     margin-bottom: 20px;
 }
+
+.title-error {
+    color: red !important;
+}
+
+span.title-error {
+    width: 100%;
+    border: 1px solid red;
+    border-radius: 10px;
+    font-size: 14pt;
+    padding: 5px;
+}
