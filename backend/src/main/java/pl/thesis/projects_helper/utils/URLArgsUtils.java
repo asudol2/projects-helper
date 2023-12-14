@@ -16,6 +16,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.client.RestTemplate;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 public class URLArgsUtils {
     private static final Logger logger = LoggerFactory.getLogger(URLArgsUtils.class);
@@ -39,20 +40,20 @@ public class URLArgsUtils {
         return builder.toString();
     }
 
-    public static String generateSignedUrl(String url, String token, String secret,
+    public static String generateSignedUrl(AuthorizationData authData, String url,
                                            String consumerKey, String consumerSecret)
             throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(token, secret);
+        consumer.setTokenWithSecret(authData.token(), authData.secret());
         return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
     }
 
-    public static JsonNode requestOnEndpoint(RestTemplate restTemplate, String token, String secret, String baseUrl,
+    public static JsonNode requestOnEndpoint(AuthorizationData authData, RestTemplate restTemplate, String baseUrl,
                                              String consumerKey, String consumerSecret) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonOutput = mapper.createObjectNode();
         try {
-            String signedUrl = generateSignedUrl(baseUrl, token, secret, consumerKey, consumerSecret);
+            String signedUrl = generateSignedUrl(authData, baseUrl, consumerKey, consumerSecret);
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
             jsonOutput = mapper.readTree(response.getBody());
         } catch (Exception e) {

@@ -46,7 +46,7 @@ public class USOSController {
     public LoginResponse displayUserData(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return usosService.getUserData(authData.token(), authData.secret());
+        return usosService.getUserData(authData);
     }
 
 
@@ -59,7 +59,6 @@ public class USOSController {
     public boolean revokeAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return usosService.revokeAccessToken(authData.token(), authData.secret());
+        return usosService.revokeAccessToken(authData);
     }
-
 }

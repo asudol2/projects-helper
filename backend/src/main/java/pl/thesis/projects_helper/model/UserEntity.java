@@ -1,13 +1,5 @@
 package pl.thesis.projects_helper.model;
 
-//public record UserEntity(String ID, String firstName, String middleNames, String lastName, String sex,
-//                         Integer studentStatus, Integer staffStatus, String email) {
-//
-//    public UserEntity{
-//        this(ID, firstName, null, lastName);
-//    }
-//}
-
 public class UserEntity {
     private final String ID;
     private final String firstName;

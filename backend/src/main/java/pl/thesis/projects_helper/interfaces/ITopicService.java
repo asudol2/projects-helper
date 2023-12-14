@@ -1,20 +1,24 @@
 package pl.thesis.projects_helper.interfaces;
 
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.List;
 
 public interface ITopicService {
-    List<TopicEntity> getAllUserCurrentRelatedTopics(String token, String secret);
+    List<TopicEntity> getAllUserCurrentRelatedTopics(AuthorizationData authData);
 
     List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
-                                                       String token, String secret);
+                                                       AuthorizationData authData);
 
-    TopicOperationResult addTopic(TopicRequest topic, String token, String secret);
+    TopicOperationResult addTopic(AuthorizationData authData, TopicRequest topicRequest);
 
-    List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
+    List<TopicEntity> getSelectiveUserTopicsByCourse(AuthorizationData authData, String courseID);
 
-    TopicEntity getTopicById(int topicId);
+    TopicEntity getTopicById(AuthorizationData authData, int topicId);
+
+    boolean confirmTemporaryTopic(AuthorizationData authData, TopicConfirmRequest topic);
 }

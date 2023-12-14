@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import pl.thesis.projects_helper.model.TopicEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TopicRepository extends JpaRepository<TopicEntity, Long> {
 
@@ -11,5 +12,6 @@ public interface TopicRepository extends JpaRepository<TopicEntity, Long> {
 
     List<TopicEntity> findAllByCourseID(String courseID);
 
-    TopicEntity findByLecturerID(int lecturerID);
+    Optional<TopicEntity> findByCourseIDAndTermAndTitle(String courseID, String term, String title);
+
 }

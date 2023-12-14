@@ -4,32 +4,35 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.util.Pair;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ICoursesService {
-    List<CourseEntity> getCurrentStudentCourses(String token, String secret);
+    List<CourseEntity> getCurrentStudentCourses(AuthorizationData authData);
 
-    List<CourseEntity> getCurrentStaffCourses(String token, String secret);
+    List<CourseEntity> getCurrentStaffCourses(AuthorizationData authData);
 
-    List<CourseEntity> getAllUserCurrentRelatedCourses(String token, String secret);
+    List<CourseEntity> getAllUserCurrentRelatedCourses(AuthorizationData authData);
 
-    Pair<Integer, Integer> getUserStatusPair(String token, String secret);
+    Pair<Integer, Integer> getUserStatusPair(AuthorizationData authData);
 
-    JsonNode requestGroupsEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+    JsonNode requestGroupsEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args);
 
     List<Map<String, Object>> retrieveCurrentCoursesGroup(JsonNode usosJson);
 
-    boolean isCurrStudent(String token, String secret);
+    boolean isCurrStudent(AuthorizationData authData);
 
-    boolean isCurrStaff(String token, String secret);
+    boolean isCurrStaff(AuthorizationData authData);
 
-    JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+    JsonNode requestUsersEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args);
 
-    JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args);
+    JsonNode requestTermsEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args);
 
-    String retrieveCurrentTerm(String token, String secret);
+    String retrieveCurrentTerm(AuthorizationData authData);
 
-    List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret);
+    List<UserEntity> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID);
+
+    List<UserEntity> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID);
 }
