@@ -2,7 +2,6 @@ package pl.thesis.projects_helper.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.thesis.projects_helper.model.TopicEntity;
-import pl.thesis.projects_helper.model.request.TopicRequest;
 
 import java.util.List;
 import java.util.Optional;

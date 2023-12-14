@@ -1,7 +1,6 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,13 +10,12 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
-import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
-import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.repository.UserInTeamRepository;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.*;
 
@@ -61,8 +59,8 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public boolean addProjectRequest(String token, String secret, TeamRequest teamReq) {
-        String term = coursesService.retrieveCurrentTerm(token, secret);
+    public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
+        String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
         if (optTopic.isEmpty())
@@ -82,7 +80,7 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(String token, String secret, String courseID) {
+    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findAllByCourseID(courseID);
         Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
 
@@ -90,7 +88,7 @@ public class ProjectService implements IProjectService {
             List<UserEntity> users = new ArrayList<>();
             List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(teamReq);
             for (String userID: userIDs) {
-                UserEntity user = userService.getStudentById(userID, token, secret);
+                UserEntity user = userService.getStudentById(authData, userID);
                 if (user != null)
                     users.add(user);
             }
@@ -119,8 +117,8 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public boolean confirmProjectRequest(String token, String secret, TeamConfirmRequest teamConfirmRequest) {
-        String term = coursesService.retrieveCurrentTerm(token, secret);
+    public boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest) {
+        String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> topic = topicRepository.findByCourseIDAndTermAndTitle(teamConfirmRequest.courseID(),
                 term, teamConfirmRequest.title());
         if (topic.isEmpty())

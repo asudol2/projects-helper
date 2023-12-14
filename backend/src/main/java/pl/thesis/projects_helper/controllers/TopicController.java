@@ -6,7 +6,6 @@ import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
-import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.services.AuthorizationService;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
 
@@ -28,7 +27,7 @@ public class TopicController {
                                            @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getSelectiveUserTopicsByCourse(authData.token(), authData.secret(), courseID);
+        return topicService.getSelectiveUserTopicsByCourse(authData, courseID);
     }
 
     @GetMapping("/{id}")
@@ -36,7 +35,7 @@ public class TopicController {
                                     @PathVariable int id) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getTopicById(authData.token(), authData.secret(), id);
+        return topicService.getTopicById(authData, id);
     }
 
     @PostMapping("/add")
@@ -44,7 +43,7 @@ public class TopicController {
                                                  @RequestBody TopicRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.addTopic(authData.token(), authData.secret(), topic);
+        return topicService.addTopic(authData, topic);
     }
 
     @PostMapping("/confirm")
@@ -52,6 +51,6 @@ public class TopicController {
                                         @RequestBody TopicConfirmRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.confirmTemporaryTopic(authData.token(), authData.secret(), topic);
+        return topicService.confirmTemporaryTopic(authData, topic);
     }
 }

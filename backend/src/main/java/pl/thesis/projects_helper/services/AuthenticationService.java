@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.generateArgsUrl;
 import static pl.thesis.projects_helper.utils.URLArgsUtils.requestOnEndpoint;
+
 
 @Service
 @Aspect
@@ -41,20 +43,19 @@ public class AuthenticationService {
         this.mapper = objectMapper;
     }
 
-    private JsonNode requestUsersEndpoint(String token, String secret, Map<String, List<String>> args) {
+    private JsonNode requestUsersEndpoint(AuthorizationData authData, Map<String, List<String>> args) {
         String url = usosBaseUrl + "users/user" + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
     }
 
     @Before("@annotation(requiresAuthentication)")
     public void authenticate(JoinPoint joinPoint, RequiresAuthentication requiresAuthentication) throws Exception {
         Object[] args = joinPoint.getArgs();
-        String token = (String) args[0];
-        String secret = (String) args[1];
+        AuthorizationData authData = (AuthorizationData) args[0];
 
         Map<String, List<String>> urlArgs = new HashMap<>();
         urlArgs.put("fields", List.of("id"));
-        JsonNode usosJson = requestUsersEndpoint(token, secret, urlArgs);
+        JsonNode usosJson = requestUsersEndpoint(authData, urlArgs);
 
         if (usosJson.isEmpty())
             throw new Exception("Invalid user");

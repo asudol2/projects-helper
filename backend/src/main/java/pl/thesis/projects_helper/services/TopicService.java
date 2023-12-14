@@ -14,6 +14,7 @@ import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.*;
 
@@ -33,11 +34,11 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public List<TopicEntity> getAllUserCurrentRelatedTopics(String token, String secret) {
+    public List<TopicEntity> getAllUserCurrentRelatedTopics(AuthorizationData authData) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("fields", new ArrayList<>());
         args.get("fields").add("course_id");
-        JsonNode usosJson = coursesService.requestGroupsEndpoint(token, secret, "user", args);
+        JsonNode usosJson = coursesService.requestGroupsEndpoint(authData, "user", args);
         List<Map<String, Object>> currGroup = coursesService.retrieveCurrentCoursesGroup(usosJson);
 
         List<String> courseIDs = new ArrayList<>();
@@ -53,8 +54,8 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID, String token, String secret) {
-        List<TopicEntity> topics = getAllUserCurrentRelatedTopics(token, secret);
+    public List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID, AuthorizationData authData) {
+        List<TopicEntity> topics = getAllUserCurrentRelatedTopics(authData);
         List<TopicEntity> courseTopics = new ArrayList<>();
         for (TopicEntity topic : topics) {
             if (topic.getCourseID().equals(courseID)) {
@@ -64,8 +65,8 @@ public class TopicService implements ITopicService {
         return courseTopics;
     }
 
-    private boolean isAuthorizedToManipulateTopic(TopicEntity topic, String token, String secret){
-        List<CourseEntity> relCourses = coursesService.getAllUserCurrentRelatedCourses(token, secret);
+    private boolean isAuthorizedToManipulateTopic(TopicEntity topic, AuthorizationData authData){
+        List<CourseEntity> relCourses = coursesService.getAllUserCurrentRelatedCourses(authData);
         for (CourseEntity course: relCourses){
             if (course.getCourseID().equals(topic.getCourseID())) {
                 return true;
@@ -76,7 +77,7 @@ public class TopicService implements ITopicService {
 
     @Override
     @RequiresAuthentication
-    public TopicEntity getTopicById(String token, String secret, int topicId) {
+    public TopicEntity getTopicById(AuthorizationData authData, int topicId) {
         return topicRepository.findTopicById(topicId);
     }
 
@@ -114,13 +115,13 @@ public class TopicService implements ITopicService {
 
     @Override
     @RequiresAuthentication
-    public TopicOperationResult addTopic(String token, String secret, TopicRequest topicRequest) {
+    public TopicOperationResult addTopic(AuthorizationData authData, TopicRequest topicRequest) {
         TopicOperationResult basicValidationResult = validateTopicRequest(topicRequest);
         if (basicValidationResult.getCode() != 0)
             return basicValidationResult;
 
-        boolean temporary = !coursesService.isCurrStaff(token, secret);
-        String term = coursesService.retrieveCurrentTerm(token, secret);
+        boolean temporary = !coursesService.isCurrStaff(authData);
+        String term = coursesService.retrieveCurrentTerm(authData);
         TopicEntity topic = new TopicEntity(
                 topicRequest.courseId(),
                 topicRequest.lecturerID(),
@@ -128,9 +129,9 @@ public class TopicService implements ITopicService {
                 topicRequest.description(),
                 term,
                 temporary,
-                getUserID(token, secret)
+                getUserID(authData)
         );
-        if (!isAuthorizedToManipulateTopic(topic, token, secret)){
+        if (!isAuthorizedToManipulateTopic(topic, authData)){
             return TopicOperationResult.UNAUTHORIZED;
         }
 
@@ -143,18 +144,18 @@ public class TopicService implements ITopicService {
         return analyzeTopicDBMessage(message);
     }
 
-    private String getUserID(String token, String secret){
-        Map<String, String> idMap = mapper.convertValue(coursesService.requestUsersEndpoint(token, secret, "user",
+    private String getUserID(AuthorizationData authData){
+        Map<String, String> idMap = mapper.convertValue(coursesService.requestUsersEndpoint(authData, "user",
                         new HashMap<>() {{
                             put("fields", List.of("id"));
                         }}),
         Map.class);
         return idMap.get("id");
     }
-    private List<TopicEntity> getSelectiveStudentTopicsByCourse(String courseID, String token, String secret){
-        List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
-        String userID = getUserID(token, secret);
-        String targetTerm = coursesService.retrieveCurrentTerm(token, secret);
+    private List<TopicEntity> getSelectiveStudentTopicsByCourse(String courseID, AuthorizationData authData){
+        List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, authData);
+        String userID = getUserID(authData);
+        String targetTerm = coursesService.retrieveCurrentTerm(authData);
 
         topics.removeIf(topic ->
                 !topic.getTerm().equals(targetTerm) ||
@@ -165,13 +166,13 @@ public class TopicService implements ITopicService {
 
     @Override
     @RequiresAuthentication
-    public List<TopicEntity> getSelectiveUserTopicsByCourse(String token, String secret, String courseID) {
+    public List<TopicEntity> getSelectiveUserTopicsByCourse(AuthorizationData authData, String courseID) {
         // TODO: what with situation when user is student and lecturer at the same time?
-        if (coursesService.isCurrStudent(token, secret)){
-            return getSelectiveStudentTopicsByCourse(courseID, token, secret);
-        } else if (coursesService.isCurrStaff(token, secret)) {
-             List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, token, secret);
-             topics.removeIf(topic -> !topic.getTerm().equals(coursesService.retrieveCurrentTerm(token, secret)));
+        if (coursesService.isCurrStudent(authData)){
+            return getSelectiveStudentTopicsByCourse(courseID, authData);
+        } else if (coursesService.isCurrStaff(authData)) {
+             List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, authData);
+             topics.removeIf(topic -> !topic.getTerm().equals(coursesService.retrieveCurrentTerm(authData)));
              return topics;
         } else {
             return null;
@@ -180,8 +181,8 @@ public class TopicService implements ITopicService {
 
     @Override
     @RequiresAuthentication
-    public boolean confirmTemporaryTopic(String token, String secret, TopicConfirmRequest topic) {
-        String term = coursesService.retrieveCurrentTerm(token, secret);
+    public boolean confirmTemporaryTopic(AuthorizationData authData, TopicConfirmRequest topic) {
+        String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> topicEntityOpt = topicRepository.findByCourseIDAndTermAndTitle(topic.courseId(),
                 term, topic.title());
         if (topicEntityOpt.isEmpty())

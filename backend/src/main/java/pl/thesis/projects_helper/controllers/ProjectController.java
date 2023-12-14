@@ -3,9 +3,7 @@ package pl.thesis.projects_helper.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.interfaces.IProjectService;
-import pl.thesis.projects_helper.interfaces.ITopicService;
 import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
@@ -34,7 +32,7 @@ public class ProjectController {
                                   @RequestBody TeamRequest teamRequest) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.addProjectRequest(authData.token(), authData.secret(), teamRequest);
+        return projectService.addProjectRequest(authData, teamRequest);
     }
 
     @GetMapping("/requests")
@@ -43,7 +41,7 @@ public class ProjectController {
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.getCourseTeamRequests(authData.token(), authData.secret(), courseID);
+        return projectService.getCourseTeamRequests(authData, courseID);
     }
 
     @PostMapping("/confirm")
@@ -51,6 +49,6 @@ public class ProjectController {
                                          @RequestBody TeamConfirmRequest teamConfirmRequest) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.confirmProjectRequest(authData.token(), authData.secret(), teamConfirmRequest);
+        return projectService.confirmProjectRequest(authData, teamConfirmRequest);
     }
 }

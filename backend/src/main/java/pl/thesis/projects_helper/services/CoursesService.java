@@ -2,7 +2,6 @@ package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -14,6 +13,7 @@ import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -43,25 +43,25 @@ public class CoursesService implements ICoursesService {
 
     @Override
     @RequiresAuthentication
-    public List<CourseEntity> getCurrentStudentCourses(String token, String secret) {
-        return getCurrentStatusRelatedCourses("participant", token, secret);
+    public List<CourseEntity> getCurrentStudentCourses(AuthorizationData authData) {
+        return getCurrentStatusRelatedCourses(authData, "participant");
     }
 
     @Override
     @RequiresAuthentication
-    public List<CourseEntity> getCurrentStaffCourses(String token, String secret) {
-        return getCurrentStatusRelatedCourses("lecturer", token, secret);
+    public List<CourseEntity> getCurrentStaffCourses(AuthorizationData authData) {
+        return getCurrentStatusRelatedCourses(authData, "lecturer");
     }
 
-    private List<CourseEntity> getCurrentStatusRelatedCourses(String role, String token, String secret) {
-        if (role.equals("participant") && !isCurrStudent(token, secret)) {
+    private List<CourseEntity> getCurrentStatusRelatedCourses(AuthorizationData authData, String role) {
+        if (role.equals("participant") && !isCurrStudent(authData)) {
             return new ArrayList<>();
-        } else if (role.equals("lecturer") && !isCurrStaff(token, secret)) {
+        } else if (role.equals("lecturer") && !isCurrStaff(authData)) {
             return new ArrayList<>();
         }
 
         List<CourseEntity> currCourses = new ArrayList<>();
-        for (CourseEntity course : getAllUserCurrentRelatedCourses(token, secret)) {
+        for (CourseEntity course : getAllUserCurrentRelatedCourses(authData)) {
             if (course.getRelationshipType().equals(role)) {
                 currCourses.add(course);
             }
@@ -71,10 +71,10 @@ public class CoursesService implements ICoursesService {
 
     @Override
     @RequiresAuthentication
-    public List<CourseEntity> getAllUserCurrentRelatedCourses(String token, String secret) {
+    public List<CourseEntity> getAllUserCurrentRelatedCourses(AuthorizationData authData) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("fields", new ArrayList<>(Arrays.asList("course_id", "lecturers")));
-        JsonNode usosJson = requestGroupsEndpoint(token, secret, "user", args);
+        JsonNode usosJson = requestGroupsEndpoint(authData, "user", args);
         List<Map<String, Object>> currGroup = retrieveCurrentCoursesGroup(usosJson);
 
         List<CourseEntity> courses = new ArrayList<>();
@@ -86,32 +86,32 @@ public class CoursesService implements ICoursesService {
         return courses;
     }
 
-    public JsonNode requestUsersEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+    public JsonNode requestUsersEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "users/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
     }
 
     @Override
-    public Pair<Integer, Integer> getUserStatusPair(String token, String secret) {
+    public Pair<Integer, Integer> getUserStatusPair(AuthorizationData authData) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("fields", new ArrayList<>(Arrays.asList("student_status", "staff_status")));
-        JsonNode usosJson = requestUsersEndpoint(token, secret, "user", args);
+        JsonNode usosJson = requestUsersEndpoint(authData, "user", args);
         // student, staff
         return Pair.of(usosJson.get("student_status").asInt(), usosJson.get("staff_status").asInt());
     }
 
-    public boolean isCurrStudent(String token, String secret) {
-        return getUserStatusPair(token, secret).getFirst() == UserActivityStatus.ACTIVE.getCode();
+    public boolean isCurrStudent(AuthorizationData authData) {
+        return getUserStatusPair(authData).getFirst() == UserActivityStatus.ACTIVE.getCode();
     }
 
-    public boolean isCurrStaff(String token, String secret) {
-        return getUserStatusPair(token, secret).getSecond() == UserActivityStatus.ACTIVE.getCode();
+    public boolean isCurrStaff(AuthorizationData authData) {
+        return getUserStatusPair(authData).getSecond() == UserActivityStatus.ACTIVE.getCode();
     }
 
     @Override
-    public JsonNode requestGroupsEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+    public JsonNode requestGroupsEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "groups/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
     }
 
     @Override
@@ -134,7 +134,6 @@ public class CoursesService implements ICoursesService {
 
     private String retrieveCurrentRealisationIDFromTerms(JsonNode usosJson) {
         List<Map<String, String>> termsList = mapper.convertValue(usosJson.get("terms"), List.class);
-
         List<String> ids = new ArrayList<>();
         for (Map<String, String> term : termsList) {
             ids.add(term.get("id"));
@@ -144,17 +143,17 @@ public class CoursesService implements ICoursesService {
     }
 
     @Override
-    public JsonNode requestTermsEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+    public JsonNode requestTermsEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "terms/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
     }
 
     @Override
     @RequiresAuthentication
-    public String retrieveCurrentTerm(String token, String secret){
+    public String retrieveCurrentTerm(AuthorizationData authData){
         Map<String, List<String>> args = new HashMap<>();
         args.put("active_only", List.of("true"));
-        JsonNode usosJson = requestTermsEndpoint(token, secret, "terms_index", args);
+        JsonNode usosJson = requestTermsEndpoint(authData, "terms_index", args);
         List<Map<String, String>> usosMap = mapper.convertValue(usosJson, List.class);
 
         LocalDate currDate = LocalDate.now();
@@ -174,19 +173,19 @@ public class CoursesService implements ICoursesService {
         return null;
     }
 
-    public JsonNode requestCoursesEndpoint(String token, String secret, String func, Map<String, List<String>> args) {
+    public JsonNode requestCoursesEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "courses/" + func + "?" + generateArgsUrl(args);
-        return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+        return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
     }
     @Override
     @RequiresAuthentication
-    public List<UserEntity> retrieveCurrentCourseLecturers(String token, String secret, String courseID) {
+    public List<UserEntity> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
-        args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
+        args.put("term_id", List.of(retrieveCurrentTerm(authData)));
         args.put("fields", List.of("lecturers"));
 
-        JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
+        JsonNode usosJson = requestCoursesEndpoint(authData, "course_edition", args);
         List<Map<String, String>> lecturersMap = mapper.convertValue(usosJson.get("lecturers"), List.class);
 
         return  mapUsosUsersMapsListToUserEntitiesList(lecturersMap);
@@ -194,13 +193,13 @@ public class CoursesService implements ICoursesService {
 
     @Override
     @RequiresAuthentication
-    public List<UserEntity> retrieveCurrentCourseParticipants(String token, String secret, String courseID) {
+    public List<UserEntity> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
-        args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
+        args.put("term_id", List.of(retrieveCurrentTerm(authData)));
         args.put("fields", List.of("participants"));
 
-        JsonNode usosJson = requestCoursesEndpoint(token, secret, "course_edition", args);
+        JsonNode usosJson = requestCoursesEndpoint(authData, "course_edition", args);
         List<Map<String, String>> participantsMapsList = mapper.convertValue(usosJson.get("participants"), List.class);
         return mapUsosUsersMapsListToUserEntitiesList(participantsMapsList);
     }

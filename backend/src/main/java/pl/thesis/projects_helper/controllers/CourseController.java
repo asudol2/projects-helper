@@ -26,7 +26,7 @@ public class CourseController {
     public List<CourseEntity> getUserCourses(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.getAllUserCurrentRelatedCourses(authData.token(), authData.secret());
+        return coursesService.getAllUserCurrentRelatedCourses(authData);
     }
 
     @GetMapping("/student")
@@ -34,7 +34,7 @@ public class CourseController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.getCurrentStudentCourses(authData.token(), authData.secret());
+        return coursesService.getCurrentStudentCourses(authData);
     }
 
     @GetMapping("/staff")
@@ -42,14 +42,14 @@ public class CourseController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.getCurrentStaffCourses(authData.token(), authData.secret());
+        return coursesService.getCurrentStaffCourses(authData);
     }
 
     @GetMapping("/term")
     public String getCurrentTerm(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.retrieveCurrentTerm(authData.token(), authData.secret());
+        return coursesService.retrieveCurrentTerm(authData);
     }
 
     @GetMapping("/lecturers")
@@ -57,7 +57,7 @@ public class CourseController {
                                                @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.retrieveCurrentCourseLecturers(authData.token(), authData.secret(), courseID);
+        return coursesService.retrieveCurrentCourseLecturers(authData, courseID);
     }
 
     @GetMapping("/participants")
@@ -65,6 +65,6 @@ public class CourseController {
                                                   @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.retrieveCurrentCourseParticipants(authData.token(), authData.secret(), courseID);
+        return coursesService.retrieveCurrentCourseParticipants(authData, courseID);
     }
 }

@@ -1,9 +1,10 @@
 package pl.thesis.projects_helper.interfaces;
 
 import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 public interface IUserService {
 
-    UserEntity getLecturerById(String token, String secret, String lecturerID);
-    UserEntity getStudentById(String token, String secret, String studentID);
+    UserEntity getLecturerById(AuthorizationData authData, String lecturerID);
+    UserEntity getStudentById(AuthorizationData authData, String studentID);
 }

@@ -24,6 +24,7 @@ import pl.thesis.projects_helper.model.request.TokenRequest;
 import pl.thesis.projects_helper.model.response.LoginResponse;
 import pl.thesis.projects_helper.model.response.TokenResponse;
 import pl.thesis.projects_helper.repository.TokenRepository;
+import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import jakarta.annotation.PostConstruct;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
@@ -108,11 +109,11 @@ public class USOSService implements IUSOSService {
 
     @Override
     @RequiresAuthentication
-    public LoginResponse getUserData(String token, String secret) {
+    public LoginResponse getUserData(AuthorizationData authData) {
         String fields = "first_name|last_name";
         String url = usosBaseUrl + "users/user?fields=" + fields;
         try {
-            String signedUrl = generateSignedUrl(url, token, secret, consumerKey, consumerSecret);
+            String signedUrl = generateSignedUrl(authData, url, consumerKey, consumerSecret);
             ObjectMapper objectMapper = new ObjectMapper();
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
             Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
@@ -147,10 +148,10 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public boolean revokeAccessToken(String token, String secret){
+    public boolean revokeAccessToken(AuthorizationData authData){
         String url = usosBaseUrl + "oauth/revoke_token";
         try {
-            JsonNode usosJson = requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
+            JsonNode usosJson = requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
             Map<String, Boolean> usosMap = mapper.convertValue(usosJson, Map.class);
 
             if (usosMap.isEmpty()){
