@@ -81,7 +81,7 @@ public class ProjectService implements IProjectService {
     @Override
     @RequiresAuthentication
     public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
-        List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findAllByCourseID(courseID);
+        List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
         Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
 
         for (TeamRequestEntity teamReq: courseTeamRequests) {
