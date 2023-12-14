@@ -53,38 +53,6 @@ ALTER TABLE public.topics
         UNIQUE (course_id, term, title);
 
 
-insert into public.topics(course_id, lecturer_id, term, title, description)
-values ('103A-INxxx-ISP-ZPR', '38996', '2023L', 'project_1', 'description_1');
-
-insert into public.topics(course_id, lecturer_id, term, title, description)
-values ('103A-INxxx-ISP-ZPR', '38996', '2023Z', 'project_2', 'description_2');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_3', 'description_3', false, null);
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_4', 'description_4', false, 1158741);
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_5', 'description_5', true, '1158935');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_6', 'description_6', false, '1158935');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_7', 'description_7', true, '1158741');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_8', 'description_8', true, '1158741');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_9', 'description_9', true, '1158935');
-
-insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
-values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_10', 'description_10', false, '1158935');
-
---------------------------------------------------------------
-
 CREATE TABLE public.teams (
     id serial primary key,
     topic_id integer references topics(id)
@@ -104,3 +72,54 @@ CREATE TABLE public.users_in_teams (
     user_id varchar(64)
 );
 ALTER TABLE public.users_in_teams OWNER TO projectshelper;
+
+
+------------------------------------------------------------------------
+
+insert into public.topics(course_id, lecturer_id, term, title, description)
+values ('103A-INxxx-ISP-ZPR', '38996', '2023L', 'project_1', 'description_1');
+
+insert into public.topics(course_id, lecturer_id, term, title, description)
+values ('103A-INxxx-ISP-ZPR', '38996', '2023Z', 'project_2', 'description_2');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_3', 'description_3', false, null);
+
+insert into public.topics(course_id, lecturer_id, term, title, description, max_team_cap, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_4', 'description_4', 4, false, '1158741');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_5', 'description_5', true, '1158935');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, max_team_cap, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_6', 'description_6', 4, false, '1158935');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_7', 'description_7', true, '1158741');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_8', 'description_8', true, '1158741');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023L', 'project_9', 'description_9', true, '1158935');
+
+insert into public.topics(course_id, lecturer_id, term, title, description, max_team_cap, temporary, propounder_id)
+values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_10', 'description_10', 4, false, '1158935');
+
+
+insert into public.team_requests(topic_id) values (4);
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158935');
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158741');
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158940');
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158948');
+
+insert into public.team_requests(topic_id) values (6);
+insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158935');
+insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158741');
+insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158940');
+
+insert into public.team_requests(topic_id) values (10);
+insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158935');
+insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158741');
+
+------------------------------------------------------------------------
