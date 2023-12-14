@@ -57,14 +57,14 @@ public class CourseController {
                                                @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return coursesService.retrieveCurrentCourseLecturers(courseID, authData.token(), authData.secret());
+        return coursesService.retrieveCurrentCourseLecturers(authData.token(), authData.secret(), courseID);
     }
 
     @GetMapping("/participants")
-    public List<UserEntity> getCourseParticipants(){
-        String token = "Vc2t2eGu5ktGhbX8FY9n";
-        String secret = "LjdWENv8kfGj4HKTfpDm8ZH5Ym4kKtHS444AD48n";
-        String courseID = "103D-INxxx-ISP-FO";
-        return coursesService.retrieveCurrentCourseParticipants(courseID, token, secret);
+    public List<UserEntity> getCourseParticipants(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                  @RequestParam("course_id") String courseID){
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return coursesService.retrieveCurrentCourseParticipants(authData.token(), authData.secret(), courseID);
     }
 }

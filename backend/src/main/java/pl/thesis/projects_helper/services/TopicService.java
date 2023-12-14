@@ -12,6 +12,7 @@ import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
+import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.TopicOperationResult;
 
 import java.util.*;
@@ -74,7 +75,8 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public TopicEntity getTopicById(int topicId) {
+    @RequiresAuthentication
+    public TopicEntity getTopicById(String token, String secret, int topicId) {
         return topicRepository.findTopicById(topicId);
     }
 
@@ -100,7 +102,7 @@ public class TopicService implements ITopicService {
         return TopicOperationResult.SIZE;
     }
 
-    private TopicOperationResult validateTopicRequest(TopicRequest topic){
+    private TopicOperationResult validateTopicRequest(TopicRequest topic) {
         if (topic.courseId().length() > 64)
             return TopicOperationResult.COURSE_ID_SIZE;
         if (topic.title().length() > 256)
@@ -109,8 +111,10 @@ public class TopicService implements ITopicService {
             return TopicOperationResult.DESCRIPTION_SIZE;
         return TopicOperationResult.SUCCESS;
     }
+
     @Override
-    public TopicOperationResult addTopic(TopicRequest topicRequest, String token, String secret) {
+    @RequiresAuthentication
+    public TopicOperationResult addTopic(String token, String secret, TopicRequest topicRequest) {
         TopicOperationResult basicValidationResult = validateTopicRequest(topicRequest);
         if (basicValidationResult.getCode() != 0)
             return basicValidationResult;
@@ -160,7 +164,8 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret){
+    @RequiresAuthentication
+    public List<TopicEntity> getSelectiveUserTopicsByCourse(String token, String secret, String courseID) {
         // TODO: what with situation when user is student and lecturer at the same time?
         if (coursesService.isCurrStudent(token, secret)){
             return getSelectiveStudentTopicsByCourse(courseID, token, secret);
@@ -174,7 +179,8 @@ public class TopicService implements ITopicService {
     }
 
     @Override
-    public boolean confirmTemporaryTopic(TopicConfirmRequest topic, String token, String secret) {
+    @RequiresAuthentication
+    public boolean confirmTemporaryTopic(String token, String secret, TopicConfirmRequest topic) {
         String term = coursesService.retrieveCurrentTerm(token, secret);
         Optional<TopicEntity> topicEntityOpt = topicRepository.findByCourseIDAndTermAndTitle(topic.courseId(),
                 term, topic.title());

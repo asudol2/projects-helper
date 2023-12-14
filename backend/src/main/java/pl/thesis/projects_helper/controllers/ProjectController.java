@@ -21,16 +21,11 @@ import java.util.Map;
 public class ProjectController {
 
     private final IProjectService projectService;
-    private final ICoursesService coursesService;
-    private final ITopicService topicService;
     private final AuthorizationService authorizationService;
 
     @Autowired
-    public ProjectController(IProjectService projectService, ICoursesService coursesService,
-                             ITopicService topicService, AuthorizationService authorizationService) {
+    public ProjectController(IProjectService projectService, AuthorizationService authorizationService) {
         this.projectService = projectService;
-        this.coursesService = coursesService;
-        this.topicService = topicService;
         this.authorizationService = authorizationService;
     }
 
@@ -39,7 +34,7 @@ public class ProjectController {
                                   @RequestBody TeamRequest teamRequest) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.addProjectRequest(teamRequest, authData.token(), authData.secret());
+        return projectService.addProjectRequest(authData.token(), authData.secret(), teamRequest);
     }
 
     @GetMapping("/requests")
@@ -48,7 +43,7 @@ public class ProjectController {
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.getCourseTeamRequests(courseID, authData.token(), authData.secret());
+        return projectService.getCourseTeamRequests(authData.token(), authData.secret(), courseID);
     }
 
     @PostMapping("/confirm")
@@ -56,6 +51,6 @@ public class ProjectController {
                                          @RequestBody TeamConfirmRequest teamConfirmRequest) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.confirmProjectRequest(teamConfirmRequest, authData.token(), authData.secret());
+        return projectService.confirmProjectRequest(authData.token(), authData.secret(), teamConfirmRequest);
     }
 }

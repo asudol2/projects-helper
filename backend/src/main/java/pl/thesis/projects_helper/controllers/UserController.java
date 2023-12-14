@@ -26,13 +26,13 @@ public class UserController {
     public UserEntity getLecturerById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("lecturer_id") String lecturerID){
         AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
-        return userService.getLecturerById(lecturerID, authData.token(), authData.secret());
+        return userService.getLecturerById(authData.token(), authData.secret(), lecturerID);
     }
 
     @GetMapping("/student")
     public UserEntity getStudentById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                       @RequestParam("student_id") String studentID){
         AuthorizationService.AuthorizationData authData = authServ.processAuthorizationHeader(authorizationHeader);
-        return userService.getStudentById(studentID, authData.token(), authData.secret());
+        return userService.getStudentById(authData.token(), authData.secret(), studentID);
     }
 }

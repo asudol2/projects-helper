@@ -13,11 +13,11 @@ public interface ITopicService {
     List<TopicEntity> getAllCourseCurrentRelatedTopics(String courseID,
                                                        String token, String secret);
 
-    TopicOperationResult addTopic(TopicRequest topic, String token, String secret);
+    TopicOperationResult addTopic(String token, String secret, TopicRequest topicRequest);
 
-    List<TopicEntity> getSelectiveUserTopicsByCourse(String courseID, String token, String secret);
+    List<TopicEntity> getSelectiveUserTopicsByCourse(String token, String secret, String courseID);
 
-    TopicEntity getTopicById(int topicId);
+    TopicEntity getTopicById(String token, String secret, int topicId);
 
-    boolean confirmTemporaryTopic(TopicConfirmRequest topic, String token, String secret);
+    boolean confirmTemporaryTopic(String token, String secret, TopicConfirmRequest topic);
 }

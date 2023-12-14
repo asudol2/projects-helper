@@ -42,11 +42,13 @@ public class CoursesService implements ICoursesService {
     }
 
     @Override
+    @RequiresAuthentication
     public List<CourseEntity> getCurrentStudentCourses(String token, String secret) {
         return getCurrentStatusRelatedCourses("participant", token, secret);
     }
 
     @Override
+    @RequiresAuthentication
     public List<CourseEntity> getCurrentStaffCourses(String token, String secret) {
         return getCurrentStatusRelatedCourses("lecturer", token, secret);
     }
@@ -148,6 +150,7 @@ public class CoursesService implements ICoursesService {
     }
 
     @Override
+    @RequiresAuthentication
     public String retrieveCurrentTerm(String token, String secret){
         Map<String, List<String>> args = new HashMap<>();
         args.put("active_only", List.of("true"));
@@ -176,7 +179,8 @@ public class CoursesService implements ICoursesService {
         return requestOnEndpoint(restTemplate, token, secret, url, consumerKey, consumerSecret);
     }
     @Override
-    public List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret){
+    @RequiresAuthentication
+    public List<UserEntity> retrieveCurrentCourseLecturers(String token, String secret, String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
         args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));
@@ -189,7 +193,8 @@ public class CoursesService implements ICoursesService {
     }
 
     @Override
-    public List<UserEntity> retrieveCurrentCourseParticipants(String courseID, String token, String secret) {
+    @RequiresAuthentication
+    public List<UserEntity> retrieveCurrentCourseParticipants(String token, String secret, String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
         args.put("term_id", List.of(retrieveCurrentTerm(token, secret)));

@@ -31,7 +31,7 @@ public interface ICoursesService {
 
     String retrieveCurrentTerm(String token, String secret);
 
-    List<UserEntity> retrieveCurrentCourseLecturers(String courseID, String token, String secret);
+    List<UserEntity> retrieveCurrentCourseLecturers(String token, String secret, String courseID);
 
-    List<UserEntity> retrieveCurrentCourseParticipants(String courseID, String token, String secret);
+    List<UserEntity> retrieveCurrentCourseParticipants(String token, String secret, String courseID);
 }

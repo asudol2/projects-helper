@@ -61,5 +61,4 @@ public class USOSController {
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return usosService.revokeAccessToken(authData.token(), authData.secret());
     }
-
 }

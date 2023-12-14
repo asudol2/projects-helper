@@ -28,7 +28,7 @@ public class TopicController {
                                            @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getSelectiveUserTopicsByCourse(courseID, authData.token(), authData.secret());
+        return topicService.getSelectiveUserTopicsByCourse(authData.token(), authData.secret(), courseID);
     }
 
     @GetMapping("/{id}")
@@ -36,7 +36,7 @@ public class TopicController {
                                     @PathVariable int id) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.getTopicById(id);
+        return topicService.getTopicById(authData.token(), authData.secret(), id);
     }
 
     @PostMapping("/add")
@@ -44,7 +44,7 @@ public class TopicController {
                                                  @RequestBody TopicRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.addTopic(topic, authData.token(), authData.secret());
+        return topicService.addTopic(authData.token(), authData.secret(), topic);
     }
 
     @PostMapping("/confirm")
@@ -52,6 +52,6 @@ public class TopicController {
                                         @RequestBody TopicConfirmRequest topic) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return topicService.confirmTemporaryTopic(topic, authData.token(), authData.secret());
+        return topicService.confirmTemporaryTopic(authData.token(), authData.secret(), topic);
     }
 }

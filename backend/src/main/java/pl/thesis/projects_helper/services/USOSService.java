@@ -26,6 +26,7 @@ import pl.thesis.projects_helper.model.response.TokenResponse;
 import pl.thesis.projects_helper.repository.TokenRepository;
 
 import jakarta.annotation.PostConstruct;
+import pl.thesis.projects_helper.utils.RequiresAuthentication;
 
 import java.util.*;
 import java.security.SecureRandom;
@@ -106,6 +107,7 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
+    @RequiresAuthentication
     public LoginResponse getUserData(String token, String secret) {
         String fields = "first_name|last_name";
         String url = usosBaseUrl + "users/user?fields=" + fields;

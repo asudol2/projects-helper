@@ -17,6 +17,7 @@ import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.repository.UserInTeamRepository;
+import pl.thesis.projects_helper.utils.RequiresAuthentication;
 
 import java.util.*;
 
@@ -59,7 +60,8 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public boolean addProjectRequest(TeamRequest teamReq, String token, String secret) {
+    @RequiresAuthentication
+    public boolean addProjectRequest(String token, String secret, TeamRequest teamReq) {
         String term = coursesService.retrieveCurrentTerm(token, secret);
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
@@ -79,7 +81,8 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(String courseID, String token, String secret) {
+    @RequiresAuthentication
+    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(String token, String secret, String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findAllByCourseID(courseID);
         Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
 
@@ -115,7 +118,8 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public boolean confirmProjectRequest(TeamConfirmRequest teamConfirmRequest, String token, String secret) {
+    @RequiresAuthentication
+    public boolean confirmProjectRequest(String token, String secret, TeamConfirmRequest teamConfirmRequest) {
         String term = coursesService.retrieveCurrentTerm(token, secret);
         Optional<TopicEntity> topic = topicRepository.findByCourseIDAndTermAndTitle(teamConfirmRequest.courseID(),
                 term, teamConfirmRequest.title());
