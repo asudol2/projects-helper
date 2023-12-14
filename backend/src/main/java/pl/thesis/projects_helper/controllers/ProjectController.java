@@ -8,6 +8,7 @@ import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -35,22 +36,14 @@ public class ProjectController {
         return projectService.addProjectRequest(authData, teamRequest);
     }
 
-//    @GetMapping("/requests")
-//    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(
-//            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-//            @RequestParam("course_id") String courseID) {
-//        AuthorizationService.AuthorizationData authData =
-//                authorizationService.processAuthorizationHeader(authorizationHeader);
-//        return projectService.getCourseTeamRequests(authData, courseID);
-//    }
-@GetMapping("/requests")
-public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests() {
-        String token = "f7aR6QbFMg3ZQpnJ4Gym";
-        String secret = "aum2RCbh8tMns8WKXNCj589JZnaDY8yqEQFbSCzK";
-        AuthorizationService.AuthorizationData authData = new AuthorizationService.AuthorizationData(token, secret);
-        String courseID = "103D-INxxx-ISP-FO";
+    @GetMapping("/requests")
+    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+            @RequestParam("course_id") String courseID) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.getCourseTeamRequests(authData, courseID);
-}
+    }
 
     @PostMapping("/confirm")
     public boolean confirmProjectRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,

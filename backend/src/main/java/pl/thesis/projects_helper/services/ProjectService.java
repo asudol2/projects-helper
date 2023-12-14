@@ -67,6 +67,10 @@ public class ProjectService implements IProjectService {
             return false;
         if (optTopic.get().isTemporary())
             return false;
+        if (optTopic.get().getMinTeamCap() > teamReq.userIDs().size() ||
+            optTopic.get().getMaxTeamCap() < teamReq.userIDs().size()) {
+            return false;
+        }
 
         Long topicID = optTopic.get().getId();
         TeamRequestEntity teamReqEntity = new TeamRequestEntity(topicID, "topic");

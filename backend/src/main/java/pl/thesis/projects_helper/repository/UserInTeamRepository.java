@@ -13,7 +13,5 @@ public interface UserInTeamRepository extends JpaRepository<UserInTeamEntity, Lo
     @Query("SELECT u.userID FROM UserInTeamEntity u WHERE u.teamRequest = :teamRequest")
     List<String> findUserIDsByTeamRequest(@Param("teamRequest") TeamRequestEntity teamRequest);
 
-
-
     List<UserInTeamEntity> findUserInTeamEntitiesByUserIDIsIn(List<String> userIDs);
 }
