@@ -27,7 +27,7 @@ public class ProjectController {
         this.authorizationService = authorizationService;
     }
 
-    @PostMapping("/request")
+    @PostMapping("/add_request")
     public boolean addTeamRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                   @RequestBody TeamRequest teamRequest) {
         AuthorizationService.AuthorizationData authData =
