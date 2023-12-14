@@ -23,6 +23,7 @@ export default function AddTopicPage() {
         description: ""
     });
     const [courseId, setCourseId] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>("");
     const navigate = useNavigate();
 
 
@@ -42,7 +43,8 @@ export default function AddTopicPage() {
                 if (data == "SUCCESS") {
                     navigate(-1);
                 } else {
-                    console.log("Wystąpił błąd: "+data); //TODO coś bardziej kreatywnego
+                    setValidationError(String(data));
+                    console.log("Wystąpił błąd: "+data);
                 }
             })
             .catch(error => {
@@ -67,13 +69,19 @@ export default function AddTopicPage() {
                                 <label htmlFor="title">Tytuł:</label>
                                 <input 
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${validationError == "UNIQUE_TITLE_PER_COURSE_AND_TERM" ? 'title-error' : ''} `}
                                     id="title"
                                     name="title"
                                     value={state.title}
                                     onChange={handleChange}
                                     required
                                 />
+                                {
+                                    validationError == "UNIQUE_TITLE_PER_COURSE_AND_TERM" && 
+                                    <span className="title-error">
+                                        Temat o tym tytule już istnieje w ramach tego przedmiotu.
+                                    </span>
+                                }
                             </div>
                             <div className="form-group projects-helper-add-topic-description">
                                 <label htmlFor="description">Opis:</label>
