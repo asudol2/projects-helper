@@ -84,9 +84,9 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
+    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
-        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
 
         for (TeamRequestEntity teamReq: courseTeamRequests) {
             List<UserEntity> users = new ArrayList<>();
@@ -97,7 +97,9 @@ public class ProjectService implements IProjectService {
                     users.add(user);
             }
             TopicEntity topic = teamReq.getTopic();
-            finalMap.put(topic, users);
+            if (!finalMap.containsKey(topic))
+                finalMap.put(topic, new ArrayList<>());
+            finalMap.get(topic).add(users);
         }
         return finalMap;
     }

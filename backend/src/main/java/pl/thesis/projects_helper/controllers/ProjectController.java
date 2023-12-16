@@ -37,7 +37,7 @@ public class ProjectController {
     }
 
     @GetMapping("/requests")
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(
+    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
