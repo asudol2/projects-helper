@@ -122,4 +122,9 @@ insert into public.team_requests(topic_id) values (10);
 insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158935');
 insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158741');
 
+insert into team_requests (topic_id) values (4);
+insert into users_in_teams (team_request_id, user_id) values (4, '1158935');
+insert into users_in_teams (team_request_id, user_id) values (4, '1158741');
+insert into users_in_teams (team_request_id, user_id) values (4, '1158748');
+
 ------------------------------------------------------------------------
