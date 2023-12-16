@@ -42,7 +42,7 @@ public class ProjectController {
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.getCourseTeamRequests(authData, courseID);
+        return projectService.getCourseTeamsLists(authData, courseID);
     }
 
     @PostMapping("/confirm")
@@ -51,5 +51,14 @@ public class ProjectController {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.confirmProjectRequest(authData, teamConfirmRequest);
+    }
+
+    @GetMapping("/kurwa")
+    public boolean autoAssign() {
+        AuthorizationService.AuthorizationData authData = new AuthorizationService.AuthorizationData(
+                "wDFeXExUExhk5b3k3LLW", "bMENrYjeBEjdQ88wqjFB43k6ZtW8EBUwuhNkHyhd"
+        );
+        String courseID = "103D-INxxx-ISP-FO";
+        return projectService.naiveAutoAssignTeams(authData, courseID);
     }
 }

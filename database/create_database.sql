@@ -110,21 +110,21 @@ values ('103D-INxxx-ISP-FO', '1012113', '2023Z', 'project_10', 'description_10',
 insert into public.team_requests(topic_id) values (4);
 insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158935');
 insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158741');
-insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158940');
-insert into public.users_in_teams(team_request_id, user_id) values (1,  '1158948');
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1149399');
+insert into public.users_in_teams(team_request_id, user_id) values (1,  '1149418');
 
 insert into public.team_requests(topic_id) values (6);
 insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158935');
 insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158741');
-insert into public.users_in_teams(team_request_id, user_id) values (2,  '1158940');
+insert into public.users_in_teams(team_request_id, user_id) values (2,  '1149399');
 
 insert into public.team_requests(topic_id) values (10);
 insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158935');
 insert into public.users_in_teams(team_request_id, user_id) values (3,  '1158741');
 
-insert into team_requests (topic_id) values (4);
-insert into users_in_teams (team_request_id, user_id) values (4, '1158935');
-insert into users_in_teams (team_request_id, user_id) values (4, '1158741');
-insert into users_in_teams (team_request_id, user_id) values (4, '1158748');
+insert into public.team_requests(topic_id) values (4);
+insert into public.users_in_teams(team_request_id, user_id) values (4, '1158935');
+insert into public.users_in_teams(team_request_id, user_id) values (4, '1158741');
+insert into public.users_in_teams(team_request_id, user_id) values (4, '1149418');
 
 ------------------------------------------------------------------------
