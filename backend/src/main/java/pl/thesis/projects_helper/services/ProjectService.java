@@ -87,7 +87,8 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamsLists(AuthorizationData authData, String courseID) {
+    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequestsLists(AuthorizationData authData,
+                                                                               String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
         Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
 
@@ -103,6 +104,26 @@ public class ProjectService implements IProjectService {
             if (!finalMap.containsKey(topic))
                 finalMap.put(topic, new ArrayList<>());
             finalMap.get(topic).add(users);
+        }
+        return finalMap;
+    }
+
+    @Override
+    @RequiresAuthentication
+    public Map<TopicEntity, List<UserEntity>> getCourseTeams(AuthorizationData authData, String courseID) {
+        List<TeamEntity> courseTeams = teamRepository.findAllByTopicCourseID(courseID);
+        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+
+        for (TeamEntity team: courseTeams) {
+            List<UserEntity> users = new ArrayList<>();
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
+            for (String userID: userIDs) {
+                UserEntity user = userService.getStudentById(authData, userID);
+                if (user != null)
+                    users.add(user);
+            }
+            TopicEntity topic = team.getTopic();
+            finalMap.put(topic, users);
         }
         return finalMap;
     }
