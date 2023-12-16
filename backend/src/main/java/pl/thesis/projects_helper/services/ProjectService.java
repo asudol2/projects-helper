@@ -67,6 +67,10 @@ public class ProjectService implements IProjectService {
             return false;
         if (optTopic.get().isTemporary())
             return false;
+        if (optTopic.get().getMinTeamCap() > teamReq.userIDs().size() ||
+            optTopic.get().getMaxTeamCap() < teamReq.userIDs().size()) {
+            return false;
+        }
 
         Long topicID = optTopic.get().getId();
         TeamRequestEntity teamReqEntity = new TeamRequestEntity(topicID, "topic");
@@ -80,9 +84,9 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
-        List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findAllByCourseID(courseID);
-        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(AuthorizationData authData, String courseID) {
+        List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
+        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
 
         for (TeamRequestEntity teamReq: courseTeamRequests) {
             List<UserEntity> users = new ArrayList<>();
@@ -93,7 +97,9 @@ public class ProjectService implements IProjectService {
                     users.add(user);
             }
             TopicEntity topic = teamReq.getTopic();
-            finalMap.put(topic, users);
+            if (!finalMap.containsKey(topic))
+                finalMap.put(topic, new ArrayList<>());
+            finalMap.get(topic).add(users);
         }
         return finalMap;
     }

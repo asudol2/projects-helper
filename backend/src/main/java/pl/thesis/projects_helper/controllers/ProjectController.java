@@ -8,6 +8,7 @@ import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ProjectController {
     }
 
     @GetMapping("/requests")
-    public Map<TopicEntity, List<UserEntity>> getCourseTeamRequests(
+    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
