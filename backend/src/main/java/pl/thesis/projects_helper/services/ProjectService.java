@@ -1,7 +1,6 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,6 +10,7 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.response.CourseParticipantResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
@@ -18,7 +18,6 @@ import pl.thesis.projects_helper.repository.UserInTeamRepository;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -201,7 +200,7 @@ public class ProjectService implements IProjectService {
     }
 
     public void assignMaxStudentsNumberToRandomCourseTopics(Map<TopicEntity, List<String>> topicToUserIDsMap,
-                                                             List<UserEntity> participants,
+                                                             List<CourseParticipantResponse> participants,
                                                              String courseID) {
         Random random = new Random();
         List<TopicEntity> freeTopics = topicRepository.findAllByCourseID(courseID);
@@ -215,7 +214,7 @@ public class ProjectService implements IProjectService {
         for (TopicEntity freeTopic: freeTopics) {
             topicToUserIDsMap.put(freeTopic, new ArrayList<>());
             for (int i = 0; i < freeTopic.getMaxTeamCap(); i++) {
-                topicToUserIDsMap.get(freeTopic).add(participants.remove(random.nextInt(participants.size())).getID());
+                topicToUserIDsMap.get(freeTopic).add(participants.remove(random.nextInt(participants.size())).ID());
             }
         }
     }
@@ -234,8 +233,8 @@ public class ProjectService implements IProjectService {
             assignedUserIDs.addAll(userInTeamRepository.findUserIDsByTeam(team));
         }
 
-        List<UserEntity> participants = coursesService.retrieveCurrentCourseParticipants(authData, courseID);
-        participants.removeIf(participant -> assignedUserIDs.contains(participant.getID()));
+        List<CourseParticipantResponse> participants = coursesService.retrieveCurrentCourseParticipants(authData, courseID);
+        participants.removeIf(participant -> assignedUserIDs.contains(participant.ID()));
 
         assignMaxStudentsNumberToRandomCourseTopics(topicToUserIDsMap, participants, courseID);
         return topicToUserIDsMap;
@@ -267,7 +266,7 @@ public class ProjectService implements IProjectService {
 
         Set<String> allCourseUserIDs = coursesService.retrieveCurrentCourseParticipants(authData, courseID)
                 .stream()
-                .map(UserEntity::getID)
+                .map(CourseParticipantResponse::ID)
                 .collect(Collectors.toSet());
         Set<String> assignedUserIDs = topicToUserIDsMap.values().stream()
                 .flatMap(List::stream)

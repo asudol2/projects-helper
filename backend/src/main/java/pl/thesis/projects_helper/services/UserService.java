@@ -1,5 +1,6 @@
 package pl.thesis.projects_helper.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,8 @@ public class UserService implements IUserService {
                 "student_status",
                 "staff_status",
                 "email"));
-        Map<String, Object> userData = mapper.convertValue(requestUsersEndpoint(authData, "user", args), Map.class);
+        Map<String, Object> userData = mapper.convertValue(requestUsersEndpoint(authData, "user", args),
+                new TypeReference<Map<String, Object>>() {});
         return new UserEntity(userID,
                 (String) userData.get("first_name"),
                 (String) userData.get("middle_names"),
