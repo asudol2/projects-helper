@@ -20,4 +20,6 @@ public interface IProjectService {
     boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest);
 
     boolean naiveAutoAssignTeams(AuthorizationData authData, String courseID);
+
+    boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID);
 }

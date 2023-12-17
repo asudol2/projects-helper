@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -10,6 +11,7 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.response.LoginResponse;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
@@ -48,6 +50,9 @@ public class ProjectService implements IProjectService {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    USOSService usosService;
 
 
     private final RestTemplate restTemplate;
@@ -274,5 +279,28 @@ public class ProjectService implements IProjectService {
                 .flatMap(List::stream)
                 .collect(Collectors.toSet());
         return allCourseUserIDs.equals(assignedUserIDs);
+    }
+
+    public boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID) {
+        Optional<TeamRequestEntity> teamRequest = teamRequestRepository.findById(teamRequestID);
+        if (teamRequest.isEmpty())
+            return false;
+        List<UserInTeamEntity> teamRequestUITs = userInTeamRepository
+                .findUserInTeamEntitiesByTeamRequest(teamRequest.get());
+        if (teamRequest.get().getTopic().getMinTeamCap() > teamRequestUITs.size() - 1) {
+            userInTeamRepository.deleteAll(teamRequestUITs);
+            teamRequestRepository.deleteById(teamRequestID);
+            return true;
+        }
+
+        String userID = usosService.getUserData(authData).ID();
+        List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserID(userID);
+        for (UserInTeamEntity uit: UITs) {
+            if (uit.getTeamRequest().equals(teamRequest.get())) {
+                userInTeamRepository.delete(uit);
+                return true;
+            }
+        }
+        return false;
     }
 }
