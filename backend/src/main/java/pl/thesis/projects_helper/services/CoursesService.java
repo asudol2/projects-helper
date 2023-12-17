@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
-import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
@@ -179,7 +179,8 @@ public class CoursesService implements ICoursesService {
     }
     @Override
     @RequiresAuthentication
-    public List<UserEntity> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID) {
+    public List<ParticipantResponse> retrieveCurrentCourseLecturers(AuthorizationData authData,
+                                                                    String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
         args.put("term_id", List.of(retrieveCurrentTerm(authData)));
@@ -188,12 +189,13 @@ public class CoursesService implements ICoursesService {
         JsonNode usosJson = requestCoursesEndpoint(authData, "course_edition", args);
         List<Map<String, String>> lecturersMap = mapper.convertValue(usosJson.get("lecturers"), List.class);
 
-        return  mapUsosUsersMapsListToUserEntitiesList(lecturersMap);
+        return mapUsosUsersMapsListToCourseParticipantResponseList(lecturersMap);
     }
 
     @Override
     @RequiresAuthentication
-    public List<UserEntity> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID) {
+    public List<ParticipantResponse> retrieveCurrentCourseParticipants(AuthorizationData authData,
+                                                                       String courseID) {
         Map<String, List<String>> args = new HashMap<>();
         args.put("course_id", List.of(courseID));
         args.put("term_id", List.of(retrieveCurrentTerm(authData)));
@@ -201,13 +203,16 @@ public class CoursesService implements ICoursesService {
 
         JsonNode usosJson = requestCoursesEndpoint(authData, "course_edition", args);
         List<Map<String, String>> participantsMapsList = mapper.convertValue(usosJson.get("participants"), List.class);
-        return mapUsosUsersMapsListToUserEntitiesList(participantsMapsList);
+        return mapUsosUsersMapsListToCourseParticipantResponseList(participantsMapsList);
     }
 
-    private List<UserEntity> mapUsosUsersMapsListToUserEntitiesList(List<Map<String, String>> usersMapsList) {
-        List<UserEntity> participantsList = new ArrayList<>();
+    private List<ParticipantResponse> mapUsosUsersMapsListToCourseParticipantResponseList(
+            List<Map<String, String>> usersMapsList) {
+        List<ParticipantResponse> participantsList = new ArrayList<>();
         for (Map<String, String> partMap: usersMapsList){
-            participantsList.add(new UserEntity(partMap.get("id"),
+            participantsList.add(new ParticipantResponse(
+                    partMap.get("id"),
+                    partMap.get("middle_names"),
                     partMap.get("first_name"),
                     partMap.get("last_name")));
         }

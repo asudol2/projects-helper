@@ -8,7 +8,6 @@ import pl.thesis.projects_helper.model.TopicEntity;
 import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
-import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -42,7 +41,16 @@ public class ProjectController {
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.getCourseTeamRequests(authData, courseID);
+        return projectService.getCourseTeamRequestsLists(authData, courseID);
+    }
+
+    @GetMapping("/teams")
+    public Map<TopicEntity, List<UserEntity>> getCourseTeams(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+            @RequestParam("course_id") String courseID) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.getCourseTeams(authData, courseID);
     }
 
     @PostMapping("/confirm")
@@ -51,5 +59,13 @@ public class ProjectController {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.confirmProjectRequest(authData, teamConfirmRequest);
+    }
+
+    @PostMapping("/auto_assign")
+    public boolean autoAssign(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                              @RequestParam("course_id") String courseID) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.naiveAutoAssignTeams(authData, courseID);
     }
 }

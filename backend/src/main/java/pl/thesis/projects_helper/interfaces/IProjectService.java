@@ -13,7 +13,11 @@ public interface IProjectService {
 
     boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq);
 
-    Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(AuthorizationData authData, String courseID);
+    Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequestsLists(AuthorizationData authData, String courseID);
+
+    Map<TopicEntity, List<UserEntity>> getCourseTeams(AuthorizationData authData, String courseID);
 
     boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest);
+
+    boolean naiveAutoAssignTeams(AuthorizationData authData, String courseID);
 }

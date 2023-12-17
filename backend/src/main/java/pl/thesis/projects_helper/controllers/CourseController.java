@@ -4,7 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
-import pl.thesis.projects_helper.model.UserEntity;
+import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -53,16 +53,18 @@ public class CourseController {
     }
 
     @GetMapping("/lecturers")
-    public List<UserEntity> getCourseLecturers(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                               @RequestParam("course_id") String courseID){
+    public List<ParticipantResponse> getCourseLecturers(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+            @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return coursesService.retrieveCurrentCourseLecturers(authData, courseID);
     }
 
     @GetMapping("/participants")
-    public List<UserEntity> getCourseParticipants(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                                  @RequestParam("course_id") String courseID){
+    public List<ParticipantResponse> getCourseParticipants(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+            @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return coursesService.retrieveCurrentCourseParticipants(authData, courseID);
