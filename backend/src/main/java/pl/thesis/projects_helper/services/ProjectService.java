@@ -62,6 +62,8 @@ public class ProjectService implements IProjectService {
     @Override
     @RequiresAuthentication
     public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
+        if (teamReq.userIDs().size() != new HashSet<>(teamReq.userIDs()).size())
+            return false;
         String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
