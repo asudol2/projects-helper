@@ -5,6 +5,7 @@ import { LoginResponse } from "../model/LoginResponse";
 import { TokenResponse } from "../model/TokenRespone";
 import { UserDataResponse } from "../model/UserDataResponse";
 import { Topic } from "../model/Topic";
+import { CourseParticipant } from "../model/CourseParticipant";
 
 async function fetchGet(url: string, token: string = "", secret: string = "") {
     const concatenatedValue = `${token}:${secret}`;
@@ -79,5 +80,20 @@ export class Requests {
             : Promise<GenericResponse<string>> {
         return await fetchPost(
             "/topics/add", { courseId: courseId, title: title, description: description }, token, secret);
+    }
+
+    static async getCourseParticipants(token: string, secret: string, courseId: string)
+            : Promise<GenericResponse<CourseParticipant[]>> {
+        return await fetchGet("/courses/participants?course_id=" + courseId, token, secret);
+    }
+
+    static async addTeamRequest(token: string, secret: string, courseId: string, 
+                                title: string, participantsIds: string[]) {
+        return await fetchPost(
+            "/projects/add_request", 
+            {courseID: courseId, title: title, userIDs: participantsIds},
+            token,
+            secret
+        );
     }
 }

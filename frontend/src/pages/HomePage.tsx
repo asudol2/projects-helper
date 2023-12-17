@@ -22,6 +22,9 @@ export default function LoginPage() {
             Requests.getAllCourses(token, secret).then(res => res.res).then(data => {
                 if (data !== undefined) {
                     setCourses(data);
+                } else {
+                    SecurityHelper.clearStorage();
+                    navigate("/login");
                 }
             })
             .catch(error => {

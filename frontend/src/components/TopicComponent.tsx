@@ -12,11 +12,11 @@ export function TopicComponent(props: TopicComponentProps) {
     const { id, courseID, lecturerID, title, description, minTeamCap, maxTeamCap, temporary } = props.topic;
 
 
-    const handleClisk = () => {
+    const handleClick = () => {
         navigate("/topic/"+id);
     }
     return (
-        <div className="container-fluid projects-helper-item-row" onClick={handleClisk}>
+        <div className="container-fluid projects-helper-item-row" onClick={handleClick}>
             {props.index}. {title} {temporary === true && (<span className="projects-helper-temporary-topic">niezatwierdzony</span>)}
         </div>
     )

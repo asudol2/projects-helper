@@ -17,6 +17,8 @@ const NavBar = () => {
                 if (data !== undefined) {
                     setToken(data?.token);
                     setSecret(data?.secret);
+                } else {
+                    navigate("/login");
                 }
             })
             .catch(error => {
@@ -26,6 +28,8 @@ const NavBar = () => {
             Requests.getUserData(token, secret).then(res => res.res).then(data => {
                 if (data !== undefined)
                     setUsername(data?.firstName + " " + data?.lastName)
+                else
+                    navigate("/login");
             })
             .catch(error => {
                 SecurityHelper.clearStorage();
