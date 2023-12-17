@@ -61,7 +61,7 @@ public class ProjectController {
         return projectService.confirmProjectRequest(authData, teamConfirmRequest);
     }
 
-    @GetMapping("/auto_assign")
+    @PostMapping("/auto_assign")
     public boolean autoAssign(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                               @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
