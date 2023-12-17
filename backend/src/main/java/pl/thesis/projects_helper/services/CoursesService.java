@@ -213,7 +213,6 @@ public class CoursesService implements ICoursesService {
             participantsList.add(new ParticipantResponse(
                     partMap.get("id"),
                     partMap.get("first_name"),
-                    partMap.get("middle_names"),
                     partMap.get("last_name")));
         }
         return participantsList;
