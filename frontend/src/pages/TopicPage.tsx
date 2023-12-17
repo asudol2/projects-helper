@@ -6,6 +6,7 @@ import { SecurityHelper } from "../helpers/SecurityHelper";
 import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
+import { CreateTeamComponent } from "../components/CreateTeamComponent";
 import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/topics.css";
@@ -15,6 +16,7 @@ export default function TopicPage() {
     const { topicId } = useParams();
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [topic, setTopic] = useState<Topic | null>(null);
+    const [creatingTeam, setCreatingTeam] = useState<boolean>(false);
     const navigate = useNavigate();
 
 
@@ -34,6 +36,14 @@ export default function TopicPage() {
         }
 
     }, [token, setToken, secret, setSecret]);
+
+    const createTeam = () => {
+        setCreatingTeam(true)
+    }
+
+    const teamCreated = () => {
+        setCreatingTeam(false);
+    }
 
 
     return (
@@ -55,11 +65,17 @@ export default function TopicPage() {
                         <span className="projects-helper-topic-label">Maksymalny skład zespołu: </span>
                         {topic?.maxTeamCap}
                     </div>
-                    <button
-                        className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled': ''}`}
-                    >
-                        Wybierz ten temat
-                    </button>
+                    {creatingTeam &&
+                        <CreateTeamComponent courseId={String(topic?.courseID)} title={String(topic?.title)} 
+                            callback={teamCreated}/>}
+                    { !creatingTeam &&
+                        <button
+                            className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled': ''}`}
+                            onClick={createTeam}
+                        >
+                            Stwórz zespół do realizacji tego tematu
+                        </button>
+                    }
                     {
                         topic?.temporary && <button className={"btn btn-primary projects-helper-cancel-topic"}>
                             Wycofaj propozycję tematu

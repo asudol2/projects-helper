@@ -1,0 +1,57 @@
+.projects-helper-create-team {
+    border: 3px solid green;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.projects-helper-add-team-member-row {
+    margin: 15px 0;
+    position: relative;
+}
+
+.projects-helper-floating-tip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid black;
+    margin-top: 1px;
+    border-radius: 4px;
+    z-index: 1;
+    animation: fadeIn 0.3s ease-out;
+    font-size: 14pt;
+    width: 100%;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.projects-helper-search-result-item {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.projects-helper-search-result-item:hover {
+    background-color: darkgrey;
+    cursor: pointer;
+}
+
+.projects-helper-add-team-member-row-finished input {
+    color: grey;
+}
+
+.projects-helper-add-create-team-error {
+    color: red;
+    font-size: 14pt;
+}
