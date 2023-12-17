@@ -1,5 +1,6 @@
 export type CourseParticipant = {
-    id: string,
+    ID: string,
     firstName: string,
     lastName: string,
+    middleNames: string,
 }

@@ -86,7 +86,7 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
         updatedRows[rowId] = {
             ...updatedRows[rowId],
             selected: true,
-            id: participant.id,
+            id: participant.ID,
             value: participant.firstName + " " + participant.lastName
         };
         setRows(updatedRows);
@@ -133,7 +133,7 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
                             {
                                 searchResults.length > 0 && searchResults.map(searchRow => (
                                     <SearchResultComponent
-                                        key={searchRow.id}
+                                        key={searchRow.ID}
                                         participant={searchRow}
                                         rowId={row.index}
                                         onClick={searchResultClick}

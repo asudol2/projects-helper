@@ -212,8 +212,8 @@ public class CoursesService implements ICoursesService {
         for (Map<String, String> partMap: usersMapsList){
             participantsList.add(new ParticipantResponse(
                     partMap.get("id"),
-                    partMap.get("middle_names"),
                     partMap.get("first_name"),
+                    partMap.get("middle_names"),
                     partMap.get("last_name")));
         }
         return participantsList;

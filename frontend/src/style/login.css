@@ -24,7 +24,6 @@
 .projects-helper-login-card {
     align-items: center;
     padding: 10% 0;
-    animation: fadeIn;
     animation-duration: 500ms;
 }
 
@@ -38,7 +37,6 @@
     margin: 0 0 4%;
     text-align: start;
     width: 70%;
-    animation: fadeIn;
     animation-duration: 1000ms;
 }
 
@@ -46,27 +44,20 @@
     margin: 0 0 4%;
     text-align: start;
     width: 70%;
-    animation: fadeIn;
     animation-duration: 1500ms;
 }
 
 .projects-helper-login-submit {
     justify-content: center;
-    animation: fadeIn;
     animation-duration: 2000ms;
 }
 
 .projects-helper-login-reglink-text {
-    animation: fadeIn;
     animation-duration: 2500ms;
     color: white;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
-.projects-helper-login-reglink {
-    animation: fadeIn;
-    animation-duration: 3000ms;
-}
 
 .projects-helper-login-error {
     align-items: center;
