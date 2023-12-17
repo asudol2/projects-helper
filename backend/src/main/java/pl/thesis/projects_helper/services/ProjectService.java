@@ -10,7 +10,7 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
-import pl.thesis.projects_helper.model.response.CourseParticipantResponse;
+import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
@@ -200,7 +200,7 @@ public class ProjectService implements IProjectService {
     }
 
     public void assignMaxStudentsNumberToRandomCourseTopics(Map<TopicEntity, List<String>> topicToUserIDsMap,
-                                                             List<CourseParticipantResponse> participants,
+                                                             List<ParticipantResponse> participants,
                                                              String courseID) {
         Random random = new Random();
         List<TopicEntity> freeTopics = topicRepository.findAllByCourseID(courseID);
@@ -233,7 +233,7 @@ public class ProjectService implements IProjectService {
             assignedUserIDs.addAll(userInTeamRepository.findUserIDsByTeam(team));
         }
 
-        List<CourseParticipantResponse> participants = coursesService.retrieveCurrentCourseParticipants(authData, courseID);
+        List<ParticipantResponse> participants = coursesService.retrieveCurrentCourseParticipants(authData, courseID);
         participants.removeIf(participant -> assignedUserIDs.contains(participant.ID()));
 
         assignMaxStudentsNumberToRandomCourseTopics(topicToUserIDsMap, participants, courseID);
@@ -266,7 +266,7 @@ public class ProjectService implements IProjectService {
 
         Set<String> allCourseUserIDs = coursesService.retrieveCurrentCourseParticipants(authData, courseID)
                 .stream()
-                .map(CourseParticipantResponse::ID)
+                .map(ParticipantResponse::ID)
                 .collect(Collectors.toSet());
         Set<String> assignedUserIDs = topicToUserIDsMap.values().stream()
                 .flatMap(List::stream)

@@ -3,8 +3,7 @@ package pl.thesis.projects_helper.interfaces;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.util.Pair;
 import pl.thesis.projects_helper.model.CourseEntity;
-import pl.thesis.projects_helper.model.UserEntity;
-import pl.thesis.projects_helper.model.response.CourseParticipantResponse;
+import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public interface ICoursesService {
 
     String retrieveCurrentTerm(AuthorizationData authData);
 
-    List<CourseParticipantResponse> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID);
+    List<ParticipantResponse> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID);
 
-    List<CourseParticipantResponse> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID);
+    List<ParticipantResponse> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID);
 }

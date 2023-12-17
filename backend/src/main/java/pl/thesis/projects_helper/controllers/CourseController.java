@@ -4,8 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
-import pl.thesis.projects_helper.model.UserEntity;
-import pl.thesis.projects_helper.model.response.CourseParticipantResponse;
+import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -54,7 +53,7 @@ public class CourseController {
     }
 
     @GetMapping("/lecturers")
-    public List<CourseParticipantResponse> getCourseLecturers(
+    public List<ParticipantResponse> getCourseLecturers(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
@@ -63,7 +62,7 @@ public class CourseController {
     }
 
     @GetMapping("/participants")
-    public List<CourseParticipantResponse> getCourseParticipants(
+    public List<ParticipantResponse> getCourseParticipants(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID){
         AuthorizationService.AuthorizationData authData =
