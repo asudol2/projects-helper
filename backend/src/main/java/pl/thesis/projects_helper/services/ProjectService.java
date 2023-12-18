@@ -95,6 +95,7 @@ public class ProjectService implements IProjectService {
             return TeamRequestValidationResult.SAME_TEAM_REQ;
         return TeamRequestValidationResult.SUCCESS;
     }
+
     @Override
     @RequiresAuthentication
     public TeamRequestValidationResult addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
