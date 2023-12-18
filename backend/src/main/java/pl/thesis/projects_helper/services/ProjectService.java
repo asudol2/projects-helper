@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,6 +12,7 @@ import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
+import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
@@ -134,7 +136,7 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<UserEntity>> getUserTeams(AuthorizationData authData) {
+    public Map<Long, List<UserResponse>> getUserTeams(AuthorizationData authData) {
         List<UserInTeamEntity> UITs = userInTeamRepository
                 .findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
 
@@ -145,14 +147,20 @@ public class ProjectService implements IProjectService {
             }
         }
 
-        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+        Map<Long, List<UserResponse>> finalMap = new HashMap<>();
         for (TeamEntity team: teams) {
             List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
-            List<UserEntity> users = new ArrayList<>();
+            List<UserResponse> users = new ArrayList<>();
             for (String userID: userIDs) {
-                users.add(userService.getStudentById(authData, userID));
+                UserEntity user = userService.getStudentById(authData, userID);
+                users.add(new UserResponse(
+                        user.getID(),
+                        user.getFirstName(),
+                        user.getMiddleNames(),
+                        user.getLastName()
+                ));
             }
-            finalMap.put(team.getTopic(), users);
+            finalMap.put(team.getTopic().getId(), users);
         }
         return finalMap;
     }
@@ -333,19 +341,25 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData) {
+    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(AuthorizationData authData) {
         List<UserInTeamEntity> userUITs = userInTeamRepository.
                 findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
 
-        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
+        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
         for (UserInTeamEntity uit: userUITs) {
             List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
-            List<UserEntity> users = new ArrayList<>();
+            List<UserResponse> users = new ArrayList<>();
             for (String userID: userIDs) {
-                users.add(userService.getStudentById(authData, userID));
+                UserEntity user = userService.getStudentById(authData, userID);
+                users.add(new UserResponse(
+                        user.getID(),
+                        user.getFirstName(),
+                        user.getMiddleNames(),
+                        user.getLastName()
+                ));
             }
             if (!finalMap.containsKey(uit.getTeamRequest().getTopic()))
-                finalMap.put(uit.getTeamRequest().getTopic(), new ArrayList<>());
+                finalMap.put(uit.getTeamRequest().getTopic().getId(), new ArrayList<>());
             finalMap.get(uit.getTeamRequest().getTopic()).add(users);
             }
         return finalMap;
