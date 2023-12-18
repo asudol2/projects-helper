@@ -366,9 +366,9 @@ public class ProjectService implements IProjectService {
                         user.getLastName()
                 ));
             }
-            if (!finalMap.containsKey(uit.getTeamRequest().getTopic()))
+            if (!finalMap.containsKey(uit.getTeamRequest().getTopic().getId()))
                 finalMap.put(uit.getTeamRequest().getTopic().getId(), new ArrayList<>());
-            finalMap.get(uit.getTeamRequest().getTopic()).add(users);
+            finalMap.get(uit.getTeamRequest().getTopic().getId()).add(users);
             }
         return finalMap;
         }
