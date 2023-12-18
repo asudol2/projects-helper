@@ -18,6 +18,7 @@ import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.repository.UserInTeamRepository;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
+import pl.thesis.projects_helper.utils.TeamRequestValidationResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,40 +77,49 @@ public class ProjectService implements IProjectService {
         return UITs.size() == teamReq.userIDs().size();
     }
 
-    @Override
-    @RequiresAuthentication
-    public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
-        List<String> updatedUserIDs = new ArrayList<>(teamReq.userIDs());
-        updatedUserIDs.add((usosService.getUserData(authData).ID()));
-        teamReq = new TeamRequest(
-                teamReq.courseID(),
-                teamReq.title(),
-                updatedUserIDs
-        );
+    private TeamRequestValidationResult validateTeamRequest(AuthorizationData authData, TeamRequest teamReq) {
         if (teamReq.userIDs().size() != new HashSet<>(teamReq.userIDs()).size())
-            return false;
+            return TeamRequestValidationResult.NONUNIQUE;
         String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
         if (optTopic.isEmpty())
-            return false;
+            return TeamRequestValidationResult.NO_TOPIC;
         if (optTopic.get().isTemporary())
-            return false;
+            return TeamRequestValidationResult.TEMP_TOPIC;
         if (optTopic.get().getMinTeamCap() > teamReq.userIDs().size() ||
-            optTopic.get().getMaxTeamCap() < teamReq.userIDs().size()) {
-            return false;
+                optTopic.get().getMaxTeamCap() < teamReq.userIDs().size()) {
+            return TeamRequestValidationResult.SIZE_ERR;
         }
         if (sameTeamRequestExists(teamReq, term))
-            return false;
+            return TeamRequestValidationResult.SAME_TEAM_REQ;
+        return TeamRequestValidationResult.SUCCESS;
+    }
+    @Override
+    @RequiresAuthentication
+    public TeamRequestValidationResult addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
+        List<String> updatedUserIDs = new ArrayList<>(teamReq.userIDs());
+        updatedUserIDs.add((usosService.getUserData(authData).ID()));
+        TeamRequest updatedTeamRequest = new TeamRequest(
+                teamReq.courseID(),
+                teamReq.title(),
+                updatedUserIDs
+        );
+        TeamRequestValidationResult validationResult = validateTeamRequest(authData, teamReq);
+        if (validationResult != TeamRequestValidationResult.SUCCESS)
+            return validationResult;
 
-        Long topicID = optTopic.get().getId();
+        Long topicID = topicRepository.findByCourseIDAndTermAndTitle(
+                teamReq.courseID(),
+                coursesService.retrieveCurrentTerm(authData),
+                teamReq.title()).get().getId();
         TeamRequestEntity teamReqEntity = new TeamRequestEntity(topicID, "topic");
         TeamRequestEntity addedTeamReq = teamRequestRepository.save(teamReqEntity);
-        for (String userID: teamReq.userIDs()) {
+        for (String userID: updatedTeamRequest.userIDs()) {
             UserInTeamEntity user = new UserInTeamEntity(addedTeamReq, userID);
             userInTeamRepository.save(user);
         }
-        return true;
+        return TeamRequestValidationResult.SUCCESS;
     }
 
     @Override

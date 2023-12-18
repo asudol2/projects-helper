@@ -8,6 +8,7 @@ import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
+import pl.thesis.projects_helper.utils.TeamRequestValidationResult;
 
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,8 @@ public class ProjectController {
     }
 
     @PostMapping("/add_request")
-    public boolean addTeamRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                  @RequestBody TeamRequest teamRequest) {
+    public TeamRequestValidationResult addTeamRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
+                                                      @RequestBody TeamRequest teamRequest) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.addProjectRequest(authData, teamRequest);
