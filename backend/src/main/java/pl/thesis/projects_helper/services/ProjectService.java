@@ -263,6 +263,8 @@ public class ProjectService implements IProjectService {
         }
     }
 
+    @Override
+    @RequiresAuthentication
     public boolean naiveAutoAssignTeams(AuthorizationData authData, String courseID) {
         // map of final validated assignments including preferences from team requests
         Map<TopicEntity, List<String>> topicToUserIDsMap = prepareLocalDataForAutoAssign(authData, courseID);
@@ -281,6 +283,8 @@ public class ProjectService implements IProjectService {
         return allCourseUserIDs.equals(assignedUserIDs);
     }
 
+    @Override
+    @RequiresAuthentication
     public boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID) {
         Optional<TeamRequestEntity> teamRequest = teamRequestRepository.findById(teamRequestID);
         if (teamRequest.isEmpty())
@@ -303,4 +307,24 @@ public class ProjectService implements IProjectService {
         }
         return false;
     }
+
+    @Override
+    @RequiresAuthentication
+    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData) {
+        List<UserInTeamEntity> userUITs = userInTeamRepository.
+                findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
+
+        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
+        for (UserInTeamEntity uit: userUITs) {
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
+            List<UserEntity> users = new ArrayList<>();
+            for (String userID: userIDs) {
+                users.add(userService.getStudentById(authData, userID));
+            }
+            if (!finalMap.containsKey(uit.getTeamRequest().getTopic()))
+                finalMap.put(uit.getTeamRequest().getTopic(), new ArrayList<>());
+            finalMap.get(uit.getTeamRequest().getTopic()).add(users);
+            }
+        return finalMap;
+        }
 }

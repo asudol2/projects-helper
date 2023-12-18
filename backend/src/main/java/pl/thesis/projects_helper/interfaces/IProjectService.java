@@ -22,4 +22,6 @@ public interface IProjectService {
     boolean naiveAutoAssignTeams(AuthorizationData authData, String courseID);
 
     boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID);
+
+    Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData);
 }

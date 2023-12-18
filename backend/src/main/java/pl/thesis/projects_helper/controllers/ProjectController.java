@@ -35,7 +35,7 @@ public class ProjectController {
         return projectService.addProjectRequest(authData, teamRequest);
     }
 
-    @GetMapping("/requests")
+    @GetMapping("/course_requests")
     public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
@@ -75,5 +75,13 @@ public class ProjectController {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.rejectTeamRequest(authData, teamRequestID);
+    }
+
+    @GetMapping("/user_requests")
+    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.getUserTeamRequests(authData);
     }
 }
