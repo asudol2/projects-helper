@@ -63,10 +63,29 @@ public class ProjectService implements IProjectService {
         mapper = new ObjectMapper();
     }
 
+    private boolean sameTeamRequestExists(TeamRequest teamReq, String term) {
+        Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
+                term, teamReq.title());
+        if (optTopic.isEmpty())
+            return false;
+
+        List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequestTopicID(optTopic.get().getId());
+        List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(userIDs);
+        UITs.removeIf(uit -> uit.getTeamRequest() == null);
+        UITs.removeIf(uit -> uit.getTeamRequest().getTopic() != optTopic.get());
+        return UITs.size() == teamReq.userIDs().size();
+    }
+
     @Override
     @RequiresAuthentication
     public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
-        teamReq.userIDs().add(usosService.getUserData(authData).ID());
+        List<String> updatedUserIDs = new ArrayList<>(teamReq.userIDs());
+        updatedUserIDs.add((usosService.getUserData(authData).ID()));
+        teamReq = new TeamRequest(
+                teamReq.courseID(),
+                teamReq.title(),
+                updatedUserIDs
+        );
         if (teamReq.userIDs().size() != new HashSet<>(teamReq.userIDs()).size())
             return false;
         String term = coursesService.retrieveCurrentTerm(authData);
@@ -80,6 +99,8 @@ public class ProjectService implements IProjectService {
             optTopic.get().getMaxTeamCap() < teamReq.userIDs().size()) {
             return false;
         }
+        if (sameTeamRequestExists(teamReq, term))
+            return false;
 
         Long topicID = optTopic.get().getId();
         TeamRequestEntity teamReqEntity = new TeamRequestEntity(topicID, "topic");
