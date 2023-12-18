@@ -69,7 +69,7 @@ public class ProjectController {
         return projectService.naiveAutoAssignTeams(authData, courseID);
     }
 
-    @GetMapping("/reject")
+    @PostMapping("/reject")
     public boolean rejectTeamRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
                                      @RequestParam("team_request_id") Long teamRequestID) {
         AuthorizationService.AuthorizationData authData =
