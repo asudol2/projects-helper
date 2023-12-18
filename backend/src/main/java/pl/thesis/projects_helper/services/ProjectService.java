@@ -11,6 +11,7 @@ import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
+import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
 import pl.thesis.projects_helper.repository.TopicRepository;
@@ -91,43 +92,83 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequestsLists(AuthorizationData authData,
+    public Map<Long, List<List<UserResponse>>> getCourseTeamRequestsLists(AuthorizationData authData,
                                                                                String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
-        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
+        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
 
         for (TeamRequestEntity teamReq: courseTeamRequests) {
-            List<UserEntity> users = new ArrayList<>();
+            List<UserResponse> users = new ArrayList<>();
             List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(teamReq);
             for (String userID: userIDs) {
                 UserEntity user = userService.getStudentById(authData, userID);
                 if (user != null)
-                    users.add(user);
+                    users.add(new UserResponse(
+                            user.getID(),
+                            user.getFirstName(),
+                            user.getMiddleNames(),
+                            user.getLastName()
+                    ));
             }
             TopicEntity topic = teamReq.getTopic();
-            if (!finalMap.containsKey(topic))
-                finalMap.put(topic, new ArrayList<>());
-            finalMap.get(topic).add(users);
+            if (!finalMap.containsKey(topic.getId()))
+                finalMap.put(topic.getId(), new ArrayList<>());
+            finalMap.get(topic.getId()).add(users);
         }
         return finalMap;
     }
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<UserEntity>> getCourseTeams(AuthorizationData authData, String courseID) {
+    public Map<Long, List<UserResponse>> getCourseTeams(AuthorizationData authData, String courseID) {
         List<TeamEntity> courseTeams = teamRepository.findAllByTopicCourseID(courseID);
-        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+        Map<Long, List<UserResponse>> finalMap = new HashMap<>();
 
         for (TeamEntity team: courseTeams) {
-            List<UserEntity> users = new ArrayList<>();
+            List<UserResponse> users = new ArrayList<>();
             List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
             for (String userID: userIDs) {
                 UserEntity user = userService.getStudentById(authData, userID);
                 if (user != null)
-                    users.add(user);
+                    users.add(new UserResponse(
+                            user.getID(),
+                            user.getFirstName(),
+                            user.getMiddleNames(),
+                            user.getLastName()
+                    ));
             }
-            TopicEntity topic = team.getTopic();
-            finalMap.put(topic, users);
+            finalMap.put(team.getTopic().getId(), users);
+        }
+        return finalMap;
+    }
+
+    @Override
+    @RequiresAuthentication
+    public Map<Long, List<UserResponse>> getUserTeams(AuthorizationData authData) {
+        List<UserInTeamEntity> UITs = userInTeamRepository
+                .findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
+
+        List<TeamEntity> teams = new ArrayList<>();
+        for (UserInTeamEntity uit: UITs) {
+            if (uit.getTeam() != null) {
+                teams.add(uit.getTeam());
+            }
+        }
+
+        Map<Long, List<UserResponse>> finalMap = new HashMap<>();
+        for (TeamEntity team: teams) {
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
+            List<UserResponse> users = new ArrayList<>();
+            for (String userID: userIDs) {
+                UserEntity user = userService.getStudentById(authData, userID);
+                users.add(new UserResponse(
+                        user.getID(),
+                        user.getFirstName(),
+                        user.getMiddleNames(),
+                        user.getLastName()
+                ));
+            }
+            finalMap.put(team.getTopic().getId(), users);
         }
         return finalMap;
     }
@@ -308,19 +349,25 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData) {
+    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(AuthorizationData authData) {
         List<UserInTeamEntity> userUITs = userInTeamRepository.
                 findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
 
-        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
+        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
         for (UserInTeamEntity uit: userUITs) {
             List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
-            List<UserEntity> users = new ArrayList<>();
+            List<UserResponse> users = new ArrayList<>();
             for (String userID: userIDs) {
-                users.add(userService.getStudentById(authData, userID));
+                UserEntity user = userService.getStudentById(authData, userID);
+                users.add(new UserResponse(
+                        user.getID(),
+                        user.getFirstName(),
+                        user.getMiddleNames(),
+                        user.getLastName()
+                ));
             }
             if (!finalMap.containsKey(uit.getTeamRequest().getTopic()))
-                finalMap.put(uit.getTeamRequest().getTopic(), new ArrayList<>());
+                finalMap.put(uit.getTeamRequest().getTopic().getId(), new ArrayList<>());
             finalMap.get(uit.getTeamRequest().getTopic()).add(users);
             }
         return finalMap;

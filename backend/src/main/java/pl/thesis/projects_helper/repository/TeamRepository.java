@@ -9,4 +9,5 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     List<TeamEntity> findAllByTopicCourseID(String courseID);
 
+
 }

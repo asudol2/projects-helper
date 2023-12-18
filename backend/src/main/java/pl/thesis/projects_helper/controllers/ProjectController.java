@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IProjectService;
-import pl.thesis.projects_helper.model.TopicEntity;
-import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_requests")
-    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(
+    public Map<Long, List<List<UserResponse>>> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
@@ -44,13 +43,21 @@ public class ProjectController {
         return projectService.getCourseTeamRequestsLists(authData, courseID);
     }
 
-    @GetMapping("/teams")
-    public Map<TopicEntity, List<UserEntity>> getCourseTeams(
+    @GetMapping("/course_teams")
+    public Map<Long, List<UserResponse>> getCourseTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.getCourseTeams(authData, courseID);
+    }
+
+    @GetMapping("/user_teams")
+    public Map<Long, List<UserResponse>> getUserTeams(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.getUserTeams(authData);
     }
 
     @PostMapping("/confirm")
@@ -78,7 +85,7 @@ public class ProjectController {
     }
 
     @GetMapping("/user_requests")
-    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(
+    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
