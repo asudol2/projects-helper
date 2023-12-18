@@ -66,6 +66,7 @@ public class ProjectService implements IProjectService {
     @Override
     @RequiresAuthentication
     public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
+        teamReq.userIDs().add(usosService.getUserData(authData).ID());
         if (teamReq.userIDs().size() != new HashSet<>(teamReq.userIDs()).size())
             return false;
         String term = coursesService.retrieveCurrentTerm(authData);
