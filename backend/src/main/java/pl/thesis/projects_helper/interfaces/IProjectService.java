@@ -24,4 +24,6 @@ public interface IProjectService {
     boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID);
 
     Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData);
+
+    Map<TopicEntity, List<UserEntity>> getUserTeams(AuthorizationData authData);
 }

@@ -44,13 +44,21 @@ public class ProjectController {
         return projectService.getCourseTeamRequestsLists(authData, courseID);
     }
 
-    @GetMapping("/teams")
+    @GetMapping("/course_teams")
     public Map<TopicEntity, List<UserEntity>> getCourseTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.getCourseTeams(authData, courseID);
+    }
+
+    @GetMapping("/user_teams")
+    public Map<TopicEntity, List<UserEntity>> getUserTeams(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        AuthorizationService.AuthorizationData authData =
+                authorizationService.processAuthorizationHeader(authorizationHeader);
+        return projectService.getUserTeams(authData);
     }
 
     @PostMapping("/confirm")

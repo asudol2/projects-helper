@@ -132,6 +132,31 @@ public class ProjectService implements IProjectService {
         return finalMap;
     }
 
+    @Override
+    @RequiresAuthentication
+    public Map<TopicEntity, List<UserEntity>> getUserTeams(AuthorizationData authData) {
+        List<UserInTeamEntity> UITs = userInTeamRepository
+                .findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
+
+        List<TeamEntity> teams = new ArrayList<>();
+        for (UserInTeamEntity uit: UITs) {
+            if (uit.getTeam() != null) {
+                teams.add(uit.getTeam());
+            }
+        }
+
+        Map<TopicEntity, List<UserEntity>> finalMap = new HashMap<>();
+        for (TeamEntity team: teams) {
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
+            List<UserEntity> users = new ArrayList<>();
+            for (String userID: userIDs) {
+                users.add(userService.getStudentById(authData, userID));
+            }
+            finalMap.put(team.getTopic(), users);
+        }
+        return finalMap;
+    }
+
     private void acceptProjectRequest(TopicEntity topic,
                                          List<UserInTeamEntity> relatedUITs) {
         TeamEntity addedTeam = teamRepository.save(new TeamEntity(topic.getId(), "topic"));
