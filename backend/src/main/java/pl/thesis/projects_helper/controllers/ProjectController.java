@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IProjectService;
-import pl.thesis.projects_helper.model.TopicEntity;
-import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.UserResponse;
@@ -37,7 +35,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_requests")
-    public Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequests(
+    public Map<Long, List<List<UserResponse>>> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
@@ -46,7 +44,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_teams")
-    public Map<TopicEntity, List<UserEntity>> getCourseTeams(
+    public Map<Long, List<UserResponse>> getCourseTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =

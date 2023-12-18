@@ -1,7 +1,5 @@
 package pl.thesis.projects_helper.interfaces;
 
-import pl.thesis.projects_helper.model.TopicEntity;
-import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.UserResponse;
@@ -14,9 +12,9 @@ public interface IProjectService {
 
     boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq);
 
-    Map<TopicEntity, List<List<UserEntity>>> getCourseTeamRequestsLists(AuthorizationData authData, String courseID);
+    Map<Long, List<List<UserResponse>>> getCourseTeamRequestsLists(AuthorizationData authData, String courseID);
 
-    Map<TopicEntity, List<UserEntity>> getCourseTeams(AuthorizationData authData, String courseID);
+    Map<Long, List<UserResponse>> getCourseTeams(AuthorizationData authData, String courseID);
 
     boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest);
 
