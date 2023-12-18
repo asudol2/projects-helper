@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import pl.thesis.projects_helper.model.TeamEntity;
 import pl.thesis.projects_helper.model.TeamRequestEntity;
 import pl.thesis.projects_helper.model.UserInTeamEntity;
+import pl.thesis.projects_helper.model.request.TeamRequest;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface UserInTeamRepository extends JpaRepository<UserInTeamEntity, Lo
     List<UserInTeamEntity> findUserInTeamEntitiesByUserIDIsIn(List<String> userIDs);
 
     List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequestTopicCourseID(String courseID);
+
+    List<UserInTeamEntity> findUserInTeamEntitiesByUserID(String userID);
+
+    List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequest(TeamRequestEntity teamRequest);
 }

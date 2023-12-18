@@ -49,6 +49,9 @@ public class ProjectService implements IProjectService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    USOSService usosService;
+
 
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
@@ -62,6 +65,8 @@ public class ProjectService implements IProjectService {
     @Override
     @RequiresAuthentication
     public boolean addProjectRequest(AuthorizationData authData, TeamRequest teamReq) {
+        if (teamReq.userIDs().size() != new HashSet<>(teamReq.userIDs()).size())
+            return false;
         String term = coursesService.retrieveCurrentTerm(authData);
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
@@ -256,6 +261,8 @@ public class ProjectService implements IProjectService {
         }
     }
 
+    @Override
+    @RequiresAuthentication
     public boolean naiveAutoAssignTeams(AuthorizationData authData, String courseID) {
         // map of final validated assignments including preferences from team requests
         Map<TopicEntity, List<String>> topicToUserIDsMap = prepareLocalDataForAutoAssign(authData, courseID);
@@ -273,4 +280,49 @@ public class ProjectService implements IProjectService {
                 .collect(Collectors.toSet());
         return allCourseUserIDs.equals(assignedUserIDs);
     }
+
+    @Override
+    @RequiresAuthentication
+    public boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID) {
+        Optional<TeamRequestEntity> teamRequest = teamRequestRepository.findById(teamRequestID);
+        if (teamRequest.isEmpty())
+            return false;
+        List<UserInTeamEntity> teamRequestUITs = userInTeamRepository
+                .findUserInTeamEntitiesByTeamRequest(teamRequest.get());
+        if (teamRequest.get().getTopic().getMinTeamCap() > teamRequestUITs.size() - 1) {
+            userInTeamRepository.deleteAll(teamRequestUITs);
+            teamRequestRepository.deleteById(teamRequestID);
+            return true;
+        }
+
+        String userID = usosService.getUserData(authData).ID();
+        List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserID(userID);
+        for (UserInTeamEntity uit: UITs) {
+            if (uit.getTeamRequest().equals(teamRequest.get())) {
+                userInTeamRepository.delete(uit);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @RequiresAuthentication
+    public Map<TopicEntity, List<List<UserEntity>>> getUserTeamRequests(AuthorizationData authData) {
+        List<UserInTeamEntity> userUITs = userInTeamRepository.
+                findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
+
+        Map<TopicEntity, List<List<UserEntity>>> finalMap = new HashMap<>();
+        for (UserInTeamEntity uit: userUITs) {
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
+            List<UserEntity> users = new ArrayList<>();
+            for (String userID: userIDs) {
+                users.add(userService.getStudentById(authData, userID));
+            }
+            if (!finalMap.containsKey(uit.getTeamRequest().getTopic()))
+                finalMap.put(uit.getTeamRequest().getTopic(), new ArrayList<>());
+            finalMap.get(uit.getTeamRequest().getTopic()).add(users);
+            }
+        return finalMap;
+        }
 }

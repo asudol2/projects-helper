@@ -110,7 +110,7 @@ public class USOSService implements IUSOSService {
     @Override
     @RequiresAuthentication
     public LoginResponse getUserData(AuthorizationData authData) {
-        String fields = "first_name|last_name";
+        String fields = "id|first_name|last_name";
         String url = usosBaseUrl + "users/user?fields=" + fields;
         try {
             String signedUrl = generateSignedUrl(authData, url, consumerKey, consumerSecret);
@@ -118,9 +118,10 @@ public class USOSService implements IUSOSService {
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
             Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
             });
+            String ID = (String) jsonMap.get("id");
             String firstName = (String) jsonMap.get("first_name");
             String lastName = (String) jsonMap.get("last_name");
-            return new LoginResponse(firstName, lastName);
+            return new LoginResponse(ID, firstName, lastName);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
