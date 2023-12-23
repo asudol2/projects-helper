@@ -41,6 +41,22 @@ export default function TopicPage() {
         setCreatingTeam(true)
     }
 
+    const removeTopicRequest = () => {
+        if (!token || !secret || !topic)
+            return;
+        Requests.removeTopicRequest(token, secret, topic?.courseID, topic?.title).then(res => res.res).then(data => {
+            if (data !== undefined && data) {
+                navigate(-1);
+            } else {
+                console.log("error");
+            }
+        })
+        .catch(error => {
+            navigate("/login");
+            SecurityHelper.clearStorage();
+        })
+    }
+
     const teamCreated = () => {
         setCreatingTeam(false);
     }
@@ -77,7 +93,10 @@ export default function TopicPage() {
                         </button>
                     }
                     {
-                        topic?.temporary && <button className={"btn btn-primary projects-helper-cancel-topic"}>
+                        topic?.temporary && 
+                        <button className={"btn btn-primary projects-helper-cancel-topic"}
+                                onClick={removeTopicRequest}
+                        >
                             Wycofaj propozycję tematu
                         </button>
                     }

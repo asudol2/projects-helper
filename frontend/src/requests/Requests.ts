@@ -47,7 +47,7 @@ async function fetchPost(url: string, body: any, token: string = "", secret: str
         return { res: json }
     }
     const text = await response.text();
-    return {res: text}
+    return { res: text }
 }
 
 export type ErrorResponse = {
@@ -64,7 +64,7 @@ export class Requests {
         return fetchGet("/login")
     }
     static getUserData(token: string, secret: string): Promise<GenericResponse<UserDataResponse>> {
-        return  fetchGet("/name", token, secret);
+        return fetchGet("/name", token, secret);
     }
 
     static getOAuthCredentials(): Promise<GenericResponse<TokenResponse>> {
@@ -85,27 +85,41 @@ export class Requests {
     }
 
     static addTopic(token: string, secret: string, courseId: string, title: string, description: string)
-            : Promise<GenericResponse<string>> {
+        : Promise<GenericResponse<string>> {
         return fetchPost(
             "/topics/add", { courseId: courseId, title: title, description: description }, token, secret);
     }
 
     static getCourseParticipants(token: string, secret: string, courseId: string)
-            : Promise<GenericResponse<CourseParticipant[]>> {
+        : Promise<GenericResponse<CourseParticipant[]>> {
         return fetchGet("/courses/participants?course_id=" + courseId, token, secret);
     }
 
-    static addTeamRequest(token: string, secret: string, courseId: string, 
-                                title: string, participantsIds: string[]) {
+    static addTeamRequest(token: string, secret: string, courseId: string,
+        title: string, participantsIds: string[])
+        : Promise<GenericResponse<boolean>> {
         return fetchPost(
-            "/projects/add_request", 
-            {courseID: courseId, title: title, userIDs: participantsIds},
+            "/projects/add_request",
+            { courseID: courseId, title: title, userIDs: participantsIds },
             token,
             secret
         );
     }
 
-    static getCurrentTerm(token: string, secret: string) {
+    static getCurrentTerm(token: string, secret: string): Promise<GenericResponse<string>> {
         return fetchGet("/courses/term", token, secret, false);
+    }
+
+    static removeTopicRequest(token: string, secret: string, courseId: string, title: string)
+        : Promise<GenericResponse<boolean>> {
+        return fetchPost("/topics/confirm", { courseId: courseId, title: title, confirm: false }, token, secret, false);
+    }
+
+    static getUserTeamRequests(token: string, secret: string): Promise<GenericResponse<Map<string, CourseParticipant[][]>>> {
+        return fetchGet("/projects/user_requests", token, secret);
+    }
+
+    static getUserTeams(token: string, secret: string): Promise<GenericResponse<Map<string, CourseParticipant[]>>> {
+        return fetchGet("");  //TODO dokończyć
     }
 }

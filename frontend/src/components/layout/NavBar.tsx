@@ -49,7 +49,11 @@ const NavBar = () => {
             <ul className="navbar-nav projects-helper-navbar-nav ms-auto">
 
                 {SecurityHelper.isUserLoggedIn() && <div>
-                    <li className="nav-item projects-helper-nav-item-username"><span>{userName}</span></li>
+                    <li className="nav-item projects-helper-nav-item-username">
+                        <Link className="nav-link projects-helper-navbar-link" to="/profile">
+                            <span>{userName}</span>
+                        </Link>
+                    </li>
                     <li className="nav-item projects-helper-nav-item">
                     <Link onClick={() => {
                         setToken(null);
