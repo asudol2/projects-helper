@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.response.TeamResponse;
 import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 import pl.thesis.projects_helper.utils.TeamRequestValidationResult;
@@ -84,12 +85,13 @@ public class ProjectController {
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.rejectTeamRequest(authData, teamRequestID);
     }
-
+    
     @GetMapping("/user_requests")
-    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(
+    public List<TeamResponse> getUserTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
+
         return projectService.getUserTeamRequests(authData);
     }
 }

@@ -6,6 +6,7 @@ import { TokenResponse } from "../model/TokenRespone";
 import { UserDataResponse } from "../model/UserDataResponse";
 import { Topic } from "../model/Topic";
 import { CourseParticipant } from "../model/CourseParticipant";
+import { TeamRequestResponse } from "../model/TeamRequstResponse";
 
 async function fetchGet(url: string, token: string = "", secret: string = "", jsonResponse: boolean = true) {
     const concatenatedValue = `${token}:${secret}`;
@@ -115,7 +116,7 @@ export class Requests {
         return fetchPost("/topics/confirm", { courseId: courseId, title: title, confirm: false }, token, secret, false);
     }
 
-    static getUserTeamRequests(token: string, secret: string): Promise<GenericResponse<Map<string, CourseParticipant[][]>>> {
+    static getUserTeamRequests(token: string, secret: string): Promise<GenericResponse<TeamRequestResponse[]>> {
         return fetchGet("/projects/user_requests", token, secret);
     }
 

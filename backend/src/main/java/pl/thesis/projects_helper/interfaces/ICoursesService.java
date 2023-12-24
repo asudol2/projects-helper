@@ -5,6 +5,7 @@ import org.springframework.data.util.Pair;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
+import pl.thesis.projects_helper.utils.RequiresAuthentication;
 
 import java.util.List;
 import java.util.Map;
@@ -35,4 +36,6 @@ public interface ICoursesService {
     List<ParticipantResponse> retrieveCurrentCourseLecturers(AuthorizationData authData, String courseID);
 
     List<ParticipantResponse> retrieveCurrentCourseParticipants(AuthorizationData authData, String courseID);
+
+    String getCourseNameById(AuthorizationData authData, String courseId);
 }

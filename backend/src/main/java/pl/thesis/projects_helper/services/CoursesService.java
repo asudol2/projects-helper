@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
 import pl.thesis.projects_helper.model.CourseEntity;
+import pl.thesis.projects_helper.model.CourseName;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
@@ -204,6 +205,16 @@ public class CoursesService implements ICoursesService {
         JsonNode usosJson = requestCoursesEndpoint(authData, "course_edition", args);
         List<Map<String, String>> participantsMapsList = mapper.convertValue(usosJson.get("participants"), List.class);
         return mapUsosUsersMapsListToCourseParticipantResponseList(participantsMapsList);
+    }
+
+    @Override
+    @RequiresAuthentication
+    public String getCourseNameById(AuthorizationData authData, String courseId) {
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("course_id", List.of(courseId));
+        args.put("fields", List.of("name"));
+        JsonNode usosJson = requestCoursesEndpoint(authData, "course", args);
+        return mapper.convertValue(usosJson.get("name"), CourseName.class).pl();
     }
 
     private List<ParticipantResponse> mapUsosUsersMapsListToCourseParticipantResponseList(

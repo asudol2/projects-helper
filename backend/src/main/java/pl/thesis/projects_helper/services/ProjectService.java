@@ -11,6 +11,7 @@ import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
+import pl.thesis.projects_helper.model.response.TeamResponse;
 import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
@@ -382,11 +383,10 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(AuthorizationData authData) {
+    public List<TeamResponse> getUserTeamRequests(AuthorizationData authData) {
         List<UserInTeamEntity> userUITs = userInTeamRepository.
                 findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
-
-        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
+        List<TeamResponse> result = new ArrayList<>();
         for (UserInTeamEntity uit: userUITs) {
             List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
             List<UserResponse> users = new ArrayList<>();
@@ -399,10 +399,13 @@ public class ProjectService implements IProjectService {
                         user.getLastName()
                 ));
             }
-            if (!finalMap.containsKey(uit.getTeamRequest().getTopic().getId()))
-                finalMap.put(uit.getTeamRequest().getTopic().getId(), new ArrayList<>());
-            finalMap.get(uit.getTeamRequest().getTopic().getId()).add(users);
-            }
-        return finalMap;
+            result.add(new TeamResponse(
+                            uit.getTeamRequest().getTopic().getId(),
+                            uit.getTeamRequest().getTopic().getTitle(),
+                            coursesService.getCourseNameById(authData, uit.getTeamRequest().getTopic().getCourseID()),
+                            users
+            ));
         }
+        return result;
+    }
 }
