@@ -98,7 +98,7 @@ export class Requests {
 
     static addTeamRequest(token: string, secret: string, courseId: string,
         title: string, participantsIds: string[])
-        : Promise<GenericResponse<boolean>> {
+        : Promise<GenericResponse<string>> {
         return fetchPost(
             "/projects/add_request",
             { courseID: courseId, title: title, userIDs: participantsIds },
@@ -122,5 +122,9 @@ export class Requests {
 
     static getUserTeams(token: string, secret: string): Promise<GenericResponse<Map<string, CourseParticipant[]>>> {
         return fetchGet("");  //TODO dokończyć
+    }
+
+    static rejectTeamRequest(token: string, secret: string, teamRequestId: number) : Promise<GenericResponse<boolean>> {
+        return fetchPost("/projects/reject", teamRequestId, token, secret, false);
     }
 }

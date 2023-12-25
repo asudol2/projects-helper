@@ -12,8 +12,12 @@
     white-space: pre-line;
 }
 
-.projects-helper-choose-topic, .projects-helper-cancel-topic{
-    margin: 50px 5px;
+.projects-helper-choose-topic {
+    margin: 10px 0;
+}
+
+.projects-helper-cancel-topic{
+    margin: 10px 5px;
 }
 
 .projects-helper-temporary-topic {

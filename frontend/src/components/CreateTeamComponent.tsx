@@ -29,7 +29,7 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
     const [participants, setParticipants] = useState<CourseParticipant[]>([]);
     const [rows, setRows] = useState<ParticipantRow[]>([{ index: 0, value: "", id: "", selected: false }]);
     const [searchResults, setSearchResults] = useState<CourseParticipant[]>([]);
-    const [errorOccurred, setErrorOccured] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const handleChange = (id: number, value: string) => {
         const updatedRows = rows.map(row => (row.index === id ? { ...row, value, selected: false } : row));
@@ -49,11 +49,11 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
             return;
         }
         Requests.addTeamRequest(token, secret, props.courseId, props.title, participantsIds).then(res => res.res).then(data => {
-            if (data) {
+            if (data === "SUCCESS") {
                 props.callback();
-                setErrorOccured(false);
-            } else {
-                setErrorOccured(true);
+                setErrorMessage("");
+            } else if (data !== undefined) {
+                setErrorMessage(data);
             }
         })
         .catch(error => {
@@ -66,6 +66,9 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
         let localSearchResults: CourseParticipant[] = [];
         const toSearch = value.toLowerCase();
         for (const participant of participants) {
+            if (SecurityHelper.getUserId() === participant.ID) {
+                continue;
+            }
             if (participant.firstName.toLowerCase().includes(toSearch) ||
                     participant.lastName.toLowerCase().includes(toSearch) ||
                     (participant.firstName.toLowerCase() + " " + participant.lastName.toLowerCase()).includes(toSearch) ||
@@ -92,6 +95,14 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
         setRows(updatedRows);
     }
 
+    const errorMessagesMap: Map<string, string> = new Map([
+        ["NONUNIQUE", "Jedna osoba nie może kilkukrotnie w danym zespole."],
+        ["NO_TOPIC", "Wystąpił błąd. Ten temat nie istnieje."],
+        ["TEMP_TOPIC", "Wystąpił błąd. Ten temat nie został jeszcze zaakceptowany."],
+        ["SIZE_ERR", "Liczba członków musi się mieścić w granicach podanych wyżej. Pamiętaj o sobie :)"],
+        ["SAME_TEAM_REQ", "Zespół o dokładnie tym samym składzie został już zgłoszony na ten temat."],
+      ]);
+
 
     useEffect(() => {
         if (token && secret) {
@@ -109,7 +120,7 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
             });
         }
 
-    }, [token, setToken, secret, setSecret]);
+    }, [token, setToken, secret, setSecret, props.courseId, navigate]);
 
     return (
         <div className="container-fluid projects-helper-create-team">
@@ -147,13 +158,14 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
                     </div>
                 ))}
                 {
-                    errorOccurred &&
-                    <div className="projects-helper-add-create-team-error">Wystąpił błąd podczas tworzenia zespołu.</div>
+                    errorMessage !== "" &&
+                    <div className="projects-helper-add-create-team-error">{errorMessagesMap.get(errorMessage)}</div>
                 }
                 <button type="submit" className="btn btn-primary">Stwórz zespół</button>
                 <button type="button" onClick={handleAddRow} className="btn">
                     Dodaj osobę
                 </button>
+                <button type="button" onClick={() => props.callback()} className="btn">Anuluj</button>
             </form>
         </div>
     )

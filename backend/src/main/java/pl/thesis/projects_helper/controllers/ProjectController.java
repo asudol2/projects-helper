@@ -80,7 +80,7 @@ public class ProjectController {
 
     @PostMapping("/reject")
     public boolean rejectTeamRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                     @RequestParam("team_request_id") Long teamRequestID) {
+                                     @RequestBody Long teamRequestID) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
         return projectService.rejectTeamRequest(authData, teamRequestID);

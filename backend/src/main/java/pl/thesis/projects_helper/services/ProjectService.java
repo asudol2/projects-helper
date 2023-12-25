@@ -66,11 +66,11 @@ public class ProjectService implements IProjectService {
     }
 
     private boolean sameTeamRequestExists(TeamRequest teamReq, String term) {
+        //TODO ta funkcja po prostu nie robi tego co powinna
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
         if (optTopic.isEmpty())
             return false;
-
         List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequestTopicID(optTopic.get().getId());
         List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(userIDs);
         UITs.removeIf(uit -> uit.getTeamRequest() == null);
@@ -107,7 +107,7 @@ public class ProjectService implements IProjectService {
                 teamReq.title(),
                 updatedUserIDs
         );
-        TeamRequestValidationResult validationResult = validateTeamRequest(authData, teamReq);
+        TeamRequestValidationResult validationResult = validateTeamRequest(authData, updatedTeamRequest);
         if (validationResult != TeamRequestValidationResult.SUCCESS)
             return validationResult;
 
@@ -400,6 +400,7 @@ public class ProjectService implements IProjectService {
                 ));
             }
             result.add(new TeamResponse(
+                            uit.getTeamRequest().getId(),
                             uit.getTeamRequest().getTopic().getId(),
                             uit.getTeamRequest().getTopic().getTitle(),
                             coursesService.getCourseNameById(authData, uit.getTeamRequest().getTopic().getCourseID()),

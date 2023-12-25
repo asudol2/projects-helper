@@ -90,5 +90,16 @@
 }
 
 .extended {
-    max-height: 100vh;
+    max-height: 150vh;
 } 
+
+.projects-helper-team-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.projects-helper-team-participants-container {
+    flex: 1;
+}

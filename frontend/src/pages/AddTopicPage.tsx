@@ -44,7 +44,6 @@ export default function AddTopicPage() {
                     navigate(-1);
                 } else {
                     setValidationError(String(data));
-                    console.log("Wystąpił błąd: "+data);
                 }
             })
             .catch(error => {

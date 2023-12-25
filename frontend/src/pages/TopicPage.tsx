@@ -7,6 +7,8 @@ import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { CreateTeamComponent } from "../components/CreateTeamComponent";
+import { TopicTeamsComponent } from "../components/TopicTeamsComponent";
+import { TeamRequestResponse } from "../model/TeamRequstResponse";
 import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/topics.css";
@@ -17,6 +19,7 @@ export default function TopicPage() {
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [topic, setTopic] = useState<Topic | null>(null);
     const [creatingTeam, setCreatingTeam] = useState<boolean>(false);
+    const [teamRequests, setTeamRequests] = useState<TeamRequestResponse[]>([]);
     const navigate = useNavigate();
 
 
@@ -32,6 +35,7 @@ export default function TopicPage() {
                     SecurityHelper.clearStorage();
                     navigate("/login");
                 });
+                getTopicTeamRequests(token, secret);
             }
         }
 
@@ -57,8 +61,28 @@ export default function TopicPage() {
         })
     }
 
+    const getTopicTeamRequests = (token: string, secret: string) => {
+        Requests.getUserTeamRequests(token, secret).then(res => res.res).then(data => {
+            if (data !== undefined) {
+                const result = data.filter(item => String(item.topicId) == topicId);
+                setTeamRequests(result);
+            } else {
+                SecurityHelper.clearStorage();
+                navigate("/login");
+            }
+        })
+        .catch(err => {
+            SecurityHelper.clearStorage();
+            navigate("/login");
+        });
+    }
+
     const teamCreated = () => {
         setCreatingTeam(false);
+        if (token && secret) {
+            setTeamRequests([]);
+            getTopicTeamRequests(token, secret);
+        }
     }
 
 
@@ -82,20 +106,27 @@ export default function TopicPage() {
                         {topic?.maxTeamCap}
                     </div>
                     {creatingTeam &&
-                        <CreateTeamComponent courseId={String(topic?.courseID)} title={String(topic?.title)} 
-                            callback={teamCreated}/>}
-                    { !creatingTeam &&
+                        <CreateTeamComponent courseId={String(topic?.courseID)} title={String(topic?.title)}
+                            callback={teamCreated} />}
+                    {!creatingTeam && teamRequests.length > 0 &&
+                            <TopicTeamsComponent
+                                key={0}
+                                teamRequests={teamRequests}
+                                title={"Propozycje zespołów na ten temat, których członkiem jesteś: ("+teamRequests.length+")"}
+                            />
+                    }
+                    {!creatingTeam &&
                         <button
-                            className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled': ''}`}
+                            className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled' : ''}`}
                             onClick={createTeam}
                         >
-                            Stwórz zespół do realizacji tego tematu
+                            Stwórz nowy zespół do realizacji tego tematu
                         </button>
                     }
                     {
-                        topic?.temporary && 
+                        topic?.temporary &&
                         <button className={"btn btn-primary projects-helper-cancel-topic"}
-                                onClick={removeTopicRequest}
+                            onClick={removeTopicRequest}
                         >
                             Wycofaj propozycję tematu
                         </button>

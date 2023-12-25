@@ -55,8 +55,8 @@ export default function UserPage() {
                     }
                     <p>Niepotwierdzone zespoły projektowe:</p>
                     {
-                        teamRequests != null && Array.from(teamRequests.entries()).map(([index, teamRequests])=> (
-                            <TopicTeamsComponent key={index} teamRequests={teamRequests}/>
+                        teamRequests != null && Array.from(teamRequests.entries()).map(([index, groupedTeamRequests])=> (
+                            <TopicTeamsComponent key={index} teamRequests={groupedTeamRequests} />
                         ))
                     }
                 </div>

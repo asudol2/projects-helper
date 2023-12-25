@@ -26,10 +26,12 @@ const NavBar = () => {
             });
         } else {
             Requests.getUserData(token, secret).then(res => res.res).then(data => {
-                if (data !== undefined)
-                    setUsername(data?.firstName + " " + data?.lastName)
-                else
+                if (data !== undefined) {
+                    setUsername(data?.firstName + " " + data?.lastName);
+                    SecurityHelper.saveUserId(data.ID);
+                } else {
                     navigate("/login");
+                }
             })
             .catch(error => {
                 SecurityHelper.clearStorage();
