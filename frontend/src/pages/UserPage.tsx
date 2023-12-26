@@ -14,7 +14,9 @@ import "../style/shared.css"
 export default function UserPage() {
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [teamRequests, setTeamRequests] = useState<Map<number, TeamRequestResponse[]>>(new Map());
-    const [loadingTeamRequests, setLoadingTemRequests] = useState<boolean>(false);
+    const [teams, setTeams] = useState<Map<number, TeamRequestResponse[]>>(new Map()); //TODO weryfikacja tego
+    const [loadingTeamRequests, setLoadingTeamRequests] = useState<boolean>(false);
+    const [loadingTeams, setLoadingTeams] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const groupTeamsByTopicId = (teams: TeamRequestResponse[]) => {
@@ -28,7 +30,7 @@ export default function UserPage() {
     };
 
     const loadTemRequests = (token: string, secret: string) => {
-        setLoadingTemRequests(true);
+        setLoadingTeamRequests(true);
         Requests.getUserTeamRequests(token, secret).then(res => res.res).then(data => {
             if (data !== undefined) {
                 setTeamRequests(groupTeamsByTopicId(data));
@@ -42,7 +44,7 @@ export default function UserPage() {
             navigate("/login");
         })
         .finally(() => {
-            setLoadingTemRequests(false);
+            setLoadingTeamRequests(false);
         });
     };
 
@@ -61,11 +63,19 @@ export default function UserPage() {
                 <div className="App container-fluid projects-helper-user-page">
                     <p>Zespoły projektowe w których uczestniczysz:</p>
                     {
+                        !loadingTeams && teams.size == 0 &&
+                        <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego zespołu.</p>
+                    }
+                    {
                     }
                     <p>Niepotwierdzone zespoły projektowe:</p>
                     {
                         loadingTeamRequests &&
                         <LoadingComponent text="Ładowanie niepotwierdzonych zespołów"/>
+                    }
+                    {
+                        !loadingTeamRequests && teamRequests.size == 0 &&
+                        <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego niepotwierdzonego zespołu.</p>
                     }
                     {
                         teamRequests != null && Array.from(teamRequests.entries()).map(([index, groupedTeamRequests])=> (
