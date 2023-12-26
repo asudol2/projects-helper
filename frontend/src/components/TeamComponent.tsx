@@ -9,9 +9,11 @@ interface TeamComponentProps {
     teamRequest: TeamRequestResponse;
     displayCount: boolean;
     confirmed?: boolean | null;
+    onDestroy: () => void;
 }
 
-const leaveTeam = (teamRequestId: number, token: string | null, secret: string | null, event: React.MouseEvent<HTMLButtonElement>) => {
+const leaveTeam = (teamRequestId: number, token: string | null, secret: string | null, 
+                    callback: () => void, event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     if (token && secret) {
         if (!window.confirm("Czy na pewno chcesz opuścić zespół?")) {
@@ -19,7 +21,7 @@ const leaveTeam = (teamRequestId: number, token: string | null, secret: string |
         }
         Requests.rejectTeamRequest(token, secret, teamRequestId).then(res => res.res).then(data => {
             if (data) {
-                console.log("opuszczono zespół");  //TODO coś z tym trzeba zrobić
+                callback();
             }
         })
         .catch(err => {
@@ -51,7 +53,7 @@ export function TeamComponent(props: TeamComponentProps) {
                 }
                 { !props.confirmed &&
                     <button className="btn btn-primary projects-helper-leave-team"
-                        onClick={(e) => leaveTeam(props.teamRequest.teamRequestId, token, secret, e)}
+                        onClick={(e) => leaveTeam(props.teamRequest.teamRequestId, token, secret, props.onDestroy, e)}
                     >
                         Opuść zespół
                     </button>

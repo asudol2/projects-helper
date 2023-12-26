@@ -112,7 +112,7 @@ export default function TopicPage() {
                             <TopicTeamsComponent
                                 key={0}
                                 teamRequests={teamRequests}
-                                title={"Propozycje zespołów na ten temat, których członkiem jesteś: ("+teamRequests.length+")"}
+                                title={"Propozycje zespołów na ten temat, których członkiem jesteś:"}
                             />
                     }
                     {!creatingTeam &&

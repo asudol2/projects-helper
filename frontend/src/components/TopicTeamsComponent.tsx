@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TeamRequestResponse } from "../model/TeamRequstResponse";
 import { TeamComponent } from "./TeamComponent";
 import "../style/teams.css";
@@ -12,9 +12,20 @@ interface TopicTeamsComponentProps {
 
 export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
     const [isExtended, setIsExtended] = useState<boolean>(false);
+    const [teamRequests, setTeamRequests] = useState<TeamRequestResponse[]>([]);
+
+    useEffect(() => {
+        setTeamRequests(props.teamRequests);
+    }, []);
 
     const handleClick = () => {
         setIsExtended((prevIsExtended) => !prevIsExtended);
+    };
+
+    const handleRemove = (index: number) => {
+        const newRequests = [...props.teamRequests];
+        newRequests.splice(index, 1);
+        setTeamRequests(newRequests);
     };
 
     return (
@@ -25,26 +36,27 @@ export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
             { props.title == null &&
                 <div className="projects-helper-teams-topic-title">
                     Tytuł: {props.teamRequests[0].topicTitle}, przedmiot: <span className="projects-helper-teams-course-name">{
-                        props.teamRequests[0].courseName}:
+                        props.teamRequests[0].courseName}: ({teamRequests.length})
                     </span>
                 </div>
             }
             { props.title != null &&
                 <div className="projects-helper-teams-topic-title">
-                    {props.title}
+                    {props.title} ({teamRequests.length})
                 </div>
             }
             <div
                 className={`projects-helper-topic-team-details ${isExtended ? 'extended' : 'compressed'}`}
             >
                 {
-                    props.teamRequests.map((teamRequest, index) => (
+                    teamRequests.map((teamRequest, index) => (
                         <TeamComponent
                             index={index}
                             key={index}
                             teamRequest={teamRequest}
                             displayCount={props.teamRequests.length > 1}
                             confirmed={props.confirmed}
+                            onDestroy={() => {handleRemove(index)}}
                         />
                     ))
                 }
