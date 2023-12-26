@@ -120,8 +120,15 @@ export class Requests {
         return fetchGet("/projects/user_requests", token, secret);
     }
 
-    static getUserTeams(token: string, secret: string): Promise<GenericResponse<Map<string, CourseParticipant[]>>> {
-        return fetchGet("");  //TODO dokończyć
+    static getUserTeams(token: string, secret: string): Promise<GenericResponse<TeamRequestResponse[]>> {
+        return fetchGet("/projects/user_teams", token, secret);
+    }
+
+    static getUserTeamsOrTeamRequests(token: string, secret: string, teamRequests: boolean): Promise<GenericResponse<TeamRequestResponse[]>> {
+        if (teamRequests) {
+            return this.getUserTeamRequests(token, secret);
+        }
+        return this.getUserTeams(token, secret);
     }
 
     static rejectTeamRequest(token: string, secret: string, teamRequestId: number) : Promise<GenericResponse<boolean>> {

@@ -55,7 +55,7 @@ public class ProjectController {
     }
 
     @GetMapping("/user_teams")
-    public Map<Long, List<UserResponse>> getUserTeams(
+    public List<TeamResponse> getUserTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);

@@ -29,11 +29,17 @@ export default function UserPage() {
         return result;
     };
 
-    const loadTemRequests = (token: string, secret: string) => {
-        setLoadingTeamRequests(true);
-        Requests.getUserTeamRequests(token, secret).then(res => res.res).then(data => {
+    const loadTeamOrTeamRequests = (
+        token: string,
+        secret: string,
+        loadRequests: boolean,
+        loadingCallback: (arg: boolean) => void, 
+        resultCallback: (arg: Map<number, TeamRequestResponse[]>) => void
+    ) => {
+        loadingCallback(true);
+        Requests.getUserTeamsOrTeamRequests(token, secret, loadRequests).then(res => res.res).then(data => {
             if (data !== undefined) {
-                setTeamRequests(groupTeamsByTopicId(data));
+                resultCallback(groupTeamsByTopicId(data));
             } else {
                 SecurityHelper.clearStorage();
                 navigate("/login");
@@ -44,13 +50,22 @@ export default function UserPage() {
             navigate("/login");
         })
         .finally(() => {
-            setLoadingTeamRequests(false);
+            loadingCallback(false);
         });
+    };
+
+    const loadTeamRequests = (token: string, secret: string) => {
+        loadTeamOrTeamRequests(token, secret, true, setLoadingTeamRequests, setTeamRequests);
+    };
+
+    const loadTeams = (token: string, secret: string) => {
+        loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
     };
 
     useEffect(() => {
         if (token && secret) {
-            loadTemRequests(token, secret);
+            loadTeams(token, secret);
+            loadTeamRequests(token, secret);
         }
     }, [token, setToken, secret, setSecret]);
 
@@ -61,12 +76,19 @@ export default function UserPage() {
             </Helmet>
             <Content>
                 <div className="App container-fluid projects-helper-user-page">
-                    <p>Zespoły projektowe w których uczestniczysz:</p>
+                    <p>Zespoły projektowe, których jesteś członkiem:</p>
+                    {
+                        loadingTeams &&
+                        <LoadingComponent text="Ładowanie zespołów, których jesteś członkiem"/>
+                    }
                     {
                         !loadingTeams && teams.size == 0 &&
                         <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego zespołu.</p>
                     }
                     {
+                        teams != null && Array.from(teams.entries()).map(([index, groupedTeamRequests])=> (
+                            <TopicTeamsComponent key={index} teamRequests={groupedTeamRequests} confirmed={true}/>
+                        ))
                     }
                     <p>Niepotwierdzone zespoły projektowe:</p>
                     {

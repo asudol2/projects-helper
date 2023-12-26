@@ -1,7 +1,7 @@
 import { CourseParticipant } from "../model/CourseParticipant";
 
 export type TeamRequestResponse = {
-    teamRequestId: number;
+    teamId: number;
     topicId: number;
     topicTitle: string;
     courseName: string;

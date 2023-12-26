@@ -53,7 +53,7 @@ export function TeamComponent(props: TeamComponentProps) {
                 }
                 { !props.confirmed &&
                     <button className="btn btn-primary projects-helper-leave-team"
-                        onClick={(e) => leaveTeam(props.teamRequest.teamRequestId, token, secret, props.onDestroy, e)}
+                        onClick={(e) => leaveTeam(props.teamRequest.teamId, token, secret, props.onDestroy, e)}
                     >
                         Opuść zespół
                     </button>

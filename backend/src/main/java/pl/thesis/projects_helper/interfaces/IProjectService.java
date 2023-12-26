@@ -26,5 +26,5 @@ public interface IProjectService {
 
     List<TeamResponse> getUserTeamRequests(AuthorizationData authData);
 
-    Map<Long, List<UserResponse>> getUserTeams(AuthorizationData authData);
+    List<TeamResponse> getUserTeams(AuthorizationData authData);
 }
