@@ -31,13 +31,15 @@ export default function TopicPage() {
                 Requests.getTopicById(token, secret, topicId).then(res => res.res).then(data => {
                     if (data !== undefined) {
                         setTopic(data);
+                        if (!data.temporary) {
+                            getTopicTeamRequests(token, secret);
+                        }
                     }
                 })
                 .catch(error => {
                     SecurityHelper.clearStorage();
                     navigate("/login");
                 });
-                getTopicTeamRequests(token, secret);
             }
         }
 
@@ -85,7 +87,7 @@ export default function TopicPage() {
 
     const teamCreated = () => {
         setCreatingTeam(false);
-        if (token && secret) {
+        if (token && secret && !topic?.temporary) {
             setTeamRequests([]);
             getTopicTeamRequests(token, secret);
         }
