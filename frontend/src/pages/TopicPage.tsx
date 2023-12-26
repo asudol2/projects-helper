@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import { CreateTeamComponent } from "../components/CreateTeamComponent";
 import { TopicTeamsComponent } from "../components/TopicTeamsComponent";
 import { TeamRequestResponse } from "../model/TeamRequstResponse";
+import { LoadingComponent } from "../components/LoadingComponent";
 import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/topics.css";
@@ -19,6 +20,7 @@ export default function TopicPage() {
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [topic, setTopic] = useState<Topic | null>(null);
     const [creatingTeam, setCreatingTeam] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [teamRequests, setTeamRequests] = useState<TeamRequestResponse[]>([]);
     const navigate = useNavigate();
 
@@ -62,6 +64,7 @@ export default function TopicPage() {
     }
 
     const getTopicTeamRequests = (token: string, secret: string) => {
+        setLoading(true);
         Requests.getUserTeamRequests(token, secret).then(res => res.res).then(data => {
             if (data !== undefined) {
                 const result = data.filter(item => String(item.topicId) == topicId);
@@ -74,6 +77,9 @@ export default function TopicPage() {
         .catch(err => {
             SecurityHelper.clearStorage();
             navigate("/login");
+        })
+        .finally(() => {
+            setLoading(false);
         });
     }
 
@@ -108,6 +114,9 @@ export default function TopicPage() {
                     {creatingTeam &&
                         <CreateTeamComponent courseId={String(topic?.courseID)} title={String(topic?.title)}
                             callback={teamCreated} />}
+                    {   loading &&
+                        <LoadingComponent text="Ładowanie zespołów"/>
+                    }
                     {!creatingTeam && teamRequests.length > 0 &&
                             <TopicTeamsComponent
                                 key={0}
