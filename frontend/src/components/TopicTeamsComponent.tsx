@@ -29,38 +29,42 @@ export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
     };
 
     return (
-        <div
-            className="container-fluid projects-helper-topic-teams"
-            onClick={handleClick}
-        >
-            { props.title == null &&
-                <div className="projects-helper-teams-topic-title">
-                    Tytuł: {props.teamRequests[0].topicTitle}, przedmiot: <span className="projects-helper-teams-course-name">{
-                        props.teamRequests[0].courseName}: ({teamRequests.length})
-                    </span>
-                </div>
-            }
-            { props.title != null &&
-                <div className="projects-helper-teams-topic-title">
-                    {props.title} ({teamRequests.length})
-                </div>
-            }
+        <div>
+        { teamRequests.length > 0 &&
             <div
-                className={`projects-helper-topic-team-details ${isExtended ? 'extended' : 'compressed'}`}
+                className="container-fluid projects-helper-topic-teams"
+                onClick={handleClick}
             >
-                {
-                    teamRequests.map((teamRequest, index) => (
-                        <TeamComponent
-                            index={index}
-                            key={index}
-                            teamRequest={teamRequest}
-                            displayCount={props.teamRequests.length > 1}
-                            confirmed={props.confirmed}
-                            onDestroy={() => {handleRemove(index)}}
-                        />
-                    ))
+                { props.title == null &&
+                    <div className="projects-helper-teams-topic-title">
+                        Tytuł: {props.teamRequests[0].topicTitle}, przedmiot: <span className="projects-helper-teams-course-name">{
+                            props.teamRequests[0].courseName}: ({teamRequests.length})
+                        </span>
+                    </div>
                 }
+                { props.title != null &&
+                    <div className="projects-helper-teams-topic-title">
+                        {props.title} ({teamRequests.length})
+                    </div>
+                }
+                <div
+                    className={`projects-helper-topic-team-details ${isExtended ? 'extended' : 'compressed'}`}
+                >
+                    {
+                        teamRequests.map((teamRequest, index) => (
+                            <TeamComponent
+                                index={index}
+                                key={index}
+                                teamRequest={teamRequest}
+                                displayCount={props.teamRequests.length > 1}
+                                confirmed={props.confirmed}
+                                onDestroy={() => {handleRemove(index)}}
+                            />
+                        ))
+                    }
+                </div>
             </div>
+        }
         </div>
     )
 }
