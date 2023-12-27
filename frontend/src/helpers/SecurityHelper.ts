@@ -5,6 +5,7 @@ export class SecurityHelper {
     static loginTokenKey = "loginToken";
     static usosTokenKey = "usosToken";
     static usosSecretKey = "usosSecret";
+    static userIdKey = "userIdKey";
 
     static saveLoginToken(token: string) {
         secureLocalStorage.setItem(SecurityHelper.loginTokenKey, token);
@@ -13,6 +14,10 @@ export class SecurityHelper {
     static saveUsosTokens(token: string, secret: string) {
         secureLocalStorage.setItem(SecurityHelper.usosTokenKey, token);
         secureLocalStorage.setItem(SecurityHelper.usosSecretKey, secret);
+    }
+
+    static saveUserId(id: string) {
+        secureLocalStorage.setItem(SecurityHelper.userIdKey, id);
     }
 
     static getStringValueOrNull(key: string): string | null {
@@ -32,6 +37,10 @@ export class SecurityHelper {
 
     static getUsosSecret(): string | null {
         return SecurityHelper.getStringValueOrNull(SecurityHelper.usosSecretKey);
+    }
+
+    static getUserId(): string | null {
+        return SecurityHelper.getStringValueOrNull(SecurityHelper.userIdKey);
     }
 
     static clearStorage() {

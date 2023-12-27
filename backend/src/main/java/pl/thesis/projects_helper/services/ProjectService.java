@@ -11,6 +11,7 @@ import pl.thesis.projects_helper.model.*;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
+import pl.thesis.projects_helper.model.response.TeamResponse;
 import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.repository.TeamRepository;
 import pl.thesis.projects_helper.repository.TeamRequestRepository;
@@ -65,11 +66,11 @@ public class ProjectService implements IProjectService {
     }
 
     private boolean sameTeamRequestExists(TeamRequest teamReq, String term) {
+        //TODO ta funkcja po prostu nie robi tego co powinna
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
         if (optTopic.isEmpty())
             return false;
-
         List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequestTopicID(optTopic.get().getId());
         List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(userIDs);
         UITs.removeIf(uit -> uit.getTeamRequest() == null);
@@ -106,7 +107,7 @@ public class ProjectService implements IProjectService {
                 teamReq.title(),
                 updatedUserIDs
         );
-        TeamRequestValidationResult validationResult = validateTeamRequest(authData, teamReq);
+        TeamRequestValidationResult validationResult = validateTeamRequest(authData, updatedTeamRequest);
         if (validationResult != TeamRequestValidationResult.SUCCESS)
             return validationResult;
 
@@ -175,22 +176,41 @@ public class ProjectService implements IProjectService {
         return finalMap;
     }
 
-    @Override
-    @RequiresAuthentication
-    public Map<Long, List<UserResponse>> getUserTeams(AuthorizationData authData) {
-        List<UserInTeamEntity> UITs = userInTeamRepository
-                .findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
-
-        List<TeamEntity> teams = new ArrayList<>();
-        for (UserInTeamEntity uit: UITs) {
-            if (uit.getTeam() != null) {
-                teams.add(uit.getTeam());
-            }
+    private TeamResponse createTeamResponse(UserInTeamEntity uit, AuthorizationData authData,
+                                            List<UserResponse> users, boolean teamRequests) {
+        if (teamRequests) {
+            return new TeamResponse(
+                    uit.getTeamRequest().getId(),
+                    uit.getTeamRequest().getTopic().getId(),
+                    uit.getTeamRequest().getTopic().getTitle(),
+                    coursesService.getCourseNameById(authData, uit.getTeamRequest().getTopic().getCourseID()),
+                    users
+            );
         }
+        return new TeamResponse(
+                uit.getTeam().getId(),
+                uit.getTeam().getTopic().getId(),
+                uit.getTeam().getTopic().getTitle(),
+                coursesService.getCourseNameById(authData, uit.getTeam().getTopic().getCourseID()),
+                users
+        );
+    }
 
-        Map<Long, List<UserResponse>> finalMap = new HashMap<>();
-        for (TeamEntity team: teams) {
-            List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
+    private List<TeamResponse> getUserTeamsOrTeamRequests(AuthorizationData authData, boolean teamRequests) {
+        List<UserInTeamEntity> userUITs;
+        if (teamRequests) {
+            userUITs = userInTeamRepository.findUserInTeamEntitiesByUserIDAndTeamRequestIsNotNull(usosService.getUserData(authData).ID());
+        } else {
+            userUITs = userInTeamRepository.findUserInTeamEntitiesByUserIDAndTeamIsNotNull(usosService.getUserData(authData).ID());
+        }
+        List<TeamResponse> result = new ArrayList<>();
+        for (UserInTeamEntity uit: userUITs) {
+            List<String> userIDs;
+            if (teamRequests) {
+                userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
+            } else {
+                userIDs = userInTeamRepository.findUserIDsByTeam(uit.getTeam());
+            }
             List<UserResponse> users = new ArrayList<>();
             for (String userID: userIDs) {
                 UserEntity user = userService.getStudentById(authData, userID);
@@ -201,9 +221,15 @@ public class ProjectService implements IProjectService {
                         user.getLastName()
                 ));
             }
-            finalMap.put(team.getTopic().getId(), users);
+            result.add(createTeamResponse(uit, authData, users, teamRequests));
         }
-        return finalMap;
+        return result;
+    }
+
+    @Override
+    @RequiresAuthentication
+    public List<TeamResponse> getUserTeams(AuthorizationData authData) {
+        return getUserTeamsOrTeamRequests(authData, false);
     }
 
     private void acceptProjectRequest(TopicEntity topic,
@@ -382,27 +408,7 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<Long, List<List<UserResponse>>> getUserTeamRequests(AuthorizationData authData) {
-        List<UserInTeamEntity> userUITs = userInTeamRepository.
-                findUserInTeamEntitiesByUserID(usosService.getUserData(authData).ID());
-
-        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
-        for (UserInTeamEntity uit: userUITs) {
-            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(uit.getTeamRequest());
-            List<UserResponse> users = new ArrayList<>();
-            for (String userID: userIDs) {
-                UserEntity user = userService.getStudentById(authData, userID);
-                users.add(new UserResponse(
-                        user.getID(),
-                        user.getFirstName(),
-                        user.getMiddleNames(),
-                        user.getLastName()
-                ));
-            }
-            if (!finalMap.containsKey(uit.getTeamRequest().getTopic().getId()))
-                finalMap.put(uit.getTeamRequest().getTopic().getId(), new ArrayList<>());
-            finalMap.get(uit.getTeamRequest().getTopic().getId()).add(users);
-            }
-        return finalMap;
-        }
+    public List<TeamResponse> getUserTeamRequests(AuthorizationData authData) {
+        return getUserTeamsOrTeamRequests(authData, true);
+    }
 }

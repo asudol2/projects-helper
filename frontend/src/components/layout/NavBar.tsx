@@ -26,10 +26,12 @@ const NavBar = () => {
             });
         } else {
             Requests.getUserData(token, secret).then(res => res.res).then(data => {
-                if (data !== undefined)
-                    setUsername(data?.firstName + " " + data?.lastName)
-                else
+                if (data !== undefined) {
+                    setUsername(data?.firstName + " " + data?.lastName);
+                    SecurityHelper.saveUserId(data.ID);
+                } else {
                     navigate("/login");
+                }
             })
             .catch(error => {
                 SecurityHelper.clearStorage();
@@ -49,7 +51,11 @@ const NavBar = () => {
             <ul className="navbar-nav projects-helper-navbar-nav ms-auto">
 
                 {SecurityHelper.isUserLoggedIn() && <div>
-                    <li className="nav-item projects-helper-nav-item-username"><span>{userName}</span></li>
+                    <li className="nav-item projects-helper-nav-item-username">
+                        <Link className="nav-link projects-helper-navbar-link" to="/profile">
+                            <span>{userName}</span>
+                        </Link>
+                    </li>
                     <li className="nav-item projects-helper-nav-item">
                     <Link onClick={() => {
                         setToken(null);

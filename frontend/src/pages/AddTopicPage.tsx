@@ -39,12 +39,12 @@ export default function AddTopicPage() {
     const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         if (token && secret) {
-            Requests.addTopic(token, secret, courseId, state.title, state.description).then(res => res.res).then(data => {
+            Requests.addTopic(token, secret, courseId, state.title, state.description)
+                .then(res => res.res).then(data => {
                 if (data == "SUCCESS") {
                     navigate(-1);
                 } else {
                     setValidationError(String(data));
-                    console.log("Wystąpił błąd: "+data);
                 }
             })
             .catch(error => {

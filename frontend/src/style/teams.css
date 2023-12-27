@@ -55,3 +55,51 @@
     color: red;
     font-size: 14pt;
 }
+
+.projects-helper-topic-teams {
+    border: 1px solid black;
+    border-bottom: 3px solid black;
+    border-radius: 5px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.projects-helper-topic-teams:hover {
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.projects-helper-topic-team-details {
+    max-height: 0;
+    transition: max-height 0.5s ease;
+}
+
+.projects-helper-team {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 10px 2vw;
+    padding: 10px;
+}
+
+.projects-helper-team-participant-row {
+    padding-left: 1vw;
+}
+
+.compressed {
+    max-height: 0;
+}
+
+.extended {
+    max-height: 150vh;
+} 
+
+.projects-helper-team-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.projects-helper-team-participants-container {
+    flex: 1;
+}

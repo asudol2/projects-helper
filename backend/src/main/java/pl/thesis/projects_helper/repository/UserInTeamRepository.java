@@ -26,5 +26,8 @@ public interface UserInTeamRepository extends JpaRepository<UserInTeamEntity, Lo
 
     List<UserInTeamEntity> findUserInTeamEntitiesByUserID(String userID);
 
+    List<UserInTeamEntity> findUserInTeamEntitiesByUserIDAndTeamIsNotNull(String userID);
+    List<UserInTeamEntity> findUserInTeamEntitiesByUserIDAndTeamRequestIsNotNull(String userID);
+
     List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequest(TeamRequestEntity teamRequest);
 }

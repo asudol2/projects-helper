@@ -2,6 +2,7 @@ package pl.thesis.projects_helper.interfaces;
 
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
+import pl.thesis.projects_helper.model.response.TeamResponse;
 import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 import pl.thesis.projects_helper.utils.TeamRequestValidationResult;
@@ -23,7 +24,7 @@ public interface IProjectService {
 
     boolean rejectTeamRequest(AuthorizationData authData, Long teamRequestID);
 
-    Map<Long, List<List<UserResponse>>> getUserTeamRequests(AuthorizationData authData);
+    List<TeamResponse> getUserTeamRequests(AuthorizationData authData);
 
-    Map<Long, List<UserResponse>> getUserTeams(AuthorizationData authData);
+    List<TeamResponse> getUserTeams(AuthorizationData authData);
 }
