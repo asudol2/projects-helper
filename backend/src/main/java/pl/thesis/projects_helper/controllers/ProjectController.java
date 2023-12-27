@@ -38,7 +38,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_requests")
-    public Map<Long, List<List<UserResponse>>> getCourseTeamRequests(
+    public List<TeamResponse> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
@@ -47,7 +47,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_teams")
-    public Map<Long, List<UserResponse>> getCourseTeams(
+    public List<TeamResponse> getCourseTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =

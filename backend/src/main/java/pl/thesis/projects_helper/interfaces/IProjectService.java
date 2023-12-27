@@ -14,9 +14,9 @@ public interface IProjectService {
 
     TeamRequestValidationResult addProjectRequest(AuthorizationData authData, TeamRequest teamReq);
 
-    Map<Long, List<List<UserResponse>>> getCourseTeamRequestsLists(AuthorizationData authData, String courseID);
+    List<TeamResponse> getCourseTeamRequestsLists(AuthorizationData authData, String courseID);
 
-    Map<Long, List<UserResponse>> getCourseTeams(AuthorizationData authData, String courseID);
+    List<TeamResponse> getCourseTeams(AuthorizationData authData, String courseID);
 
     boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest);
 

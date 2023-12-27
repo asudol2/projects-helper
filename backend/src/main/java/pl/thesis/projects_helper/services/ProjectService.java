@@ -128,14 +128,13 @@ public class ProjectService implements IProjectService {
 
     @Override
     @RequiresAuthentication
-    public Map<Long, List<List<UserResponse>>> getCourseTeamRequestsLists(AuthorizationData authData,
-                                                                               String courseID) {
+    public List<TeamResponse> getCourseTeamRequestsLists(AuthorizationData authData,
+                                                         String courseID) {
         List<TeamRequestEntity> courseTeamRequests = teamRequestRepository.findByTopicCourseID(courseID);
-        Map<Long, List<List<UserResponse>>> finalMap = new HashMap<>();
-
-        for (TeamRequestEntity teamReq: courseTeamRequests) {
+        List<TeamResponse> teams = new ArrayList<>();
+        for (TeamRequestEntity teamRequest: courseTeamRequests) {
             List<UserResponse> users = new ArrayList<>();
-            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(teamReq);
+            List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequest(teamRequest);
             for (String userID: userIDs) {
                 UserEntity user = userService.getStudentById(authData, userID);
                 if (user != null)
@@ -146,36 +145,42 @@ public class ProjectService implements IProjectService {
                             user.getLastName()
                     ));
             }
-            TopicEntity topic = teamReq.getTopic();
-            if (!finalMap.containsKey(topic.getId()))
-                finalMap.put(topic.getId(), new ArrayList<>());
-            finalMap.get(topic.getId()).add(users);
+            teams.add(new TeamResponse(
+                    teamRequest.getId(),
+                    teamRequest.getTopic().getId(),
+                    teamRequest.getTopic().getTitle(),
+                    coursesService.getCourseNameById(authData, courseID),
+                    users));
         }
-        return finalMap;
+        return teams;
     }
 
     @Override
     @RequiresAuthentication
-    public Map<Long, List<UserResponse>> getCourseTeams(AuthorizationData authData, String courseID) {
+    public List<TeamResponse> getCourseTeams(AuthorizationData authData, String courseID) {
         List<TeamEntity> courseTeams = teamRepository.findAllByTopicCourseID(courseID);
-        Map<Long, List<UserResponse>> finalMap = new HashMap<>();
-
+        List<TeamResponse> teamResponses = new ArrayList<>();
         for (TeamEntity team: courseTeams) {
-            List<UserResponse> users = new ArrayList<>();
             List<String> userIDs = userInTeamRepository.findUserIDsByTeam(team);
+            List<UserResponse> users = new ArrayList<>();
             for (String userID: userIDs) {
-                UserEntity user = userService.getStudentById(authData, userID);
-                if (user != null)
-                    users.add(new UserResponse(
-                            user.getID(),
-                            user.getFirstName(),
-                            user.getMiddleNames(),
-                            user.getLastName()
-                    ));
+                UserEntity userEntity = userService.getStudentById(authData, userID);
+                users.add(new UserResponse(
+                        userEntity.getID(),
+                        userEntity.getFirstName(),
+                        userEntity.getMiddleNames(),
+                        userEntity.getLastName()));
             }
-            finalMap.put(team.getTopic().getId(), users);
+            teamResponses.add(new TeamResponse(
+                    team.getId(),
+                    team.getTopic().getId(),
+                    team.getTopic().getTitle(),
+                    coursesService.getCourseNameById(authData, courseID),
+                    users
+            ));
         }
-        return finalMap;
+        return teamResponses;
+
     }
 
     private TeamResponse createTeamResponse(UserInTeamEntity uit, AuthorizationData authData,
