@@ -94,13 +94,16 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken) {
+    public void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken,
+                                           int failRecursionDepth) throws Exception {
+        if (failRecursionDepth < 0) {
+            throw new Exception("External server error. Try again later");
+        }
         AuthorizedRequestToken authReqToken = new AuthorizedRequestToken(requestToken, oauthVerifier);
         OAuthToken accessToken = oauthTemplate.exchangeForAccessToken(authReqToken, null);
         LoginTokenEntity entity = tokenRepository.findByLoginToken(loginToken);
         if (entity == null) {
-            //TODO do something
-            return;
+            exchangeAndSaveAccessToken(oauthVerifier, loginToken, failRecursionDepth - 1);
         }
         entity.setOauthToken(accessToken.getValue());
         entity.setOauthSecret(accessToken.getSecret());

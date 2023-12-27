@@ -19,6 +19,7 @@ public class USOSController {
     private final IUSOSService usosService;
     @Value("${app.frontendUrl}")
     private String frontendUrl;
+    private final int failRecursionDepth;
 
     private final AuthorizationService authorizationService;
 
@@ -26,6 +27,7 @@ public class USOSController {
     public USOSController(IUSOSService usosService, AuthorizationService authorizationService) {
         this.usosService = usosService;
         this.authorizationService = authorizationService;
+        this.failRecursionDepth = 3;
     }
 
     @GetMapping("/login")
@@ -37,8 +39,8 @@ public class USOSController {
 
     @GetMapping("/callback")
     public RedirectView loginSuccessCallback(@RequestParam("oauth_verifier") String oauthVerifier,
-                                             @RequestParam("login_token") String loginToken) {
-        usosService.exchangeAndSaveAccessToken(oauthVerifier, loginToken);
+                                             @RequestParam("login_token") String loginToken) throws Exception {
+        usosService.exchangeAndSaveAccessToken(oauthVerifier, loginToken, failRecursionDepth);
         return new RedirectView(frontendUrl + "home");
     }
 

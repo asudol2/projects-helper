@@ -9,7 +9,8 @@ import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData
 public interface IUSOSService {
     String getAuthorizeUrl(String loginToken);
 
-    void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken);
+    void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken, int failRecursionDepth)
+            throws Exception;
 
     LoginResponse getUserData(AuthorizationData authData);
 
