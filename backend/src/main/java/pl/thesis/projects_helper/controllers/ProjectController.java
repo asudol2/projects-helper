@@ -7,12 +7,10 @@ import pl.thesis.projects_helper.interfaces.IProjectService;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.TeamResponse;
-import pl.thesis.projects_helper.model.response.UserResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 import pl.thesis.projects_helper.utils.TeamRequestValidationResult;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/projects")
@@ -37,7 +35,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_requests")
-    public Map<Long, List<List<UserResponse>>> getCourseTeamRequests(
+    public List<TeamResponse> getCourseTeamRequests(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
@@ -46,7 +44,7 @@ public class ProjectController {
     }
 
     @GetMapping("/course_teams")
-    public Map<Long, List<UserResponse>> getCourseTeams(
+    public List<TeamResponse> getCourseTeams(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestParam("course_id") String courseID) {
         AuthorizationService.AuthorizationData authData =
