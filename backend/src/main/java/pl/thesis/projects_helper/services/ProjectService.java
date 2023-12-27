@@ -66,16 +66,18 @@ public class ProjectService implements IProjectService {
     }
 
     private boolean sameTeamRequestExists(TeamRequest teamReq, String term) {
-        //TODO ta funkcja po prostu nie robi tego co powinna
+        Set<String> teamRequestUserIDsSet = new HashSet<>(teamReq.userIDs());
         Optional<TopicEntity> optTopic = topicRepository.findByCourseIDAndTermAndTitle(teamReq.courseID(),
                 term, teamReq.title());
-        if (optTopic.isEmpty())
-            return false;
-        List<String> userIDs = userInTeamRepository.findUserIDsByTeamRequestTopicID(optTopic.get().getId());
-        List<UserInTeamEntity> UITs = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(userIDs);
-        UITs.removeIf(uit -> uit.getTeamRequest() == null);
-        UITs.removeIf(uit -> uit.getTeamRequest().getTopic() != optTopic.get());
-        return UITs.size() == teamReq.userIDs().size();
+        List<TeamRequestEntity> teamRequests = teamRequestRepository.findByTopicId(optTopic.get().getId());
+        for (TeamRequestEntity teamRequest: teamRequests) {
+             if (teamRequestUserIDsSet.equals(new HashSet<>(
+                     userInTeamRepository.findUserIDsByTeamRequest(teamRequest))
+             )) {
+                 return true;
+            }
+        }
+        return false;
     }
 
     private TeamRequestValidationResult validateTeamRequest(AuthorizationData authData, TeamRequest teamReq) {

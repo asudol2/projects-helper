@@ -10,6 +10,8 @@ public interface TeamRequestRepository extends JpaRepository<TeamRequestEntity, 
 
     List<TeamRequestEntity> findByTopicCourseID(String courseID);
 
+    List<TeamRequestEntity> findByTopicId(Long topicID);
+
     Optional<TeamRequestEntity> findById(Long id);
     void deleteById(Long id);
 }
