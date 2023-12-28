@@ -14,8 +14,10 @@ import "../style/courses.css";
 export default function LoginPage() {
     const [courses, setCourses] = useState<Course[] | null>(null);
     const { token, setToken, secret, setSecret } = useUsosTokens();
-    const [term, setTerm] = useState<string>("");
+    const [headerWithTerm, setHeaderWithTerm] = useState<string>("");
     const navigate = useNavigate();
+
+    const headerTextTemplate = "Przedmioty w bieżącej realizacji ";
 
     useEffect(() => {
         if (token && secret) {
@@ -29,9 +31,15 @@ export default function LoginPage() {
             .catch(error => {
                 goToLoginPage();
             });
+            const cachedTerm = SecurityHelper.getTerm();
+            if (cachedTerm != null) {
+                setHeaderWithTerm(headerTextTemplate+cachedTerm);
+                return;
+            }
             Requests.getCurrentTerm(token, secret).then(res => res.res).then(data => {
                 if (data != undefined) {
-                    setTerm(data);
+                    setHeaderWithTerm(headerTextTemplate+data);
+                    SecurityHelper.saveTerm(data);
                 } else {
                     goToLoginPage();
                 }
@@ -55,7 +63,7 @@ export default function LoginPage() {
             </Helmet>
             <Content>
                 <div className="App container-fluid projects-helper-courses-cont">
-                    <p className="container-fluid projects-helper-page-header">Przedmioty w bieżącej realizacji {term}</p>
+                    <p className="container-fluid projects-helper-page-header">{headerWithTerm}</p>
                     {
                         courses != null &&
                         courses.map((course, index) => (
