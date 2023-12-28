@@ -165,7 +165,7 @@ public class USOSService implements IUSOSService {
                 return usosMap.get("success");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return false;
     }
