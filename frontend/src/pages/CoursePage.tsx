@@ -27,7 +27,6 @@ export default function CoursePage() {
             if (courseId) {
                 setLoadingTopics(true);
                 Requests.getCourseTopics(token, secret, courseId).then(res => res.res).then(data => {
-                    setLoadingTopics(false);
                     if (data !== undefined) {
                         setTopics(data);
                     }
@@ -35,6 +34,9 @@ export default function CoursePage() {
                 .catch(error => {
                     SecurityHelper.clearStorage();
                     navigate("/login");
+                })
+                .finally(() => {
+                    setLoadingTopics(false);
                 });
             }
         }
