@@ -40,7 +40,7 @@ export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
                         Przedmiot: <span className="projects-helper-teams-course-name">
                             {props.teamRequests[0].courseName}
                         </span>
-                            , tytuł: <span className="projects-helper-teams-topic-title">{props.teamRequests[0].topicTitle}</span>
+                        <br/>Tytuł: <span className="projects-helper-teams-topic-title">{props.teamRequests[0].topicTitle}</span>
                         : <span>({teamRequests.length})</span>
                     </div>
                 }
