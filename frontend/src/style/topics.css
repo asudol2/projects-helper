@@ -56,11 +56,11 @@
     text-align: center;
 }
 
-.title-error {
+.title-error, .capacity-error {
     color: red !important;
 }
 
-span.title-error {
+span.title-error, span.capacity-error {
     width: 100%;
     border: 1px solid red;
     border-radius: 10px;
