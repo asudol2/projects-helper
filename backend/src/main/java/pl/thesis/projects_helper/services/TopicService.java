@@ -169,7 +169,7 @@ public class TopicService implements ITopicService {
     @Override
     @RequiresAuthentication
     public List<TopicEntity> getSelectiveUserTopicsByCourse(AuthorizationData authData, String courseID) {
-        // TODO: what with situation when user is student and lecturer at the same time?
+        // what with situation when user is student and lecturer at the same time?
         if (coursesService.isCurrStudent(authData)){
             return getSelectiveStudentTopicsByCourse(courseID, authData);
         } else if (coursesService.isCurrStaff(authData)) {
