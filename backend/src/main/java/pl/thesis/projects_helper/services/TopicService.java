@@ -110,6 +110,8 @@ public class TopicService implements ITopicService {
             return TopicOperationResult.TITLE_SIZE;
         if (topic.description().length() > 8192)
             return TopicOperationResult.DESCRIPTION_SIZE;
+        if (topic.minCap() > topic.maxCap())
+            return TopicOperationResult.MIN_TEAM_CAP;
         return TopicOperationResult.SUCCESS;
     }
 

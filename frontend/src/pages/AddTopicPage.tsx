@@ -112,6 +112,7 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.minCap}
+                                        className={`${validationError == "MIN_TEAM_CAP" ? 'title-error' : ''} `}
                                         required
                                     />
                                 </div>
@@ -125,9 +126,16 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.maxCap}
+                                        className={`${validationError == "MIN_TEAM_CAP" ? 'title-error' : ''} `}
                                         required
                                     />
                                 </div>
+                                {
+                                    validationError == "MIN_TEAM_CAP" &&
+                                    <span className="capacity-error">
+                                        Maksymalna liczebność zespołu nie może być mniejsza od minimalnej.
+                                    </span>
+                                }
                             </div>
 
                             <button type="submit" className="btn btn-primary">Dodaj temat</button>
