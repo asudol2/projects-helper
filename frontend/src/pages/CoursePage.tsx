@@ -7,6 +7,7 @@ import { Topic } from "../model/Topic";
 import { SecurityHelper } from "../helpers/SecurityHelper";
 import { useUsosTokens } from "../contexts/UsosTokensContext";
 import { TopicComponent } from "../components/TopicComponent";
+import { LoadingComponent } from "../components/LoadingComponent";
 import Content from "../components/layout/Content";
 import "../style/shared.css"
 import "../style/courses.css";
@@ -17,12 +18,14 @@ export default function CoursePage() {
     const { courseData } = useParams();
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [topics, setTopics] = useState<Topic[] | null>(null);
+    const [loadingTopics, setLoadingTopics] = useState<boolean>(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (token && secret) {
             const courseId = courseData?.split("&")[1];
             if (courseId) {
+                setLoadingTopics(true);
                 Requests.getCourseTopics(token, secret, courseId).then(res => res.res).then(data => {
                     if (data !== undefined) {
                         setTopics(data);
@@ -31,6 +34,9 @@ export default function CoursePage() {
                 .catch(error => {
                     SecurityHelper.clearStorage();
                     navigate("/login");
+                })
+                .finally(() => {
+                    setLoadingTopics(false);
                 });
             }
         }
@@ -56,7 +62,11 @@ export default function CoursePage() {
                         ))
                     }
                     {
-                        (topics == null || topics.length == 0) &&
+                        loadingTopics &&
+                        <LoadingComponent text="Ładowanie tematów" />
+                    }
+                    {
+                        (!loadingTopics && (topics == null || topics.length == 0)) &&
                             <p className="projects-helper-no-topics">
                                 Nie ma jeszcze żadnych tematów zdefiniowanych dla tego przedmiotu.
                             </p>
