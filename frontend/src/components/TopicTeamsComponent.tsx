@@ -36,14 +36,16 @@ export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
                 onClick={handleClick}
             >
                 { props.title == null &&
-                    <div className="projects-helper-teams-topic-title">
-                        Tytuł: {props.teamRequests[0].topicTitle}, przedmiot: <span className="projects-helper-teams-course-name">{
-                            props.teamRequests[0].courseName}: ({teamRequests.length})
+                    <div className="projects-helper-teams-topic-title-container">
+                        Przedmiot: <span className="projects-helper-teams-course-name">
+                            {props.teamRequests[0].courseName}
                         </span>
+                            , tytuł: <span className="projects-helper-teams-topic-title">{props.teamRequests[0].topicTitle}</span>
+                        : <span>({teamRequests.length})</span>
                     </div>
                 }
                 { props.title != null &&
-                    <div className="projects-helper-teams-topic-title">
+                        <div className="projects-helper-teams-topic-title-container">
                         {props.title} ({teamRequests.length})
                     </div>
                 }

@@ -91,6 +91,7 @@
 
 .extended {
     max-height: 150vh;
+    overflow: auto;
 } 
 
 .projects-helper-team-container {
@@ -102,4 +103,8 @@
 
 .projects-helper-team-participants-container {
     flex: 1;
+}
+
+.projects-helper-teams-course-name, .projects-helper-teams-topic-title {
+    font-weight: bold;
 }

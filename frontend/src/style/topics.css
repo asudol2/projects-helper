@@ -40,6 +40,22 @@
     margin-bottom: 20px;
 }
 
+.projects-helper-add-topic-min-cap, .projects-helper-add-topic-max-cap {
+    margin-bottom: 20px;
+}
+
+.projects-helper-add-topic-min-cap label,
+.projects-helper-add-topic-max-cap label {
+    width: 410px;
+    margin-right: 10px;
+}
+
+.projects-helper-add-topic-min-cap input,
+.projects-helper-add-topic-max-cap input {
+    width: 50px;
+    text-align: center;
+}
+
 .title-error {
     color: red !important;
 }

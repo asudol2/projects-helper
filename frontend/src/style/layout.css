@@ -7,7 +7,8 @@
     position: fixed !important;
     top: 0;
     width: 100%;
-    max-height: 8vh;
+    min-height: 54px;
+    height: 8vh;
     z-index: 1;
     color: white;
 }

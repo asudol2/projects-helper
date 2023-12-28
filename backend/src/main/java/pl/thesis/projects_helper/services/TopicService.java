@@ -129,7 +129,9 @@ public class TopicService implements ITopicService {
                 topicRequest.description(),
                 term,
                 temporary,
-                getUserID(authData)
+                getUserID(authData),
+                topicRequest.minCap(),
+                topicRequest.maxCap()
         );
         if (!isAuthorizedToManipulateTopic(topic, authData)){
             return TopicOperationResult.UNAUTHORIZED;

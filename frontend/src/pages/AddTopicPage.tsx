@@ -13,6 +13,8 @@ import "../style/topics.css";
 interface AddTopicState {
     title: string;
     description: string;
+    minCap: number;
+    maxCap: number;
 }
 
 export default function AddTopicPage() {
@@ -20,7 +22,9 @@ export default function AddTopicPage() {
     const { token, secret } = useUsosTokens();
     const [state, setState] = useState<AddTopicState>({
         title: "",
-        description: ""
+        description: "",
+        minCap: 2,
+        maxCap: 2,
     });
     const [courseId, setCourseId] = useState<string>("");
     const [validationError, setValidationError] = useState<string>("");
@@ -33,13 +37,17 @@ export default function AddTopicPage() {
         
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;
+        if (name == "minCap" || name == "maxCap") {
+            const numericValue = value.replace(/[^0-9]/g, '');
+            e.target.value = numericValue;
+        }
         setState((prevState) => ({ ...prevState, [name]: value }));
     };
     
     const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         if (token && secret) {
-            Requests.addTopic(token, secret, courseId, state.title, state.description)
+            Requests.addTopic(token, secret, courseId, state.title, state.description, state.minCap, state.maxCap)
                 .then(res => res.res).then(data => {
                 if (data == "SUCCESS") {
                     navigate(-1);
@@ -48,7 +56,7 @@ export default function AddTopicPage() {
                 }
             })
             .catch(error => {
-                console.log("nie udało się dodać tematu. "+error);
+                setValidationError("Wystąpił błąd, spróbuj ponownie za chwilę.");
             });
         }
     };
@@ -94,7 +102,35 @@ export default function AddTopicPage() {
                                     required
                                 ></textarea>
                             </div>
-                            <button type="submit" className="btn btn-primary">Dodaj Temat</button>
+                            <div className="form-container">
+                                <div className="form-group projects-helper-add-topic-min-cap">
+                                    <label htmlFor="minCap">Minimalna liczebność zespołu:</label>
+                                    <input
+                                        type="number-input"
+                                        name="minCap"
+                                        id="minCap"
+                                        min="1"
+                                        onChange={handleChange}
+                                        defaultValue={state.minCap}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group projects-helper-add-topic-max-cap">
+                                    <label htmlFor="maxCap">Maksymalna liczebność zespołu:</label>
+                                    <input
+                                        type="number-input"
+                                        name="maxCap"
+                                        id="maxCap"
+                                        min="1"
+                                        onChange={handleChange}
+                                        defaultValue={state.maxCap}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <button type="submit" className="btn btn-primary">Dodaj temat</button>
                         </form>
                     </div>
                 </div>
