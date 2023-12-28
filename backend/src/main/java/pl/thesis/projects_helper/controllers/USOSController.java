@@ -57,7 +57,7 @@ public class USOSController {
         return usosService.getOAuthCredentials(token);
     }
 
-    @GetMapping("/revoke")
+    @PostMapping("/revoke")
     public boolean revokeAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
