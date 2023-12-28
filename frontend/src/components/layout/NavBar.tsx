@@ -40,6 +40,16 @@ const NavBar = () => {
         }
     }, [token, setToken, secret, setSecret]);
 
+    const logout = (token: string | null, secret: string | null) => {
+        if (token && secret) {
+            Requests.revokeToken(token, secret);
+        }
+        setToken(null);
+        setSecret(null);
+        SecurityHelper.clearStorage();
+        navigate("/login");
+    }
+
 
     return <div>
         <nav className="navbar navbar-dark projects-helper-navbar">
@@ -58,10 +68,7 @@ const NavBar = () => {
                     </li>
                     <li className="nav-item projects-helper-nav-item">
                     <Link onClick={() => {
-                        setToken(null);
-                        setSecret(null);
-                        SecurityHelper.clearStorage();
-                        navigate("/login");
+                        logout(token, secret);
                     }} className="nav-link projects-helper-navbar-link" to="/login">
                         <i className="bi bi-box-arrow-right" /> Wyloguj się
                     </Link>

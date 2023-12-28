@@ -64,6 +64,11 @@ export class Requests {
     static login(): Promise<GenericResponse<LoginResponse>> {
         return fetchGet("/login")
     }
+
+    static revokeToken(token: string, secret: string): Promise<GenericResponse<boolean>> {
+        return fetchPost("/revoke", null, token, secret, false)
+    }
+
     static getUserData(token: string, secret: string): Promise<GenericResponse<UserDataResponse>> {
         return fetchGet("/name", token, secret);
     }
