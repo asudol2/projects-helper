@@ -94,10 +94,9 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken,
-                                           int failRecursionDepth) throws Exception {
+    public void exchangeAndSaveAccessToken(String oauthVerifier, String loginToken, int failRecursionDepth) {
         if (failRecursionDepth < 0) {
-            throw new Exception("External server error. Try again later");
+            throw new RuntimeException("External server error. Try again later");
         }
         AuthorizedRequestToken authReqToken = new AuthorizedRequestToken(requestToken, oauthVerifier);
         OAuthToken accessToken = oauthTemplate.exchangeForAccessToken(authReqToken, null);
@@ -126,9 +125,8 @@ public class USOSService implements IUSOSService {
             String lastName = (String) jsonMap.get("last_name");
             return new LoginResponse(ID, firstName, lastName);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
     @Override
@@ -152,7 +150,7 @@ public class USOSService implements IUSOSService {
     }
 
     @Override
-    public boolean revokeAccessToken(AuthorizationData authData){
+    public boolean revokeAccessToken(AuthorizationData authData) {
         String url = usosBaseUrl + "oauth/revoke_token";
         try {
             JsonNode usosJson = requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);

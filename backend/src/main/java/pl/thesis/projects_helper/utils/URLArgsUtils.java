@@ -6,11 +6,8 @@ import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import pl.thesis.projects_helper.utils.GlobalExceptionHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 public class URLArgsUtils {
-    private static final Logger logger = LoggerFactory.getLogger(URLArgsUtils.class);
 
 
     public static String generateArgsUrl(Map<String, List<String>> args) {
@@ -45,24 +41,19 @@ public class URLArgsUtils {
                                            String consumerKey, String consumerSecret)
             throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret("dupa1", "dupa2");
-//        consumer.setTokenWithSecret(authData.token(), authData.secret());
+        consumer.setTokenWithSecret(authData.token(), authData.secret());
         return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
     }
 
     public static JsonNode requestOnEndpoint(AuthorizationData authData, RestTemplate restTemplate, String baseUrl,
                                              String consumerKey, String consumerSecret) {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonOutput = mapper.createObjectNode();
         try {
             String signedUrl = generateSignedUrl(authData, baseUrl, consumerKey, consumerSecret);
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
-            jsonOutput = mapper.readTree(response.getBody());
+            return mapper.readTree(response.getBody());
         } catch (Exception e) {
-            GlobalExceptionHandler.handleRuntimeException(e.getMessage());
-//            logger.error(e.getMessage());
-//            throw new Exception("Error in requestOnEndpoint", e);
+            throw new RuntimeException(e.getMessage());
         }
-        return jsonOutput;
     }
 }
