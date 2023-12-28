@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import pl.thesis.projects_helper.utils.GlobalExceptionHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class URLArgsUtils {
                                            String consumerKey, String consumerSecret)
             throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
         OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        consumer.setTokenWithSecret(authData.token(), authData.secret());
+        consumer.setTokenWithSecret("dupa1", "dupa2");
+//        consumer.setTokenWithSecret(authData.token(), authData.secret());
         return consumer.sign(url.replace("|", "%7c")).replace("%7c", "|");
     }
 
@@ -57,7 +59,9 @@ public class URLArgsUtils {
             ResponseEntity<String> response = restTemplate.exchange(signedUrl, HttpMethod.GET, null, String.class);
             jsonOutput = mapper.readTree(response.getBody());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            GlobalExceptionHandler.handleRuntimeException(e.getMessage());
+//            logger.error(e.getMessage());
+//            throw new Exception("Error in requestOnEndpoint", e);
         }
         return jsonOutput;
     }
