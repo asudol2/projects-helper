@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -63,8 +61,6 @@ public class USOSService implements IUSOSService {
     public USOSService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(USOSService.class);
 
     @PostConstruct
     private void init() {
@@ -163,7 +159,7 @@ public class USOSService implements IUSOSService {
                 return usosMap.get("success");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return false;
     }
