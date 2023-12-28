@@ -62,7 +62,9 @@ public class TopicEntity {
                        String description,
                        String term,
                        boolean temporary,
-                       String propounderID
+                       String propounderID,
+                       Integer minCap,
+                       Integer maxCap
 
     ){
         this.courseID = courseID;
@@ -71,8 +73,8 @@ public class TopicEntity {
         this.title = title;
         this.description = description;
         this.temporary = temporary;
-        this.minTeamCap = 2;
-        this.maxTeamCap = 2;
+        this.minTeamCap = minCap;
+        this.maxTeamCap = maxCap;
         this.propounderID = propounderID;
     }
 

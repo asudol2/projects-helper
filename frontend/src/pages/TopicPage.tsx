@@ -55,6 +55,9 @@ export default function TopicPage() {
     const removeTopicRequest = () => {
         if (!token || !secret || !topic)
             return;
+        if (!window.confirm("Czy na pewno chcesz wycofać propozycję tematu?")) {
+            return;
+        }
         Requests.removeTopicRequest(token, secret, topic?.courseID, topic?.title).then(res => res.res).then(data => {
             if (data !== undefined && data) {
                 navigate(-1);
@@ -125,11 +128,11 @@ export default function TopicPage() {
                     <div className="projects-helper-topic-label">Opis:</div>
                     <div className="projects-helper-topic-description">{topic && topic.description}</div>
                     <div className="projects-helper-topic-capacity">
-                        <span className="projects-helper-topic-label">Minimalny skład zespołu: </span>
+                        <span className="projects-helper-topic-label">Minimalna liczebność zespołu: </span>
                         {topic?.minTeamCap}
                     </div>
                     <div className="projects-helper-topic-capacity">
-                        <span className="projects-helper-topic-label">Maksymalny skład zespołu: </span>
+                        <span className="projects-helper-topic-label">Maksymalna liczebność zespołu: </span>
                         {topic?.maxTeamCap}
                     </div>
                     {creatingTeam &&
@@ -154,7 +157,7 @@ export default function TopicPage() {
                             <TopicTeamsComponent
                                 key={1}
                                 teamRequests={teamRequests}
-                                title={"Propozycje zespołów na ten temat, których członkiem jesteś:"}
+                                title={"Propozycje zespołów z Tobą w składzie:"}
                             />
                     }
                     {!creatingTeam &&
@@ -162,7 +165,7 @@ export default function TopicPage() {
                             className={`btn btn-primary projects-helper-choose-topic ${topic?.temporary ? 'disabled' : ''}`}
                             onClick={createTeam}
                         >
-                            Stwórz nowy zespół do realizacji tego tematu
+                            Zaproponuj zespół
                         </button>
                     }
                     {

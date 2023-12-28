@@ -76,7 +76,7 @@ export default function UserPage() {
             </Helmet>
             <Content>
                 <div className="App container-fluid projects-helper-user-page">
-                    <p>Zespoły projektowe, których jesteś członkiem:</p>
+                    <p>Twoje zespoły projektowe:</p>
                     {
                         loadingTeams &&
                         <LoadingComponent text="Ładowanie zespołów, których jesteś członkiem"/>
@@ -90,14 +90,14 @@ export default function UserPage() {
                             <TopicTeamsComponent key={index} teamRequests={groupedTeamRequests} confirmed={true}/>
                         ))
                     }
-                    <p>Niepotwierdzone zespoły projektowe:</p>
+                    <p>Niezatwierdzone zespoły projektowe:</p>
                     {
                         loadingTeamRequests &&
                         <LoadingComponent text="Ładowanie niepotwierdzonych zespołów"/>
                     }
                     {
                         !loadingTeamRequests && teamRequests.size == 0 &&
-                        <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego niepotwierdzonego zespołu.</p>
+                        <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego niezatwierdzonego zespołu.</p>
                     }
                     {
                         teamRequests != null && Array.from(teamRequests.entries()).map(([index, groupedTeamRequests])=> (

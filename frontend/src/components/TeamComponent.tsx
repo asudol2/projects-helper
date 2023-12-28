@@ -44,7 +44,8 @@ export function TeamComponent(props: TeamComponentProps) {
             <div className="projects-helper-team-container">
                 {
                     <div className="projects-helper-team-participants-container">
-                        {props.teamRequest.participants.map((participant, participantIndex) => (
+                        {props.teamRequest.participants.sort((a, b) => a.firstName.localeCompare(b.firstName))
+                                    .map((participant, participantIndex) => (
                             <div className="projects-helper-team-participant-row" key={participantIndex}>
                                 {participant.firstName} {participant.lastName}
                             </div>

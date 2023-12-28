@@ -6,6 +6,7 @@ export class SecurityHelper {
     static usosTokenKey = "usosToken";
     static usosSecretKey = "usosSecret";
     static userIdKey = "userIdKey";
+    static termKey = "term";
 
     static saveLoginToken(token: string) {
         secureLocalStorage.setItem(SecurityHelper.loginTokenKey, token);
@@ -49,5 +50,13 @@ export class SecurityHelper {
 
     static isUserLoggedIn(): boolean {
         return SecurityHelper.getUsosToken() != null && SecurityHelper.getUsosSecret() != null;
+    }
+
+    static getTerm(): string | null {
+        return SecurityHelper.getStringValueOrNull(SecurityHelper.termKey);
+    }
+
+    static saveTerm(term: string) {
+        secureLocalStorage.setItem(SecurityHelper.termKey, term);
     }
 }

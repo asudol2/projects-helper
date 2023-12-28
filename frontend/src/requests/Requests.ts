@@ -85,10 +85,14 @@ export class Requests {
         return fetchGet("/topics/" + topicId, token, secret);
     }
 
-    static addTopic(token: string, secret: string, courseId: string, title: string, description: string)
-        : Promise<GenericResponse<string>> {
+    static addTopic(token: string, secret: string, courseId: string, title: string, description: string,
+                        minCap: number, maxCap: number): Promise<GenericResponse<string>> {
         return fetchPost(
-            "/topics/add", { courseId: courseId, title: title, description: description }, token, secret);
+            "/topics/add",
+            { courseId: courseId, title: title, description: description, minCap: minCap, maxCap: maxCap },
+            token,
+            secret
+        );
     }
 
     static getCourseParticipants(token: string, secret: string, courseId: string)
