@@ -112,7 +112,7 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.minCap}
-                                        className={`${validationError == "MIN_TEAM_CAP" ? 'title-error' : ''} `}
+                                        className={`${validationError == "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
                                         required
                                     />
                                 </div>
@@ -126,7 +126,7 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.maxCap}
-                                        className={`${validationError == "MIN_TEAM_CAP" ? 'title-error' : ''} `}
+                                        className={`${validationError == "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
                                         required
                                     />
                                 </div>
