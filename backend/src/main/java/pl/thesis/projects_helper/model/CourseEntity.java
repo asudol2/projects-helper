@@ -9,6 +9,13 @@ public class CourseEntity {
     private final Pair<String, String> names;
     private final String relationshipType;
 
+    public CourseEntity(String courseID) {
+        this.courseID = courseID;
+        this.termID = null;
+        this.names = null;
+        this.relationshipType = null;
+    }
+
     public CourseEntity(String courseID,
                         String termID,
                         String courseNamePl,

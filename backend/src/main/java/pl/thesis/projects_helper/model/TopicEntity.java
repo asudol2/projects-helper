@@ -1,6 +1,7 @@
 package pl.thesis.projects_helper.model;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "topics")
@@ -99,6 +100,33 @@ public class TopicEntity {
         this.propounderID = propounderID;
     }
 
+    public TopicEntity(String term, String propounderID, boolean temporary) {
+        this.term = term;
+        this.propounderID = propounderID;
+        this.temporary = temporary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TopicEntity that = (TopicEntity) o;
+        return Objects.equals(courseID, that.courseID) &&
+                Objects.equals(lecturerID, that.lecturerID) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(term, that.term) &&
+                temporary == that.temporary &&
+                Objects.equals(propounderID, that.propounderID) &&
+                Objects.equals(minTeamCap, that.minTeamCap) &&
+                Objects.equals(maxTeamCap, that.maxTeamCap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, courseID, lecturerID, term, title, description, minTeamCap, maxTeamCap, temporary, propounderID);
+    }
+
     public Long getId() {
         return id;
     }
@@ -178,4 +206,5 @@ public class TopicEntity {
     public void setPropounderID(String propounderID) {
         this.propounderID = propounderID;
     }
+    
 }
