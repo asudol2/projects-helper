@@ -122,6 +122,11 @@ public class TopicEntity {
                 Objects.equals(maxTeamCap, that.maxTeamCap);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, courseID, lecturerID, term, title, description, minTeamCap, maxTeamCap, temporary, propounderID);
+    }
+
     public Long getId() {
         return id;
     }
@@ -201,4 +206,5 @@ public class TopicEntity {
     public void setPropounderID(String propounderID) {
         this.propounderID = propounderID;
     }
+    
 }
