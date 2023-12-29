@@ -9,11 +9,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.TopicEntity;
+import pl.thesis.projects_helper.model.request.TopicConfirmRequest;
 import pl.thesis.projects_helper.model.request.TopicRequest;
 import pl.thesis.projects_helper.repository.TopicRepository;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
@@ -404,4 +404,83 @@ public class TopicServiceTest {
                 .isNull();
     }
 
+    @Test
+    public void confirmTemporaryTopicWrongRequest() {
+        AuthorizationData authData = new AuthorizationData("", "");
+        TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
+        Optional<TopicEntity> optTopic = Optional.empty();
+
+        doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
+        doReturn(optTopic).when(topicRepository)
+                .findByCourseIDAndTermAndTitle(any(String.class), any(String.class), any(String.class));
+
+        assertThat(spyTopicService.confirmTemporaryTopic(authData, topicRequest)).isFalse();
+    }
+
+    @Test
+    public void confirmTemporaryTopicDeleteNotTemporary() {
+        AuthorizationData authData = new AuthorizationData("", "");
+        TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
+        Optional<TopicEntity> optTopic = Optional
+                .of(new TopicEntity("2023Z", "1158935", false));
+
+        doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
+        doReturn(optTopic).when(topicRepository)
+                .findByCourseIDAndTermAndTitle(any(String.class), any(String.class), any(String.class));
+
+        assertThat(spyTopicService.confirmTemporaryTopic(authData, topicRequest)).isFalse();
+    }
+
+    @Test
+    public void confirmTemporaryTopicDelete() {
+        AuthorizationData authData = new AuthorizationData("", "");
+        TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
+        Optional<TopicEntity> optTopic = Optional
+                .of(new TopicEntity("2023Z", "1158935", true));
+
+        doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
+        doReturn(optTopic).when(topicRepository)
+                .findByCourseIDAndTermAndTitle(any(String.class), any(String.class), any(String.class));
+
+        assertThat(spyTopicService.confirmTemporaryTopic(authData, topicRequest)).isTrue();
+    }
+
+    @Test
+    public void confirmTemporaryTopicSuccess() {
+        AuthorizationData authData = new AuthorizationData("", "");
+        TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
+        TopicEntity retrievedTopic = new TopicEntity(
+                "FO",
+                1234,
+                "title1",
+                "description1",
+                "2023Z",
+                true,
+                "1158935",
+                2,
+                3
+        );
+        Optional<TopicEntity> optTopic = Optional.of(retrievedTopic);
+        TopicEntity expectedSavedTopic = new TopicEntity(
+                "FO",
+                1234,
+                "title1",
+                "description1",
+                "2023Z",
+                false,
+                "1158935",
+                2,
+                3
+        );
+
+        doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
+        doReturn(optTopic).when(topicRepository)
+                .findByCourseIDAndTermAndTitle(any(String.class), any(String.class), any(String.class));
+
+        ArgumentCaptor<TopicEntity> topicEntityCaptor = ArgumentCaptor.forClass(TopicEntity.class);
+        when(topicRepository.save(topicEntityCaptor.capture())).thenReturn(mock(TopicEntity.class));
+
+        assertThat(spyTopicService.confirmTemporaryTopic(authData, topicRequest)).isTrue();
+        assertThat(topicEntityCaptor.getValue()).isEqualTo(expectedSavedTopic);
+    }
 }
