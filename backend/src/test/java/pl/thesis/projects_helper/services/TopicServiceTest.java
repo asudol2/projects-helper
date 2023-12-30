@@ -35,8 +35,6 @@ public class TopicServiceTest {
     @Mock
     private TopicRepository topicRepository;
 
-    @Mock
-    private UserService userService;
 
     @BeforeEach
     public void setUp() {
@@ -346,7 +344,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseStaff() {
+    public void getSelectiveUserTopicsByCourseStaffTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicEntity topic1 = new TopicEntity("2023Z", "1158935", true);
         TopicEntity topic2 = new TopicEntity("2023Z", "1158935", false);
@@ -373,7 +371,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseStudent() {
+    public void getSelectiveUserTopicsByCourseStudentTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicEntity topic1 = new TopicEntity("2023Z", "1158935", true);
         TopicEntity topic2 = new TopicEntity("2023Z", "1158935", false);
@@ -402,7 +400,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseWrongUser() {
+    public void getSelectiveUserTopicsByCourseWrongUserTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         doReturn(false).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
         doReturn(false).when(spyUserService).isCurrStudent(any(AuthorizationData.class));
@@ -412,7 +410,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicWrongRequest() {
+    public void confirmTemporaryTopicWrongRequestTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
         Optional<TopicEntity> optTopic = Optional.empty();
@@ -425,7 +423,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicDeleteNotTemporary() {
+    public void confirmTemporaryTopicDeleteNotTemporaryTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
         Optional<TopicEntity> optTopic = Optional
@@ -439,7 +437,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicDelete() {
+    public void confirmTemporaryTopicDeleteTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
         Optional<TopicEntity> optTopic = Optional
@@ -453,7 +451,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicSuccess() {
+    public void confirmTemporaryTopicSuccessTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
         TopicEntity retrievedTopic = new TopicEntity(
