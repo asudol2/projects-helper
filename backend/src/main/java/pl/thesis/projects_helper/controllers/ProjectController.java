@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import pl.thesis.projects_helper.interfaces.IProjectService;
+import pl.thesis.projects_helper.model.request.AutoAssignRequest;
 import pl.thesis.projects_helper.model.request.TeamConfirmRequest;
 import pl.thesis.projects_helper.model.request.TeamRequest;
 import pl.thesis.projects_helper.model.response.TeamResponse;
@@ -70,10 +71,10 @@ public class ProjectController {
 
     @PostMapping("/auto_assign")
     public boolean autoAssign(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                              @RequestParam("course_id") String courseID) {
+                              @RequestBody AutoAssignRequest request) {
         AuthorizationService.AuthorizationData authData =
                 authorizationService.processAuthorizationHeader(authorizationHeader);
-        return projectService.naiveAutoAssignTeams(authData, courseID);
+        return projectService.naiveAutoAssignTeams(authData, request.courseId());
     }
 
     @PostMapping("/reject")

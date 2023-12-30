@@ -182,4 +182,8 @@ export class Requests {
             },
             token, secret, false);
     }
+
+    static autoAssign(token: string, secret: string, courseId: string): Promise<GenericResponse<boolean>> {
+        return fetchPost("/projects/auto_assign", { courseId: courseId }, token, secret, false);
+    }
 }

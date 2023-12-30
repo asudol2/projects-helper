@@ -17,7 +17,18 @@ export default function UserPage() {
     const [teams, setTeams] = useState<Map<number, TeamRequestResponse[]>>(new Map()); //TODO weryfikacja tego
     const [loadingTeamRequests, setLoadingTeamRequests] = useState<boolean>(false);
     const [loadingTeams, setLoadingTeams] = useState<boolean>(false);
+    const [userType, setUserType] = useState<string>("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (SecurityHelper.getUsetType() == "STAFF") {
+            navigate("/");
+        }
+        if (token && secret) {
+            loadTeams(token, secret);
+            loadTeamRequests(token, secret);
+        }
+    }, [token, setToken, secret, setSecret]);
 
     const groupTeamsByTopicId = (teams: TeamRequestResponse[]) => {
         let result: Map<number, TeamRequestResponse[]> = new Map();
@@ -61,13 +72,6 @@ export default function UserPage() {
     const loadTeams = (token: string, secret: string) => {
         loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
     };
-
-    useEffect(() => {
-        if (token && secret) {
-            loadTeams(token, secret);
-            loadTeamRequests(token, secret);
-        }
-    }, [token, setToken, secret, setSecret]);
 
     return (
         <>

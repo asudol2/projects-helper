@@ -52,6 +52,21 @@ export default function CoursePage() {
         navigate("/topic/add/" + courseData);
     };
 
+    const autoAssign = () => {
+        const courseId = courseData?.split("&")[1];
+        if (token && secret && courseId) {
+            Requests.autoAssign(token, secret, courseId).then(res => res.res).then(data => {
+                if (data !== undefined) {
+                    alert(data ? "Wszystkie zespoły zostały przydzielone do tematów" : "Nie wszystkie zespoły udało się przydzielić");
+                }
+            })
+            .catch(error => {
+                SecurityHelper.clearStorage();
+                navigate("/login");
+            });
+        }
+    }
+
     const sortTopics = (a: Topic, b: Topic): number => {
         if (!a.temporary && b.temporary)
             return -1;
@@ -87,6 +102,14 @@ export default function CoursePage() {
                     <div className="projects-helper-course-add-topic" onClick={addTopic}>
                         {userType == "STAFF" ? addTopicTextStaff : addTopicTextStudent}
                     </div>
+                    {
+                        userType == "STAFF" &&
+                        <div>
+                                <div className="projects-helper-course-auto-assign" onClick={autoAssign}>
+                                Automatycznie przypisz studentów do tematów
+                            </div>
+                        </div>
+                    }
                 </div>
             </Content>
         </>
