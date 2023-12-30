@@ -30,14 +30,19 @@ public class TopicServiceTest {
 
     private CoursesService spyCoursesService;
 
+    private UserService spyUserService;
+
     @Mock
     private TopicRepository topicRepository;
+
 
     @BeforeEach
     public void setUp() {
         this.spyCoursesService = spy(new CoursesService(new RestTemplate()));
+        this.spyUserService = spy(new UserService(new RestTemplate()));
         this.spyTopicService = spy(new TopicService(spyCoursesService));
         ReflectionTestUtils.setField(spyTopicService, "topicRepository", topicRepository);
+        ReflectionTestUtils.setField(spyTopicService, "userService", spyUserService);
     }
 
     public JsonNode createEmptyJsonNode() {
@@ -160,7 +165,7 @@ public class TopicServiceTest {
                 4
         );
 
-        doReturn(true).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
         doReturn("1158935").when(spyTopicService).getUserID(any(AuthorizationData.class));
 
@@ -206,7 +211,7 @@ public class TopicServiceTest {
                 4
         );
 
-        doReturn(true).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
         doReturn("1158935").when(spyTopicService).getUserID(any(AuthorizationData.class));
         doReturn(false).when(spyTopicService).isAuthorizedToManipulateTopic(
@@ -230,7 +235,7 @@ public class TopicServiceTest {
                 4
         );
 
-        doReturn(true).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
         doReturn("1158935").when(spyTopicService).getUserID(any(AuthorizationData.class));
         doReturn(true).when(spyTopicService).isAuthorizedToManipulateTopic(
@@ -257,7 +262,7 @@ public class TopicServiceTest {
                 4
         );
 
-        doReturn(true).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
         doReturn("1158935").when(spyTopicService).getUserID(any(AuthorizationData.class));
         doReturn(true).when(spyTopicService).isAuthorizedToManipulateTopic(
@@ -339,7 +344,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseStaff() {
+    public void getSelectiveUserTopicsByCourseStaffTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicEntity topic1 = new TopicEntity("2023Z", "1158935", true);
         TopicEntity topic2 = new TopicEntity("2023Z", "1158935", false);
@@ -359,14 +364,14 @@ public class TopicServiceTest {
                 any(String.class), any(AuthorizationData.class)
         );
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
-        doReturn(true).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
 
         assertThat(spyTopicService.getSelectiveUserTopicsByCourse(authData, "FO"))
                 .containsExactlyInAnyOrderElementsOf(expectedTopics);
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseStudent() {
+    public void getSelectiveUserTopicsByCourseStudentTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicEntity topic1 = new TopicEntity("2023Z", "1158935", true);
         TopicEntity topic2 = new TopicEntity("2023Z", "1158935", false);
@@ -387,25 +392,25 @@ public class TopicServiceTest {
         );
         doReturn("1158935").when(spyTopicService).getUserID(any(AuthorizationData.class));
         doReturn("2023Z").when(spyCoursesService).retrieveCurrentTerm(any(AuthorizationData.class));
-        doReturn(false).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
-        doReturn(true).when(spyCoursesService).isCurrStudent(any(AuthorizationData.class));
+        doReturn(false).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(true).when(spyUserService).isCurrStudent(any(AuthorizationData.class));
 
         assertThat(spyTopicService.getSelectiveUserTopicsByCourse(authData, "FO"))
                 .containsExactlyInAnyOrderElementsOf(expectedTopics);
     }
 
     @Test
-    public void getSelectiveUserTopicsByCourseWrongUser() {
+    public void getSelectiveUserTopicsByCourseWrongUserTest() {
         AuthorizationData authData = new AuthorizationData("", "");
-        doReturn(false).when(spyCoursesService).isCurrStaff(any(AuthorizationData.class));
-        doReturn(false).when(spyCoursesService).isCurrStudent(any(AuthorizationData.class));
+        doReturn(false).when(spyUserService).isCurrStaff(any(AuthorizationData.class));
+        doReturn(false).when(spyUserService).isCurrStudent(any(AuthorizationData.class));
 
         assertThat(spyTopicService.getSelectiveUserTopicsByCourse(authData, "FO"))
                 .isNull();
     }
 
     @Test
-    public void confirmTemporaryTopicWrongRequest() {
+    public void confirmTemporaryTopicWrongRequestTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
         Optional<TopicEntity> optTopic = Optional.empty();
@@ -418,7 +423,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicDeleteNotTemporary() {
+    public void confirmTemporaryTopicDeleteNotTemporaryTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
         Optional<TopicEntity> optTopic = Optional
@@ -432,7 +437,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicDelete() {
+    public void confirmTemporaryTopicDeleteTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", false);
         Optional<TopicEntity> optTopic = Optional
@@ -446,7 +451,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void confirmTemporaryTopicSuccess() {
+    public void confirmTemporaryTopicSuccessTest() {
         AuthorizationData authData = new AuthorizationData("", "");
         TopicConfirmRequest topicRequest = new TopicConfirmRequest("FO", "title1", true);
         TopicEntity retrievedTopic = new TopicEntity(

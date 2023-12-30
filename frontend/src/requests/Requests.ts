@@ -78,7 +78,21 @@ export class Requests {
         return fetchPost("/oauthcredentials", { loginToken: loginToken });
     }
 
-    static getAllCourses(token: string, secret: string): Promise<GenericResponse<Course[]>> {
+    static getAllCoursesStudent(token: string, secret: string): Promise<GenericResponse<Course[]>> {
+        return fetchGet("/courses/student", token, secret);
+    }
+
+    static getAllCoursesStaff(token: string, secret: string): Promise<GenericResponse<Course[]>> {
+        return fetchGet("/courses/staff", token, secret);
+    }
+
+    static getAllCourses(token: string, secret: string, userType: string = ""): Promise<GenericResponse<Course[]>> {
+        if (userType == "STAFF") {
+            return this.getAllCoursesStaff(token, secret);
+        }
+        if (userType == "STUDENT") {
+            return this.getAllCoursesStudent(token, secret);
+        }
         return fetchGet("/courses", token, secret);
     }
 
@@ -140,7 +154,36 @@ export class Requests {
         return this.getUserTeams(token, secret);
     }
 
-    static rejectTeamRequest(token: string, secret: string, teamRequestId: number) : Promise<GenericResponse<boolean>> {
+    static getCourseTeamRequests(token: string, secret: string, courseId: string): Promise<GenericResponse<TeamRequestResponse[]>> {
+        return fetchGet("/projects/course_requests?course_id="+courseId, token, secret);
+    }
+
+    static getCourseTeams(token: string, secret: string, courseId: string): Promise<GenericResponse<TeamRequestResponse[]>> {
+        return fetchGet("/projects/course_teams?course_id="+courseId, token, secret);
+    }
+    
+    static getCourseTeamsOrTeamRequests(token: string, secret: string, courseId: string, teamRequests: boolean)
+                                                                : Promise<GenericResponse<TeamRequestResponse[]>> {
+        if (teamRequests) {
+            return this.getCourseTeamRequests(token, secret, courseId);
+        }
+        return this.getCourseTeams(token, secret, courseId);
+    }
+
+    static rejectTeamRequest(token: string, secret: string, teamRequestId: number): Promise<GenericResponse<boolean>> {
         return fetchPost("/projects/reject", teamRequestId, token, secret, false);
+    }
+
+    static confirmTeamRequest(token: string, secret: string, teamRequestId: number, topicId: number)
+        :Promise<GenericResponse<boolean>> {
+            return fetchPost("/projects/confirm", 
+            {
+                teamRequestId: teamRequestId, topicId: topicId, confirm: true
+            },
+            token, secret, false);
+    }
+
+    static autoAssign(token: string, secret: string, courseId: string): Promise<GenericResponse<boolean>> {
+        return fetchPost("/projects/auto_assign", { courseId: courseId }, token, secret, false);
     }
 }

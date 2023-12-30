@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.ICoursesService;
@@ -13,7 +12,6 @@ import pl.thesis.projects_helper.model.CourseEntity;
 import pl.thesis.projects_helper.model.CourseName;
 import pl.thesis.projects_helper.model.response.ParticipantResponse;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
-import pl.thesis.projects_helper.utils.UserActivityStatus;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
 
 import java.time.LocalDate;
@@ -35,6 +33,9 @@ public class CoursesService implements ICoursesService {
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
 
+    @Autowired
+    UserService userService;
+
 
     @Autowired
     public CoursesService(RestTemplate restTemplate) {
@@ -55,9 +56,10 @@ public class CoursesService implements ICoursesService {
     }
 
     private List<CourseEntity> getCurrentStatusRelatedCourses(AuthorizationData authData, String role) {
-        if (role.equals("participant") && !isCurrStudent(authData)) {
+        if (role.equals("participant") && !userService.isCurrStudent(authData)) {
             return new ArrayList<>();
-        } else if (role.equals("lecturer") && !isCurrStaff(authData)) {
+        }
+        if (role.equals("lecturer") && !userService.isCurrStaff(authData)) {
             return new ArrayList<>();
         }
 
@@ -90,23 +92,6 @@ public class CoursesService implements ICoursesService {
     public JsonNode requestUsersEndpoint(AuthorizationData authData, String func, Map<String, List<String>> args) {
         String url = usosBaseUrl + "users/" + func + "?" + generateArgsUrl(args);
         return requestOnEndpoint(authData, restTemplate, url, consumerKey, consumerSecret);
-    }
-
-    @Override
-    public Pair<Integer, Integer> getUserStatusPair(AuthorizationData authData) {
-        Map<String, List<String>> args = new HashMap<>();
-        args.put("fields", new ArrayList<>(Arrays.asList("student_status", "staff_status")));
-        JsonNode usosJson = requestUsersEndpoint(authData, "user", args);
-        // student, staff
-        return Pair.of(usosJson.get("student_status").asInt(), usosJson.get("staff_status").asInt());
-    }
-
-    public boolean isCurrStudent(AuthorizationData authData) {
-        return getUserStatusPair(authData).getFirst() == UserActivityStatus.ACTIVE.getCode();
-    }
-
-    public boolean isCurrStaff(AuthorizationData authData) {
-        return getUserStatusPair(authData).getSecond() == UserActivityStatus.ACTIVE.getCode();
     }
 
     @Override

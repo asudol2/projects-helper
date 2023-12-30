@@ -9,6 +9,7 @@ interface TeamComponentProps {
     teamRequest: TeamRequestResponse;
     displayCount: boolean;
     confirmed?: boolean | null;
+    staffView?: boolean | null;
     onDestroy: () => void;
 }
 
@@ -20,6 +21,24 @@ const leaveTeam = (teamRequestId: number, token: string | null, secret: string |
             return;
         }
         Requests.rejectTeamRequest(token, secret, teamRequestId).then(res => res.res).then(data => {
+            if (data) {
+                callback();
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        });
+    }
+}
+
+const confirmTeam = (teamRequestId: number, topicId: number, token: string | null, 
+    secret: string | null, callback: () => void, event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    if (token && secret) {
+        if (!window.confirm("Czy na pewno chcesz przydzielić ten zespół do tematu?")) {
+            return;
+        }
+        Requests.confirmTeamRequest(token, secret, teamRequestId, topicId).then(res => res.res).then(data => {
             if (data) {
                 callback();
             }
@@ -52,11 +71,26 @@ export function TeamComponent(props: TeamComponentProps) {
                         ))}
                     </div>
                 }
-                { !props.confirmed &&
-                    <button className="btn btn-primary projects-helper-leave-team"
+                { !props.staffView && !props.confirmed &&
+                    <button className="btn btn-primary projects-helper-team-action-button"
                         onClick={(e) => leaveTeam(props.teamRequest.teamId, token, secret, props.onDestroy, e)}
                     >
                         Opuść zespół
+                    </button>
+                }
+                { props.staffView && !props.confirmed &&
+                    <button className="btn btn-primary projects-helper-team-action-button"
+                        onClick={
+                            (e) => confirmTeam(
+                                props.teamRequest.teamId,
+                                props.teamRequest.topicId,
+                                token,
+                                secret,
+                                props.onDestroy,
+                                e
+                        )}
+                    >
+                        Przydziel ten temat
                     </button>
                 }
             </div>

@@ -19,9 +19,14 @@ export default function CoursePage() {
     const { token, setToken, secret, setSecret } = useUsosTokens();
     const [topics, setTopics] = useState<Topic[] | null>(null);
     const [loadingTopics, setLoadingTopics] = useState<boolean>(false);
+    const [userType, setUserType] = useState<string>("");
     const navigate = useNavigate();
 
+    const addTopicTextStudent = "Zaproponuj własny temat";
+    const addTopicTextStaff = "Dodaj temat";
+
     useEffect(() => {
+        setUserType(String(SecurityHelper.getUsetType()));
         if (token && secret) {
             const courseId = courseData?.split("&")[1];
             if (courseId) {
@@ -47,6 +52,29 @@ export default function CoursePage() {
         navigate("/topic/add/" + courseData);
     };
 
+    const autoAssign = () => {
+        const courseId = courseData?.split("&")[1];
+        if (token && secret && courseId) {
+            Requests.autoAssign(token, secret, courseId).then(res => res.res).then(data => {
+                if (data !== undefined) {
+                    alert(data ? "Wszystkie zespoły zostały przydzielone do tematów" : "Nie wszystkie zespoły udało się przydzielić");
+                }
+            })
+            .catch(error => {
+                SecurityHelper.clearStorage();
+                navigate("/login");
+            });
+        }
+    }
+
+    const sortTopics = (a: Topic, b: Topic): number => {
+        if (!a.temporary && b.temporary)
+            return -1;
+        if (a.temporary && !b.temporary)
+            return 1;
+        return a.title.localeCompare(b.title);
+    };
+
     return (
         <>
             <Helmet>
@@ -57,7 +85,7 @@ export default function CoursePage() {
                     <div className="projects-helper-page-header">{courseData?.split("&")[0]}</div>
                     <div className="projects-helper-page-header-small">Lista dostępnych tematów projektów</div>
                     {
-                        topics != null && topics.map((topic, index) => (
+                        topics != null && topics.sort(sortTopics).map((topic, index) => (
                             <TopicComponent key={index} topic={topic} index={index + 1}/>
                         ))
                     }
@@ -71,7 +99,17 @@ export default function CoursePage() {
                                 Nie ma jeszcze żadnych tematów zdefiniowanych dla tego przedmiotu.
                             </p>
                     }
-                    <div className="projects-helper-course-add-topic" onClick={addTopic}>Zaproponuj własny temat</div>
+                    <div className="projects-helper-course-add-topic" onClick={addTopic}>
+                        {userType == "STAFF" ? addTopicTextStaff : addTopicTextStudent}
+                    </div>
+                    {
+                        userType == "STAFF" &&
+                        <div>
+                                <div className="projects-helper-course-auto-assign" onClick={autoAssign}>
+                                Automatycznie przypisz studentów do tematów
+                            </div>
+                        </div>
+                    }
                 </div>
             </Content>
         </>

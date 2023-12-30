@@ -26,6 +26,7 @@ import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData
 
 import jakarta.annotation.PostConstruct;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
+import pl.thesis.projects_helper.utils.UserType;
 
 import java.util.*;
 import java.security.SecureRandom;
@@ -51,6 +52,9 @@ public class USOSService implements IUSOSService {
 
     @Autowired
     TokenRepository tokenRepository;
+
+    @Autowired
+    UserService userService;
 
     private OAuth1Template oauthTemplate;
     private final RestTemplate restTemplate;
@@ -119,7 +123,8 @@ public class USOSService implements IUSOSService {
             String ID = (String) jsonMap.get("id");
             String firstName = (String) jsonMap.get("first_name");
             String lastName = (String) jsonMap.get("last_name");
-            return new LoginResponse(ID, firstName, lastName);
+            UserType userType = userService.getUserType(authData);
+            return new LoginResponse(ID, firstName, lastName, userType);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

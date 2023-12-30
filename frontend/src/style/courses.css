@@ -32,7 +32,7 @@
     text-align: left;
 }
 
-.projects-helper-course-add-topic {
+.projects-helper-course-add-topic, .projects-helper-course-auto-assign {
     color: green;
     border: 1px solid green;
     padding: 0 2vw;
@@ -44,9 +44,10 @@
     position: relative;
     left: 50%;
     transform: translate(-50%, 0);
+    margin-bottom: 20px;
 }
 
-.projects-helper-course-add-topic:hover {
+.projects-helper-course-add-topic:hover, .projects-helper-course-auto-assign:hover {
     color: white;
     background-color: green;
     border: 1px solid black;

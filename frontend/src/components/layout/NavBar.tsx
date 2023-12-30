@@ -9,6 +9,7 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     const [userName, setUsername] = useState("");
+    const [userType, setUserType] = useState("");
     const {token, setToken, secret, setSecret} = useUsosTokens();
 
     useEffect(() => {
@@ -27,8 +28,10 @@ const NavBar = () => {
         } else {
             Requests.getUserData(token, secret).then(res => res.res).then(data => {
                 if (data !== undefined) {
-                    setUsername(data?.firstName + " " + data?.lastName);
+                    setUsername(data.firstName + " " + data.lastName);
                     SecurityHelper.saveUserId(data.ID);
+                    SecurityHelper.saveUsetType(data.userType);
+                    setUserType(data.userType == "STAFF" ? "pracownik" : (data.userType == "STUDENT" ? "student" : ""));
                 } else {
                     navigate("/login");
                 }
@@ -63,7 +66,7 @@ const NavBar = () => {
                 {SecurityHelper.isUserLoggedIn() && <div>
                     <li className="nav-item projects-helper-nav-item-username">
                         <Link className="nav-link projects-helper-navbar-link" to="/profile">
-                            <span>{userName}</span>
+                            <span>{userName} {userType != "" && "("+userType+")"}</span>
                         </Link>
                     </li>
                     <li className="nav-item projects-helper-nav-item">
