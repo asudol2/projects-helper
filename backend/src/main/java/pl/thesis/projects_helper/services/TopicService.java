@@ -28,6 +28,10 @@ public class TopicService implements ITopicService {
     private final ICoursesService coursesService;
 
     @Autowired
+    UserService userService;
+
+
+    @Autowired
     public TopicService(ICoursesService coursesService) {
         this.coursesService = coursesService;
         mapper = new ObjectMapper();
@@ -122,7 +126,7 @@ public class TopicService implements ITopicService {
         if (basicValidationResult.getCode() != 0)
             return basicValidationResult;
 
-        boolean temporary = !coursesService.isCurrStaff(authData);
+        boolean temporary = !userService.isCurrStaff(authData);
         String term = coursesService.retrieveCurrentTerm(authData);
         TopicEntity topic = new TopicEntity(
                 topicRequest.courseId(),
@@ -172,15 +176,15 @@ public class TopicService implements ITopicService {
     @RequiresAuthentication
     public List<TopicEntity> getSelectiveUserTopicsByCourse(AuthorizationData authData, String courseID) {
         // what with situation when user is student and lecturer at the same time?
-        if (coursesService.isCurrStudent(authData)){
+        if (userService.isCurrStaff(authData)) {
             return getSelectiveStudentTopicsByCourse(courseID, authData);
-        } else if (coursesService.isCurrStaff(authData)) {
+        }
+        if (userService.isCurrStudent(authData)) {
              List<TopicEntity> topics = getAllCourseCurrentRelatedTopics(courseID, authData);
              topics.removeIf(topic -> !topic.getTerm().equals(coursesService.retrieveCurrentTerm(authData)));
              return topics;
-        } else {
-            return null;
         }
+        return null;
     }
 
     @Override

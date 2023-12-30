@@ -20,8 +20,6 @@ public interface UserInTeamRepository extends JpaRepository<UserInTeamEntity, Lo
     @Query("SELECT u.userID FROM UserInTeamEntity u WHERE u.teamRequest.topic.id = :id")
     List<String> findUserIDsByTeamRequestTopicID(@Param("id") Long id);
 
-    List<UserInTeamEntity> findUserInTeamEntitiesByUserIDIsIn(List<String> userIDs);
-
     List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequestTopicCourseID(String courseID);
 
     List<UserInTeamEntity> findUserInTeamEntitiesByUserID(String userID);
@@ -29,5 +27,5 @@ public interface UserInTeamRepository extends JpaRepository<UserInTeamEntity, Lo
     List<UserInTeamEntity> findUserInTeamEntitiesByUserIDAndTeamIsNotNull(String userID);
     List<UserInTeamEntity> findUserInTeamEntitiesByUserIDAndTeamRequestIsNotNull(String userID);
 
-    List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequest(TeamRequestEntity teamRequest);
+    List<UserInTeamEntity> findUserInTeamEntitiesByTeamRequestId(Long teamRequestId);
 }

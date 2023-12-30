@@ -239,15 +239,16 @@ public class ProjectService implements IProjectService {
         return getUserTeamsOrTeamRequests(authData, false);
     }
 
-    private void acceptProjectRequest(TopicEntity topic,
+    private void acceptProjectRequest(Long topicId,
                                          List<UserInTeamEntity> relatedUITs) {
-        TeamEntity addedTeam = teamRepository.save(new TeamEntity(topic.getId(), "topic"));
+        Long teamRequestId = relatedUITs.get(0).getTeamRequest().getId();
+        TeamEntity addedTeam = teamRepository.save(new TeamEntity(topicId, "topic"));
         for (UserInTeamEntity uit: relatedUITs) {
             uit.setTeam(addedTeam);
             uit.setTeamRequest(null);
             userInTeamRepository.save(uit);
         }
-        teamRequestRepository.deleteById(relatedUITs.get(0).getId());
+        teamRequestRepository.deleteById(teamRequestId);
     }
 
     private void rejectProjectRequest(List<UserInTeamEntity> relatedUITs) {
@@ -259,25 +260,23 @@ public class ProjectService implements IProjectService {
     @Override
     @RequiresAuthentication
     public boolean confirmProjectRequest(AuthorizationData authData, TeamConfirmRequest teamConfirmRequest) {
-        String term = coursesService.retrieveCurrentTerm(authData);
-        Optional<TopicEntity> topic = topicRepository.findByCourseIDAndTermAndTitle(teamConfirmRequest.courseID(),
-                term, teamConfirmRequest.title());
-        if (topic.isEmpty())
+        Optional<TeamRequestEntity> teamRequest = teamRequestRepository.findById(teamConfirmRequest.teamRequestId());
+        if (teamRequest.isEmpty())
             return false;
+        List<UserInTeamEntity> uitList =
+                userInTeamRepository.findUserInTeamEntitiesByTeamRequestId(teamRequest.get().getId());
 
-        List<UserInTeamEntity> uitList = userInTeamRepository.findUserInTeamEntitiesByUserIDIsIn(
-                teamConfirmRequest.userIDs());
         List<UserInTeamEntity> relatedUITs = new ArrayList<>();
         for (UserInTeamEntity uit: uitList) {
             if (uit.getTeamRequest() == null)
                 continue;
-            if (Objects.equals(uit.getTeamRequest().getTopic().getId(), topic.get().getId())) {
+            if (Objects.equals(uit.getTeamRequest().getTopic().getId(), teamConfirmRequest.topicId())) {
                 relatedUITs.add(uit);
             }
         }
 
         if (teamConfirmRequest.confirm())
-            acceptProjectRequest(topic.get(), relatedUITs);
+            acceptProjectRequest(teamConfirmRequest.topicId(), relatedUITs);
         else rejectProjectRequest(relatedUITs);
         return true;
     }
@@ -395,7 +394,7 @@ public class ProjectService implements IProjectService {
         if (teamRequest.isEmpty())
             return false;
         List<UserInTeamEntity> teamRequestUITs = userInTeamRepository
-                .findUserInTeamEntitiesByTeamRequest(teamRequest.get());
+                .findUserInTeamEntitiesByTeamRequestId(teamRequest.get().getId());
         if (teamRequest.get().getTopic().getMinTeamCap() > teamRequestUITs.size() - 1) {
             userInTeamRepository.deleteAll(teamRequestUITs);
             teamRequestRepository.deleteById(teamRequestID);

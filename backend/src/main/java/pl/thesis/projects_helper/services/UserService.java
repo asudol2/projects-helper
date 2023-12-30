@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.thesis.projects_helper.interfaces.IUserService;
@@ -13,10 +14,9 @@ import pl.thesis.projects_helper.model.UserEntity;
 import pl.thesis.projects_helper.utils.RequiresAuthentication;
 import pl.thesis.projects_helper.utils.UserActivityStatus;
 import pl.thesis.projects_helper.services.AuthorizationService.AuthorizationData;
+import pl.thesis.projects_helper.utils.UserType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static pl.thesis.projects_helper.utils.URLArgsUtils.generateArgsUrl;
 import static pl.thesis.projects_helper.utils.URLArgsUtils.requestOnEndpoint;
@@ -88,5 +88,32 @@ public class UserService implements IUserService {
             return null;
         }
         return user;
+    }
+
+    @Override
+    public Pair<Integer, Integer> getUserStatusPair(AuthorizationData authData) {
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("fields", new ArrayList<>(Arrays.asList("student_status", "staff_status")));
+        JsonNode usosJson = requestUsersEndpoint(authData, "user", args);
+        return Pair.of(usosJson.get("student_status").asInt(), usosJson.get("staff_status").asInt());
+    }
+
+    public boolean isCurrStudent(AuthorizationData authData) {
+        return getUserStatusPair(authData).getFirst() == UserActivityStatus.ACTIVE.getCode();
+    }
+
+    public boolean isCurrStaff(AuthorizationData authData) {
+        return getUserStatusPair(authData).getSecond() == UserActivityStatus.ACTIVE.getCode();
+    }
+
+    @Override
+    public UserType getUserType(AuthorizationData authData) {
+        if (isCurrStaff(authData)) {
+            return UserType.STAFF;
+        }
+        if (isCurrStudent(authData)) {
+            return UserType.STUDENT;
+        }
+        return UserType.NONE;
     }
 }

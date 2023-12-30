@@ -17,7 +17,7 @@ export default function LoginPage() {
     const [headerWithTerm, setHeaderWithTerm] = useState<string>("");
     const navigate = useNavigate();
 
-    const headerTextTemplate = "Przedmioty w bieżącej realizacji ";
+    const headerTextTemplateStudent = "Przedmioty w bieżącej realizacji ";
 
     useEffect(() => {
         if (token && secret) {
@@ -25,32 +25,32 @@ export default function LoginPage() {
                 if (data !== undefined) {
                     setCourses(data);
                 } else {
-                    goToLoginPage();
+                    redirectToLoginPage();
                 }
             })
             .catch(error => {
-                goToLoginPage();
+                redirectToLoginPage();
             });
             const cachedTerm = SecurityHelper.getTerm();
             if (cachedTerm != null) {
-                setHeaderWithTerm(headerTextTemplate+cachedTerm);
+                setHeaderWithTerm(headerTextTemplateStudent+cachedTerm);
                 return;
             }
             Requests.getCurrentTerm(token, secret).then(res => res.res).then(data => {
                 if (data != undefined) {
-                    setHeaderWithTerm(headerTextTemplate+data);
+                    setHeaderWithTerm(headerTextTemplateStudent+data);
                     SecurityHelper.saveTerm(data);
                 } else {
-                    goToLoginPage();
+                    redirectToLoginPage();
                 }
             })
             .catch(error => {
-                goToLoginPage();
+                redirectToLoginPage();
             });
         }
     }, [token, setToken, secret, setSecret]);
 
-    const goToLoginPage = () => {
+    const redirectToLoginPage = () => {
         SecurityHelper.clearStorage();
         navigate("/login");
     }
