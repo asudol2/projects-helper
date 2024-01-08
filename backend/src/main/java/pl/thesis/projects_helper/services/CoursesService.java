@@ -144,8 +144,12 @@ public class CoursesService implements ICoursesService {
 
         LocalDate currDate = LocalDate.now();
         String currYear = String.valueOf(LocalDate.now().getYear());
+        String prevYear = String.valueOf(currDate.minusYears(1).getYear());
         List<Map<String, String>> realizations = usosMap.stream()
-                .filter(map -> map.get("id").contains(currYear))
+                .filter(map -> {
+                    String id = map.get("id");
+                    return id.contains(currYear) || id.contains(prevYear);
+                })
                 .toList();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
