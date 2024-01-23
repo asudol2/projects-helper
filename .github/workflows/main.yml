@@ -14,10 +14,10 @@ jobs:
 
     - name: Setup Node.js and Yarn
       uses: actions/setup-node@v2
+      env:
+        CI: false
       with:
         node-version: 18
-        env:
-          CI: false
 
     - name: Install Dependencies
       run: cd frontend && yarn install
