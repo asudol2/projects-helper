@@ -14,7 +14,7 @@ import pl.thesis.projects_helper.model.response.UsosAuthUrlResponse;
 import pl.thesis.projects_helper.services.AuthorizationService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://13.93.65.60:3000", "http://13.93.65.60", "http://10.1.0.4:3000", "http://10.1.0.4"})
 public class USOSController {
     private final IUSOSService usosService;
     @Value("${app.frontendUrl}")

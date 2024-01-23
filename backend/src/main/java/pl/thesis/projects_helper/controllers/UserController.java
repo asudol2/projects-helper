@@ -9,7 +9,7 @@ import pl.thesis.projects_helper.services.AuthorizationService;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://13.93.65.60:3000", "http://13.93.65.60", "http://10.1.0.4:3000", "http://10.1.0.4"})
 public class UserController {
 
     private final IUserService userService;
