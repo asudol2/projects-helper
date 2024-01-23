@@ -42,6 +42,7 @@ jobs:
     steps:
     - name: Checkout Repository
     - uses: actions/checkout@v3
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -65,43 +66,3 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: backend/target/app.jar
         target: /home/azureuser/
-
-# jobs:
-#   build:
-
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: Set up JDK 17
-#         uses: actions/setup-java@v3
-#         with:
-#           java-version: '17'
-#           distribution: 'temurin'
-#           cache: maven
-#       # - name: Run tests
-#       #   run: mvn clean test --file magazyn-backend/pom.xml
-#       # - name: Add application properties
-#       #   run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > magazyn-backend/src/main/resources/application.properties
-#       # - name: create Jar
-#       #   run: mvn clean package --file magazyn-backend/pom.xml
-#       - name: test
-#         env:
-#           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-#           CONSTANTS: ${{ secrets.CONSTANTS }}
-#         run: echo "Test" &&
-#              echo "$SSH_PRIVATE_KEY" &&
-#              echo "$CONSTANTS"
- 
-      # - name: Deploy .jar
-      #   run: sshpass -p ${{ secrets.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no magazyn.jar azureuser@40.114.226.113:~/
-      # #    - name: ssh
-      # #      run: sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no azureuser@40.114.226.113 'java -jar magazyn.jar'
-      # - name: Deploy frontend
-      #   run: |
-      #     echo "${{ secrets.DEPLOY_KEY }}" > key.ssh
-      #     sshpass -p ${{ secrets.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no key.ssh azureuser@40.114.226.113:~/
-      #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no azureuser@40.114.226.113 'chmod 700 key.ssh && mv key.ssh .ssh/id_rsa'
-      #     sshpass -p ${{ secrets.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no magazyn-frontend/deploy-front.sh azureuser@40.114.226.113:~/
-      #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh azureuser@40.114.226.113 ./deploy-front.sh http://40.114.226.113:8080/
-
