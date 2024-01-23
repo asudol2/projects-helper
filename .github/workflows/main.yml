@@ -37,7 +37,7 @@ jobs:
         host: "13.93.65.60"
         username: "azureuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: frontend/build/
+        source: build/
         target: /home/azureuser/frontend
 
 # jobs:
