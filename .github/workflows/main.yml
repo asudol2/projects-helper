@@ -15,7 +15,7 @@ jobs:
     - name: Setup Node.js and Yarn
       uses: actions/setup-node@v2
       env:
-        CI: false
+        CI: ""
       with:
         node-version: 18
 
