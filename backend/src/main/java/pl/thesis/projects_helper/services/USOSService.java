@@ -124,6 +124,9 @@ public class USOSService implements IUSOSService {
             String firstName = (String) jsonMap.get("first_name");
             String lastName = (String) jsonMap.get("last_name");
             UserType userType = userService.getUserType(authData);
+            //TODO fix
+//            firstName = "Jan";
+//            lastName = "Kowalski";
             return new LoginResponse(ID, firstName, lastName, userType);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

@@ -63,7 +63,6 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
         loadTopicTeamsOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
     }
 
-
     const removeTopicRequest = () => {
         if (!props.token || !props.secret || !props.topic)
             return;
@@ -89,6 +88,10 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
         setTeamRequests(newRequests);
         getTopicTeams(props.token, props.secret);
     };
+
+    const confirmTopicRequest = () => {
+        //TODO implement
+    }
 
 
     return (
@@ -140,11 +143,18 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
             }
             {
                 props.topic?.temporary &&
-                <button className={"btn btn-primary projects-helper-cancel-topic"}
-                    onClick={removeTopicRequest}
-                >
-                    Odrzuć propozycję tematu
-                </button>
+                <div>
+                    <button className={"btn btn-primary projects-helper-cancel-topic"}
+                        onClick={removeTopicRequest}
+                    >
+                        Odrzuć propozycję tematu
+                    </button>
+                    <button className={"btn btn-primary projects-helper-confirm-topic"}
+                        onClick={confirmTopicRequest}
+                    >
+                        Zaakceptuj propozycję tematu
+                    </button>
+                </div>
             }
         </div>
     )
