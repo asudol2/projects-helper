@@ -26,7 +26,7 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
             getTopicTeamRequests(props.token, props.secret);
             getTopicTeams(props.token, props.secret);
         }
-    }, []);
+    });
 
     const loadTopicTeamsOrTeamRequests = (
         token: string,
@@ -39,7 +39,7 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
         Requests.getCourseTeamsOrTeamRequests(token, secret, props.topic.courseID, loadRequests)
         .then(res => res.res).then(data => {
             if (data !== undefined) {
-                const result = data.filter(item => String(item.topicId) == props.topicId);
+                const result = data.filter(item => String(item.topicId) === props.topicId);
                 resultCallback(result);
             } else {
                 SecurityHelper.clearStorage();
@@ -116,7 +116,7 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
                 </div>
             }
             {
-                !loadingTeams && teams.length == 0 &&
+                !loadingTeams && teams.length === 0 &&
                 <p className="projects-helper-empty-container-message">Żaden zespół nie jest jeszcze przydzielony</p>
             }
             {loadingTeamRequests &&
@@ -124,7 +124,7 @@ export function StaffViewTopicComponent(props: StaffViewTopicComponentProps) {
             }
             <div>Niezatwierdzone zespoły:</div>
             {
-                !loadingTeamRequests && teamRequests.length == 0 &&
+                !loadingTeamRequests && teamRequests.length === 0 &&
                 <p className="projects-helper-empty-container-message">Brak niezatwierdzonych zespołów</p>
             }
             {teamRequests.length > 0 &&

@@ -17,18 +17,25 @@ export default function UserPage() {
     const [teams, setTeams] = useState<Map<number, TeamRequestResponse[]>>(new Map()); //TODO weryfikacja tego
     const [loadingTeamRequests, setLoadingTeamRequests] = useState<boolean>(false);
     const [loadingTeams, setLoadingTeams] = useState<boolean>(false);
-    const [userType, setUserType] = useState<string>("");
     const navigate = useNavigate();
 
+    const loadTeamRequests = (token: string, secret: string) => {
+        loadTeamOrTeamRequests(token, secret, true, setLoadingTeamRequests, setTeamRequests);
+    };
+
+    const loadTeams = (token: string, secret: string) => {
+        loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
+    };
+
     useEffect(() => {
-        if (SecurityHelper.getUsetType() == "STAFF") {
+        if (SecurityHelper.getUsetType() === "STAFF") {
             navigate("/");
         }
         if (token && secret) {
             loadTeams(token, secret);
             loadTeamRequests(token, secret);
         }
-    }, [token, setToken, secret, setSecret]);
+    }, [token, setToken, secret, setSecret, loadTeamRequests, loadTeams, navigate]);
 
     const groupTeamsByTopicId = (teams: TeamRequestResponse[]) => {
         let result: Map<number, TeamRequestResponse[]> = new Map();
@@ -65,14 +72,6 @@ export default function UserPage() {
         });
     };
 
-    const loadTeamRequests = (token: string, secret: string) => {
-        loadTeamOrTeamRequests(token, secret, true, setLoadingTeamRequests, setTeamRequests);
-    };
-
-    const loadTeams = (token: string, secret: string) => {
-        loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
-    };
-
     return (
         <>
             <Helmet>
@@ -86,11 +85,11 @@ export default function UserPage() {
                         <LoadingComponent text="Ładowanie zespołów, których jesteś członkiem"/>
                     }
                     {
-                        !loadingTeams && teams.size == 0 &&
+                        !loadingTeams && teams.size === 0 &&
                         <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego zespołu.</p>
                     }
                     {
-                        teams != null && Array.from(teams.entries()).map(([index, groupedTeamRequests])=> (
+                        teams !== null && Array.from(teams.entries()).map(([index, groupedTeamRequests])=> (
                             <TopicTeamsComponent key={index} teamRequests={groupedTeamRequests} confirmed={true}/>
                         ))
                     }
@@ -100,11 +99,11 @@ export default function UserPage() {
                         <LoadingComponent text="Ładowanie niepotwierdzonych zespołów"/>
                     }
                     {
-                        !loadingTeamRequests && teamRequests.size == 0 &&
+                        !loadingTeamRequests && teamRequests.size === 0 &&
                         <p className="projects-helper-empty-container-message">Nie jesteś członkiem żadnego niezatwierdzonego zespołu.</p>
                     }
                     {
-                        teamRequests != null && Array.from(teamRequests.entries()).map(([index, groupedTeamRequests])=> (
+                        teamRequests !== null && Array.from(teamRequests.entries()).map(([index, groupedTeamRequests])=> (
                             <TopicTeamsComponent key={index} teamRequests={groupedTeamRequests} />
                         ))
                     }

@@ -87,10 +87,10 @@ export class Requests {
     }
 
     static getAllCourses(token: string, secret: string, userType: string = ""): Promise<GenericResponse<Course[]>> {
-        if (userType == "STAFF") {
+        if (userType === "STAFF") {
             return this.getAllCoursesStaff(token, secret);
         }
-        if (userType == "STUDENT") {
+        if (userType === "STUDENT") {
             return this.getAllCoursesStudent(token, secret);
         }
         return fetchGet("/courses", token, secret);

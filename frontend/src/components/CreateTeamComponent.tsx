@@ -152,7 +152,7 @@ export function CreateTeamComponent(props: CreateTeamComponentProps) {
                                 ))
                             }
                             {
-                                searchResults.length == 0 && <div>Brak wyników</div>
+                                searchResults.length === 0 && <div>Brak wyników</div>
                             }
                         </div>}
                     </div>

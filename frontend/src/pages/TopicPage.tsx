@@ -35,7 +35,7 @@ export default function TopicPage() {
             }
         }
 
-    }, [token, setToken, secret, setSecret]);
+    }, [token, setToken, secret, setSecret, navigate, topicId]);
 
     return (
         <>
@@ -57,7 +57,7 @@ export default function TopicPage() {
                         {topic?.maxTeamCap}
                     </div>
                     {
-                        token && secret && topicId && topic && SecurityHelper.getUsetType() == "STUDENT" &&
+                        token && secret && topicId && topic && SecurityHelper.getUsetType() === "STUDENT" &&
                         <StudentViewTopicComponent
                             token={token}
                             secret={secret}
@@ -66,7 +66,7 @@ export default function TopicPage() {
                         />
                     }
                     {
-                        token && secret && topicId && topic && SecurityHelper.getUsetType() == "STAFF" &&
+                        token && secret && topicId && topic && SecurityHelper.getUsetType() === "STAFF" &&
                         <StaffViewTopicComponent
                             token={token}
                             secret={secret}

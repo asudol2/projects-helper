@@ -31,7 +31,7 @@ const NavBar = () => {
                     setUsername(data.firstName + " " + data.lastName);
                     SecurityHelper.saveUserId(data.ID);
                     SecurityHelper.saveUsetType(data.userType);
-                    setUserType(data.userType == "STAFF" ? "pracownik" : (data.userType == "STUDENT" ? "student" : ""));
+                    setUserType(data.userType === "STAFF" ? "pracownik" : (data.userType === "STUDENT" ? "student" : ""));
                 } else {
                     navigate("/login");
                 }
@@ -41,7 +41,7 @@ const NavBar = () => {
                 navigate("/login");
             });
         }
-    }, [token, setToken, secret, setSecret]);
+    }, [token, setToken, secret, setSecret, navigate]);
 
     const logout = (token: string | null, secret: string | null) => {
         if (token && secret) {
@@ -66,7 +66,7 @@ const NavBar = () => {
                 {SecurityHelper.isUserLoggedIn() && <div>
                     <li className="nav-item projects-helper-nav-item-username">
                         <Link className="nav-link projects-helper-navbar-link" to="/profile">
-                            <span>{userName} {userType != "" && "("+userType+")"}</span>
+                            <span>{userName} {userType !== "" && "("+userType+")"}</span>
                         </Link>
                     </li>
                     <li className="nav-item projects-helper-nav-item">
