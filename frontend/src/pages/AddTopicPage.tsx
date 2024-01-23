@@ -33,11 +33,11 @@ export default function AddTopicPage() {
 
     useEffect(() => {
             setCourseId(String(courseData?.split("&")[1]));
-    }, []);
+    });
         
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;
-        if (name == "minCap" || name == "maxCap") {
+        if (name === "minCap" || name === "maxCap") {
             const numericValue = value.replace(/[^0-9]/g, '');
             e.target.value = numericValue;
         }
@@ -49,7 +49,7 @@ export default function AddTopicPage() {
         if (token && secret) {
             Requests.addTopic(token, secret, courseId, state.title, state.description, state.minCap, state.maxCap)
                 .then(res => res.res).then(data => {
-                if (data == "SUCCESS") {
+                if (data === "SUCCESS") {
                     navigate(-1);
                 } else {
                     setValidationError(String(data));
@@ -77,7 +77,7 @@ export default function AddTopicPage() {
                                 <label htmlFor="title">Tytuł:</label>
                                 <input 
                                     type="text"
-                                    className={`form-control ${validationError == "UNIQUE_TITLE_PER_COURSE_AND_TERM" ? 'title-error' : ''} `}
+                                    className={`form-control ${validationError === "UNIQUE_TITLE_PER_COURSE_AND_TERM" ? 'title-error' : ''} `}
                                     id="title"
                                     name="title"
                                     value={state.title}
@@ -85,7 +85,7 @@ export default function AddTopicPage() {
                                     required
                                 />
                                 {
-                                    validationError == "UNIQUE_TITLE_PER_COURSE_AND_TERM" && 
+                                    validationError === "UNIQUE_TITLE_PER_COURSE_AND_TERM" && 
                                     <span className="title-error">
                                         Temat o tym tytule już istnieje w ramach tego przedmiotu.
                                     </span>
@@ -112,7 +112,7 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.minCap}
-                                        className={`${validationError == "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
+                                        className={`${validationError === "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
                                         required
                                     />
                                 </div>
@@ -126,12 +126,12 @@ export default function AddTopicPage() {
                                         min="1"
                                         onChange={handleChange}
                                         defaultValue={state.maxCap}
-                                        className={`${validationError == "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
+                                        className={`${validationError === "MIN_TEAM_CAP" ? 'capacity-error' : ''} `}
                                         required
                                     />
                                 </div>
                                 {
-                                    validationError == "MIN_TEAM_CAP" &&
+                                    validationError === "MIN_TEAM_CAP" &&
                                     <span className="capacity-error">
                                         Maksymalna liczebność zespołu nie może być mniejsza od minimalnej.
                                     </span>

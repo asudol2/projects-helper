@@ -18,6 +18,11 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     const headerTextTemplateStudent = "Przedmioty w bieżącej realizacji ";
+    
+        const redirectToLoginPage = () => {
+            SecurityHelper.clearStorage();
+            navigate("/login");
+        }
 
     useEffect(() => {
         if (token && secret) {
@@ -37,7 +42,7 @@ export default function LoginPage() {
                 return;
             }
             Requests.getCurrentTerm(token, secret).then(res => res.res).then(data => {
-                if (data != undefined) {
+                if (data !== undefined) {
                     setHeaderWithTerm(headerTextTemplateStudent+data);
                     SecurityHelper.saveTerm(data);
                 } else {
@@ -48,12 +53,7 @@ export default function LoginPage() {
                 redirectToLoginPage();
             });
         }
-    }, [token, setToken, secret, setSecret]);
-
-    const redirectToLoginPage = () => {
-        SecurityHelper.clearStorage();
-        navigate("/login");
-    }
+    }, [token, setToken, secret, setSecret, redirectToLoginPage]);
 
 
     return (

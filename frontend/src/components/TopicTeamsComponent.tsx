@@ -16,7 +16,7 @@ export function TopicTeamsComponent(props: TopicTeamsComponentProps) {
 
     useEffect(() => {
         setTeamRequests(props.teamRequests);
-    }, []);
+    });
 
     const handleClick = () => {
         setIsExtended((prevIsExtended) => !prevIsExtended);

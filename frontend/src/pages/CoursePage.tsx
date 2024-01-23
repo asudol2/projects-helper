@@ -46,7 +46,7 @@ export default function CoursePage() {
             }
         }
 
-    }, [token, setToken, secret, setSecret]);
+    }, [token, setToken, secret, setSecret, courseData, navigate]);
 
     const addTopic = () => {
         navigate("/topic/add/" + courseData);
@@ -94,16 +94,16 @@ export default function CoursePage() {
                         <LoadingComponent text="Ładowanie tematów" />
                     }
                     {
-                        (!loadingTopics && (topics == null || topics.length == 0)) &&
+                        (!loadingTopics && (topics === null || topics.length == 0)) &&
                             <p className="projects-helper-no-topics">
                                 Nie ma jeszcze żadnych tematów zdefiniowanych dla tego przedmiotu.
                             </p>
                     }
                     <div className="projects-helper-course-add-topic" onClick={addTopic}>
-                        {userType == "STAFF" ? addTopicTextStaff : addTopicTextStudent}
+                        {userType === "STAFF" ? addTopicTextStaff : addTopicTextStudent}
                     </div>
                     {
-                        userType == "STAFF" &&
+                        userType === "STAFF" &&
                         <div>
                                 <div className="projects-helper-course-auto-assign" onClick={autoAssign}>
                                 Automatycznie przypisz studentów do tematów

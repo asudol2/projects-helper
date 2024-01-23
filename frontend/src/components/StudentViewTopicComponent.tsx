@@ -28,7 +28,7 @@ export function StudentViewTopicComponent(props: StudentViewTopicComponentProps)
             getTopicTeamRequests(props.token, props.secret);
             getTopicTeams(props.token, props.secret);
         }
-    }, []);
+    });
 
     const loadTopicTeamsOrTeamRequests = (
         token: string,
@@ -40,7 +40,7 @@ export function StudentViewTopicComponent(props: StudentViewTopicComponentProps)
         loadingCallback(true);
         Requests.getUserTeamsOrTeamRequests(token, secret, loadRequests).then(res => res.res).then(data => {
             if (data !== undefined) {
-                const result = data.filter(item => String(item.topicId) == props.topicId);
+                const result = data.filter(item => String(item.topicId) === props.topicId);
                 resultCallback(result);
             } else {
                 SecurityHelper.clearStorage();
