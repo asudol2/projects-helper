@@ -23,7 +23,7 @@ jobs:
       run: cd frontend && yarn install
 
     - name: Build React App
-      run: cd frontend && yarn build && ls -l frontend/build
+      run: cd frontend && yarn build && ls -l
 
   deploy:
     runs-on: ubuntu-latest
