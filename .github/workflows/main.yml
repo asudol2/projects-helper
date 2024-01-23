@@ -42,10 +42,6 @@ jobs:
     needs: build-and-deploy-frontend
 
     steps:
-    # - name: Checkout Repository
-    # - uses: actions/checkout@v3
-    #   with:
-    #     run: java
     - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Check directory
