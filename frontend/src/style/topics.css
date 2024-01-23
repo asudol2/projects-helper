@@ -7,7 +7,12 @@
     padding: 1vw;
 }
 
+.projects-helper-topic-title {
+    font-size: 16pt;
+}
+
 .projects-helper-topic-description {
+    font-size: 14pt;
     margin-bottom: 20px;
     white-space: pre-line;
 }
@@ -66,4 +71,8 @@ span.title-error, span.capacity-error {
     border-radius: 10px;
     font-size: 14pt;
     padding: 5px;
+}
+
+.projects-helper-item-topic-student { 
+    margin-top: 50px;
 }

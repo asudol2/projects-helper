@@ -108,6 +108,8 @@ public class UserService implements IUserService {
 
     @Override
     public UserType getUserType(AuthorizationData authData) {
+//        return UserType.STAFF;
+        //TODO fix
         if (isCurrStaff(authData)) {
             return UserType.STAFF;
         }
