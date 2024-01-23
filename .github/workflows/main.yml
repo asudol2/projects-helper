@@ -41,7 +41,7 @@ jobs:
         username: "azureuser"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: frontend/build/
-        target: /home/azureuser/frontend/
+        target: /var/www/
 
 # jobs:
 #   build:
