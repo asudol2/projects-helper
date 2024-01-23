@@ -19,15 +19,39 @@ export default function UserPage() {
     const [loadingTeams, setLoadingTeams] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const loadTeamRequests = (token: string, secret: string) => {
-        loadTeamOrTeamRequests(token, secret, true, setLoadingTeamRequests, setTeamRequests);
-    };
-
-    const loadTeams = (token: string, secret: string) => {
-        loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
-    };
 
     useEffect(() => {
+        const loadTeamOrTeamRequests = (
+            token: string,
+            secret: string,
+            loadRequests: boolean,
+            loadingCallback: (arg: boolean) => void,
+            resultCallback: (arg: Map<number, TeamRequestResponse[]>) => void
+        ) => {
+            loadingCallback(true);
+            Requests.getUserTeamsOrTeamRequests(token, secret, loadRequests).then(res => res.res).then(data => {
+                if (data !== undefined) {
+                    resultCallback(groupTeamsByTopicId(data));
+                } else {
+                    SecurityHelper.clearStorage();
+                    navigate("/login");
+                }
+            })
+                .catch(err => {
+                    SecurityHelper.clearStorage();
+                    navigate("/login");
+                })
+                .finally(() => {
+                    loadingCallback(false);
+                });
+        };
+        const loadTeamRequests = (token: string, secret: string) => {
+            loadTeamOrTeamRequests(token, secret, true, setLoadingTeamRequests, setTeamRequests);
+        };
+
+        const loadTeams = (token: string, secret: string) => {
+            loadTeamOrTeamRequests(token, secret, false, setLoadingTeams, setTeams);
+        };
         if (SecurityHelper.getUsetType() === "STAFF") {
             navigate("/");
         }
@@ -35,7 +59,7 @@ export default function UserPage() {
             loadTeams(token, secret);
             loadTeamRequests(token, secret);
         }
-    }, [token, setToken, secret, setSecret, loadTeamRequests, loadTeams, navigate]);
+    }, [token, setToken, secret, setSecret, navigate]);
 
     const groupTeamsByTopicId = (teams: TeamRequestResponse[]) => {
         let result: Map<number, TeamRequestResponse[]> = new Map();
@@ -45,31 +69,6 @@ export default function UserPage() {
             result.set(team.topicId, existingList);
         }
         return result;
-    };
-
-    const loadTeamOrTeamRequests = (
-        token: string,
-        secret: string,
-        loadRequests: boolean,
-        loadingCallback: (arg: boolean) => void, 
-        resultCallback: (arg: Map<number, TeamRequestResponse[]>) => void
-    ) => {
-        loadingCallback(true);
-        Requests.getUserTeamsOrTeamRequests(token, secret, loadRequests).then(res => res.res).then(data => {
-            if (data !== undefined) {
-                resultCallback(groupTeamsByTopicId(data));
-            } else {
-                SecurityHelper.clearStorage();
-                navigate("/login");
-            }
-        })
-        .catch(err => {
-            SecurityHelper.clearStorage();
-            navigate("/login");
-        })
-        .finally(() => {
-            loadingCallback(false);
-        });
     };
 
     return (

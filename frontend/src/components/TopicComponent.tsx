@@ -9,7 +9,7 @@ interface TopicComponentProps {
 
 export function TopicComponent(props: TopicComponentProps) {
     const navigate = useNavigate();
-    const { id, courseID, title, temporary } = props.topic;
+    const { id, title, temporary } = props.topic;
 
 
     const handleClick = () => {
