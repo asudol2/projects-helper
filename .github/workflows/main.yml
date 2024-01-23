@@ -40,11 +40,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-    - uses: actions/checkout@v3
-      with:
-        run: java
-    
+    # - name: Checkout Repository
+    # - uses: actions/checkout@v3
+    #   with:
+    #     run: java
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -65,6 +64,6 @@ jobs:
       with:
         host: "13.93.65.60"
         username: "azureuser"
-  #       key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #       source: backend/target/app.jar
-  #       target: /home/azureuser/
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: backend/target/app.jar
+        target: /home/azureuser/
