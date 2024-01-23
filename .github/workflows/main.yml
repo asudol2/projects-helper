@@ -20,6 +20,9 @@ jobs:
     - name: Install Dependencies
       run: cd frontend && yarn install
 
+    - name: Adjust config
+      run: echo -b "export namespace Global {\n    export const backendUrl: string = 'http://13.93.65.60/:8080'\n}" > config/Config.ts
+
     - name: Build React App
       run: cd frontend && yarn build
       
