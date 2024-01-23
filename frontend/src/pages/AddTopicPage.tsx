@@ -32,8 +32,8 @@ export default function AddTopicPage() {
 
 
     useEffect(() => {
-            setCourseId(String(courseData?.split("&")[1]));
-    });
+        setCourseId(String(courseData?.split("&")[1]));
+    }, [courseData]);
         
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const { name, value } = e.target;

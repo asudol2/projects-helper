@@ -18,13 +18,13 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     const headerTextTemplateStudent = "Przedmioty w bieżącej realizacji ";
-    
+
+    useEffect(() => {
         const redirectToLoginPage = () => {
             SecurityHelper.clearStorage();
             navigate("/login");
         }
 
-    useEffect(() => {
         if (token && secret) {
             Requests.getAllCourses(token, secret).then(res => res.res).then(data => {
                 if (data !== undefined) {
@@ -53,7 +53,7 @@ export default function LoginPage() {
                 redirectToLoginPage();
             });
         }
-    }, [token, setToken, secret, setSecret, redirectToLoginPage]);
+    }, [token, setToken, secret, setSecret, navigate]);
 
 
     return (

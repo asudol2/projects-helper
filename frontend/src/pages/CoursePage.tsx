@@ -94,7 +94,7 @@ export default function CoursePage() {
                         <LoadingComponent text="Ładowanie tematów" />
                     }
                     {
-                        (!loadingTopics && (topics === null || topics.length == 0)) &&
+                        (!loadingTopics && (topics === null || topics.length === 0)) &&
                             <p className="projects-helper-no-topics">
                                 Nie ma jeszcze żadnych tematów zdefiniowanych dla tego przedmiotu.
                             </p>
